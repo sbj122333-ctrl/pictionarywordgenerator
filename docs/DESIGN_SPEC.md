@@ -26,7 +26,7 @@ Two designs, not one design that stretches.
 | Word size | `clamp(2.5rem, 11vw, 4rem)` | `clamp(4rem, 7vw, 7rem)` |
 | Controls | Bottom-anchored, 56px min height | Centred under the word, 48px |
 | Timer | Ring, top-right, 64px | Ring, above the word, 96px |
-| Privacy cover | Essential — the phone changes hands | Still shown; the room can see the screen |
+| Handover beat | "Next drawer" on the resolved screen | Same button; the room can see the screen anyway |
 
 ### Breakpoints
 
@@ -173,29 +173,20 @@ Reached only if the host taps "Add teams". Default path skips it entirely.
 - Laptop: same list, 480px centred.
 - **Skip is as prominent as Start.** Most sessions never score.
 
-### 3.3 Cover — the privacy guard
+### 3.3 Cover — REMOVED (Sep 2026)
 
-The most important screen in the app. FR-08.
+The cover screen was a full-bleed "Drawer only / Tap when you're holding the
+phone" interstitial in front of every word. It was removed at Sabuj's request.
 
-```
-┌───────────────────────────────────┐
-│                                   │
-│              ▲                    │   Full bleed, tier ink at 8% over --bg
-│         Drawer only               │   Display face, centred
-│                                   │
-│   Tap when you're holding         │
-│   the phone                       │
-│                                   │
-│         Team 2 · Round 7          │   mono, --muted
-└───────────────────────────────────┘
-```
+What replaces it: nothing. Picking a tier goes straight to the first word, and
+"Next drawer" on the resolved screen goes straight to the next one. That button
+IS the handover beat — the person who taps it is the person holding the phone —
+and it was always doing that job while the cover screen took the credit.
 
-- The entire viewport is the tap target. Not a button — the whole screen.
-- **The word is not in the DOM.** It is fetched and rendered on tap. Do not
-  pre-render it hidden, at `opacity: 0`, or behind `[hidden]`.
-- Identical on both sizes; on laptop it is the "everyone look away" beat.
-- No animation on entry — a transition here reads as a reveal and makes people
-  glance up.
+What did not change: the word is still drawn at the instant it is painted, never
+before. See invariant 4 in `CLAUDE.md`. Do not reintroduce a pre-fetched "next
+word" as an optimisation; there is nothing to optimise and it is the one bug in
+this app with no visible symptom.
 
 ### 3.4 Playing — the word
 
@@ -230,9 +221,14 @@ PHONE                              LAPTOP
 - Laptop: three equal buttons in a row, centred.
 - Timer ring: `--muted` track, tier ink progress; switches to `--crit` at 10s
   with a single 200ms pulse — one pulse, not a loop.
-- **God Mode only:** a `Show hint (½ points)` text button under the word.
-  Revealing swaps it for the hint text in `--muted` italic and halves the round's
-  score. Once revealed it cannot be re-hidden.
+- **God Mode only:** the word's meaning, printed under it in `--ink-2` at
+  1.0625rem, `max-width: 34ch`, `text-wrap: balance`. Always visible: no button,
+  no tap, no points penalty. It is there because a God Mode term is a named
+  thing from someone else's field, and the drawer has to draw the idea — which
+  they cannot do if they cannot define it.
+
+  REMOVED (Sep 2026): the `Show hint (½ points)` button and the halved award
+  that went with it. There is no longer anything on this screen to buy.
 - **Twist**, when active: a chip above the pips in `--warn-soft` — "Non-dominant
   hand". Appears ~20% of rounds when enabled, off by default.
 
@@ -273,7 +269,6 @@ Restrained. This is a utility used under time pressure, not a showpiece.
 | Transition | Duration | Easing |
 |---|---|---|
 | Screen change | 180ms | `cubic-bezier(.2,0,0,1)` |
-| Cover → word | **0ms** | none — instant, see §3.3 |
 | Button press | 90ms scale to .97 | `ease-out` |
 | Timer final 10s | one 200ms pulse | `ease-in-out` |
 
@@ -293,8 +288,10 @@ pulse. The timer stays legible without motion.
 - Tier and outcome are never colour-only — always paired with text.
 - Live region (`aria-live="polite"`) announces the timer at 30s, 10s and 0s, and
   announces the revealed word once.
-- The cover screen is a `<button>` spanning the viewport with a real accessible
-  name, not a click-handled `<div>`.
+- Every control that acts is a real `<button>` with an accessible name, never a
+  click-handled `<div>`.
+- The God Mode meaning is ordinary body text under the word, so a screen reader
+  reaches it in reading order without any extra announcement.
 - Respect `prefers-contrast: more` by dropping the soft tier tints for solid
   borders.
 

@@ -60,7 +60,6 @@ export function summaryScreen(props: SummaryProps): HTMLElement {
               'li',
               {},
               el('span', { class: 'words__text', text: round.text }),
-              round.hintUsed ? el('span', { class: 'label', text: 'hint' }) : null,
               el(
                 'span',
                 { class: 'words__outcome' },

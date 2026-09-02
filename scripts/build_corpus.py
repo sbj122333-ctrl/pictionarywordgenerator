@@ -25,7 +25,10 @@ from collections import Counter, defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "corpus-src"))
 
-CORPUS_VERSION = "2026.09.1"
+CORPUS_VERSION = "2026.09.2"
+# The version every device compares against. Bumping it triggers reconcile() on
+# next load: the seen-bitmap is kept, the unseen set is recomputed, and the new
+# words appear without resurrecting a single word anyone has already played.
 
 # --- TIER ASSIGNMENT ------------------------------------------------------
 # Calibrated against the 1,100-word seed build. Two corrections came out of it,
@@ -38,8 +41,9 @@ CORPUS_VERSION = "2026.09.1"
 # 2. The four axes CANNOT separate Hard from God Mode. Both tiers are abstract, so
 #    both score 8-16 and the split was arbitrary: "peer pressure" and "the bystander
 #    effect" both score 11. What actually separates them is REGISTER - God Mode words
-#    are named terms of art from a specialist domain and need a hint; Hard words are
-#    abstract but everyday language. So the tier is (score, domain), not score alone.
+#    are named terms of art from a specialist domain and need their meaning printed
+#    under them; Hard words are abstract but everyday language. So the tier is
+#    (score, domain), not score alone.
 SPECIALIST = {"biases", "philosophy", "science", "biology",
               "economics", "internet", "maths", "literature"}
 TIER_ORDER = ["easy", "moderate", "hard", "god"]
@@ -66,6 +70,27 @@ def norm(text):
     t = unicodedata.normalize("NFKD", text.lower())
     t = "".join(c for c in t if not unicodedata.combining(c))
     return re.sub(r"[^a-z0-9]+", " ", t).strip()
+
+def word_count(text):
+    """
+    How many words the room has to guess.
+
+    NOT norm().split(). norm() turns every non-alphanumeric run into a space,
+    which splits "gambler's fallacy" into three and made the word screen show
+    three pips for a two-word phrase — actively misleading the people guessing.
+    Apostrophes and hyphens are inside words, not between them: "gambler's" and
+    "jack-o-lantern" are each one word.
+
+    norm() itself must NOT be changed to fix this. It is the key ordinals are
+    assigned against in data/ordinals.lock.json, and altering it would renumber
+    the corpus and resurrect every word every device has already played.
+    """
+    t = unicodedata.normalize("NFKD", text.lower())
+    t = "".join(c for c in t if not unicodedata.combining(c))
+    t = re.sub(r"[\u2019'\-]", "", t)            # possessives, contractions, compounds
+    t = re.sub(r"[^a-z0-9]+", " ", t)             # everything else separates
+    return len(t.split())
+
 
 def stem_key(text):
     """Aggressive key for NEAR-duplicate detection: normalised, de-pluralised, sorted."""
@@ -97,8 +122,14 @@ def load_lock():
     p = os.path.join(ROOT, "data", "ordinals.lock.json")
     if os.path.exists(p):
         with open(p) as f:
-            return json.load(f)
-    return {"nextOrd": 0, "assigned": {}, "tombstones": []}
+            lock = json.load(f)
+        # "addedIn" arrived with the 2026.09.2 expansion. Anything already
+        # holding an ordinal before it existed came in with the seed release.
+        lock.setdefault("addedIn", {})
+        for key in lock["assigned"]:
+            lock["addedIn"].setdefault(key, "2026.09.1")
+        return lock
+    return {"nextOrd": 0, "assigned": {}, "tombstones": [], "addedIn": {}}
 
 
 def build():
@@ -114,10 +145,10 @@ def build():
         rows = tiers[tier]
         for row in rows:
             if tier == "god":
-                text, cat, C, F, D, R, T, hint = row
+                text, cat, C, F, D, R, T, meaning = row
             else:
                 text, cat, C, F, D, R, T = row
-                hint = None
+                meaning = None
             text = text.strip()
 
             # --- gate: axis ranges ---
@@ -149,15 +180,19 @@ def build():
                         f"[{tier}] '{text}': fails fun gate (T={T}, needs >=2 or a delight note)"
                     )
 
-            # --- gate: God Mode hints are mandatory (FR-13) ---
+            # --- gate: God Mode meanings are mandatory (FR-13, revised Sep 2026) ---
+            # The word screen prints this under the word, always, with no tap and no
+            # points penalty. A god word whose meaning is missing is a dead round, so
+            # the build refuses to ship one. 120 chars is what fits on a phone at the
+            # meaning's type size without pushing the outcome buttons off-screen.
             if tier == "god":
-                if not hint or len(hint.strip()) < 8:
-                    errors.append(f"[god] '{text}': missing or too-short hint")
-                elif len(hint) > 90:
-                    errors.append(f"[god] '{text}': hint is {len(hint)} chars, max 90")
+                if not meaning or len(meaning.strip()) < 8:
+                    errors.append(f"[god] '{text}': missing or too-short meaning")
+                elif len(meaning) > 120:
+                    errors.append(f"[god] '{text}': meaning is {len(meaning)} chars, max 120")
 
-            # --- gate: word count 1-6 (FR-09) ---
-            wc = len(norm(text).split())
+            # --- gate: word count 1-7 (FR-09) ---
+            wc = word_count(text)
             if not 1 <= wc <= MAX_WORDS:
                 errors.append(f"[{tier}] '{text}': {wc} words, max {MAX_WORDS}")
             if tier == "easy" and wc > 3:
@@ -183,6 +218,7 @@ def build():
             else:
                 ordinal = lock["nextOrd"]
                 lock["assigned"][nk] = ordinal
+                lock["addedIn"][nk] = CORPUS_VERSION
                 lock["nextOrd"] += 1
 
             records.append({
@@ -196,10 +232,10 @@ def build():
                 "score": score,
                 "computedTier": computed,
                 "override": None,
-                "hint": hint,
+                "meaning": meaning,
                 "locale": ["global"],
                 "volatility": "evergreen",
-                "addedIn": CORPUS_VERSION,
+                "addedIn": lock["addedIn"].get(nk, CORPUS_VERSION),
             })
 
     # --- near-duplicate report ---
@@ -238,7 +274,7 @@ def report(records, errors, warnings):
 
     print(f"\n  multi-word entries: {sum(1 for r in records if r['words'] > 1)} "
           f"({sum(1 for r in records if r['words'] > 1)/len(records)*100:.0f}%)")
-    print(f"  god-mode hints:     {sum(1 for r in records if r['hint'])}/{by_tier['god']}")
+    print(f"  god-mode meanings:  {sum(1 for r in records if r['meaning'])}/{by_tier['god']}")
     print(f"  ordinal range:      0 - {max(r['ord'] for r in records)}")
 
     if warnings:
@@ -282,7 +318,7 @@ def emit(records, lock):
             "words": [
                 {k: v for k, v in (
                     ("o", r["ord"]), ("t", r["text"]), ("w", r["words"]),
-                    ("c", r["category"]), ("h", r["hint"]),
+                    ("c", r["category"]), ("m", r["meaning"]),
                 ) if v is not None}
                 for r in rows
             ],

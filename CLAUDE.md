@@ -43,10 +43,13 @@ Never treat the cursor as authoritative. On corpus change, recompute the unseen
 set from the bitmap and reshuffle only that. This is what makes the no-repeat
 guarantee survive content releases.
 
-**4. The word never enters the DOM before the drawer asks for it.**
-The cover screen exists because a word glimpsed while the phone is being handed
-over ruins the round. Do not pre-render, do not `hidden`, do not render at
-`opacity: 0`. It is not in the document until the reveal.
+**4. A word is drawn at the moment it is painted, and never earlier.**
+The cover interstitial was removed in Sep 2026 at Sabuj's request, and this
+invariant is what survived that. `reveal()` is the only thing that draws; the
+caller builds the word screen from what it returns. Never pre-fetch the next
+word, never hold one in a variable "ready", never render one hidden or at
+`opacity: 0` — a word that exists before someone asked for it can be glimpsed,
+and a word drawn but not shown is a word silently burned.
 
 **5. Tier is computed, never hand-assigned.**
 `assign_tier(score, category)` in `scripts/build_corpus.py` is the only thing
@@ -125,15 +128,19 @@ injected `StorageAdapter` port, never directly.
 
 ## Current state
 
-Seed corpus: **1,100 words** (306 easy / 372 moderate / 200 hard / 222 god),
-16.6 KB gzipped, all gates passing. This is 23% of the V1.0 launch target of
-4,800 and is deliberately short — it exists so the engine can be built and
-played against real data. Growing it is editorial work, not a code task; the
-pipeline is in `docs/TECHNICAL_SPEC.md`.
+Corpus **2026.09.2** — **3,977 words** (974 easy / 1,469 moderate / 824 hard /
+710 god), 56 KB gzipped, all gates passing. That is 83% of the V1.0 launch
+target of 4,800, up from the 1,100-word seed. Ordinals 0–1,099 are the seed
+release and 1,100–3,976 came in with this expansion; nothing was renumbered, so
+every device keeps its history and simply finds more words unseen.
+
+God Mode is now 710 words against a V1.0 target of 600 and a ceiling of ~1,500.
+It is deliberately the smallest tier and the one to stop growing first — past
+the ceiling you are admitting terms that fail the Recognition axis.
 
 **The app is built and playable.** Tasks 1–13 of `docs/BUILD_PLAN.md` are done:
-engine, storage, deck, anti-clustering, all six screens, timer, teams, scoring,
-PWA, Memory Code. 123 tests green, 39 KB of the 300 KB budget.
+engine, storage, deck, anti-clustering, the screens, timer, teams, scoring,
+PWA, Memory Code. 131 tests green, 78 KB of the 300 KB budget.
 
 Task 14 (release) is the open one: the WCAG 2.2 AA audit and the real-device
 pass across iOS Safari, Android Chrome and desktop have not been run, and
@@ -149,3 +156,20 @@ Two corrections were made to the specs while building, both recorded in place:
 - **`theme` and `installDismissed` moved into `Settings`** rather than getting
   keys of their own, to keep the one-key rule absolute. No schema bump: absent
   fields parse to defaults. TECHNICAL_SPEC §2.3.
+
+Three product changes landed in Sep 2026, all requested by Sabuj:
+
+- **The cover screen is gone.** No "Drawer only / Tap when you're holding the
+  phone" interstitial; the word is drawn and painted in one step, and the
+  handover moment is the "Next drawer" button on the resolved screen. Invariant
+  4 was rewritten rather than deleted — see above.
+- **Hints became meanings.** The `hint` field is now `meaning` (packed key `h`
+  became `m`), it is printed under every God Mode word unconditionally, and it
+  costs nothing. The ½-points award, the reveal button and `Round.hintUsed` are
+  all removed. A God Mode term the room cannot define is a dead round, not a
+  hard one.
+- **Back navigates instead of exiting.** Every screen but tier select owns a
+  history entry carrying its own view, so back means "the previous screen" and
+  only leaves the app from tier select. The old code pushed an entry only when
+  leaving `tiers`, and `startGame()` switches to `loading` first — so the game
+  screen never got one and Android's back button closed the app mid-round.

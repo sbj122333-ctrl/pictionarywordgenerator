@@ -22,7 +22,7 @@ import type { Outcome, Team } from '../state/session';
 import { GameSession } from '../state/session';
 import { clear, el } from './dom';
 import type { ScreenHandle } from './screens/game';
-import { coverScreen, playScreen } from './screens/game';
+import { playScreen } from './screens/game';
 import type { TierStatus } from './screens/tier-select';
 import { tierSelectScreen } from './screens/tier-select';
 import { teamSetupScreen } from './screens/teams';
@@ -78,14 +78,25 @@ export class App {
       this.installEvent = event as InstallPromptEvent;
     });
 
-    // Browser back out of a game lands on tier select with the record intact.
-    // The words already drawn stay burned, which is right — they were revealed.
-    window.addEventListener('popstate', () => {
-      if (this.view.name === 'tiers') return;
-      this.session?.abandon();
-      this.session = null;
-      this.view = { name: 'tiers' };
-      this.render();
+    // ----------------------------------------------------------------------
+    // History
+    //
+    // Every screen that is not tier select gets its own history entry, and the
+    // view it represents is carried *in* that entry's state. Back then means
+    // "the screen the entry before this one describes", which is the previous
+    // screen, and only at tier select — where there is no entry of ours left to
+    // pop — does back leave the app.
+    //
+    // The bug this replaces: the old code pushed an entry only when leaving the
+    // `tiers` view, and `startGame()` switches to `loading` before it navigates.
+    // So the game screen never got an entry at all, and Android's back button
+    // went straight past the app and closed it mid-round.
+    // ----------------------------------------------------------------------
+    history.replaceState({ view: { name: 'tiers' } satisfies View }, '');
+
+    window.addEventListener('popstate', (event) => {
+      const state = event.state as { view?: View } | null;
+      this.show(state?.view ?? { name: 'tiers' });
     });
 
     window.addEventListener('keydown', (event) => {
@@ -122,9 +133,40 @@ export class App {
     this.root.appendChild(this.screen());
   }
 
+  /**
+   * Navigate forward. `push` adds a history entry; `false` replaces the current
+   * one, which is right when a screen is standing in for the one already there
+   * (loading → game, game → summary) and wrong everywhere else.
+   */
   private go(view: View, push = true): void {
-    if (push && this.view.name === 'tiers' && view.name !== 'tiers') {
-      history.pushState({ view: view.name }, '');
+    const state = { view };
+    if (push) history.pushState(state, '');
+    else history.replaceState(state, '');
+    this.show(view);
+  }
+
+  /**
+   * Go back one screen. In-app back buttons delegate to the browser rather than
+   * navigating themselves, so the two never drift apart — otherwise a tap on
+   * "Back" leaves a spent entry behind and the hardware back button appears to
+   * do nothing.
+   */
+  private back(): void {
+    history.back();
+  }
+
+  /** Apply a view. The single place a screen change becomes visible. */
+  private show(view: View): void {
+    // Leaving a game that has not been ended abandons it. The summary needs the
+    // session, so it is not a departure; neither is re-entering the game.
+    if (
+      this.view.name === 'game' &&
+      view.name !== 'game' &&
+      view.name !== 'summary' &&
+      view.name !== 'loading'
+    ) {
+      this.session?.abandon();
+      this.session = null;
     }
     this.view = view;
     this.render();
@@ -228,13 +270,13 @@ export class App {
     return teamSetupScreen({
       onStart: (teams) => {
         this.teams = teams;
-        this.go({ name: 'tiers' }, false);
+        this.back();
       },
       onSkip: () => {
         this.teams = [];
-        this.go({ name: 'tiers' }, false);
+        this.back();
       },
-      onBack: () => this.go({ name: 'tiers' }, false),
+      onBack: () => this.back(),
     });
   }
 
@@ -263,7 +305,13 @@ export class App {
     return deck;
   }
 
-  private async startGame(tier: Tier): Promise<void> {
+  /**
+   * `replace` is set when the game is taking over a history entry that already
+   * belongs to this session — "play again" from the summary, or starting a tier
+   * you have just recycled. Backing out of those should land on tier select,
+   * not on a finished summary or a recycle prompt you already answered.
+   */
+  private async startGame(tier: Tier, replace = false): Promise<void> {
     const store = this.store;
     if (!store) return;
 
@@ -282,11 +330,11 @@ export class App {
     }
 
     if (deck.remaining() === 0) {
-      this.go({ name: 'recycle', tier });
+      this.go({ name: 'recycle', tier }, !replace);
       return;
     }
 
-    this.session = new GameSession({
+    const session = new GameSession({
       tier,
       deck,
       teams: this.teams,
@@ -295,34 +343,30 @@ export class App {
         store.save();
       },
     });
-    this.session.toCover();
-    this.go({ name: 'game' });
+    this.session = session;
+
+    // No cover screen: the first word is drawn here and painted immediately.
+    if (!session.reveal()) {
+      this.session = null;
+      this.go({ name: 'recycle', tier }, !replace);
+      return;
+    }
+
+    this.twist = this.pickTwist();
+    this.go({ name: 'game' }, !replace);
+  }
+
+  /** One in five rounds when twists are on. Not in the engine — this is flavour. */
+  private pickTwist(): string | null {
+    if (!this.store?.settings.twists) return null;
+    if (Math.random() >= 0.2) return null;
+    return TWISTS[Math.floor(Math.random() * TWISTS.length)] ?? null;
   }
 
   private game(): HTMLElement {
     const session = this.session;
     const store = this.store;
     if (!session || !store) return el('div', { class: 'screen' });
-
-    if (session.phase === 'cover') {
-      this.twist =
-        store.settings.twists && Math.random() < 0.2
-          ? (TWISTS[Math.floor(Math.random() * TWISTS.length)] ?? null)
-          : null;
-
-      const handle = coverScreen({
-        tier: session.tier,
-        teamName: session.scoring ? (session.teams[session.activeTeam]?.name ?? null) : null,
-        round: session.rounds.length + 1,
-        onReveal: () => {
-          const word = session.reveal();
-          if (!word) this.endSession();
-          else this.render();
-        },
-      });
-      this.handle = handle;
-      return handle.node;
-    }
 
     if (session.phase === 'playing' && session.current) {
       const handle = playScreen({
@@ -333,12 +377,7 @@ export class App {
         timerSeconds: store.settings.timerSeconds,
         twist: this.twist,
         onResolve: (outcome) => this.resolve(outcome),
-        onHint: () => session.revealHint(),
-        onQuit: () => {
-          session.abandon();
-          this.session = null;
-          this.go({ name: 'tiers' }, false);
-        },
+        onQuit: () => this.back(),
       });
       this.handle = handle;
       return handle.node;
@@ -419,7 +458,13 @@ export class App {
                 type: 'button',
                 on: {
                   click: () => {
-                    session.nextRound();
+                    // Draws and paints in one step. Whoever taps this is the
+                    // person the phone is being handed to.
+                    if (!session.nextRound()) {
+                      this.endSession();
+                      return;
+                    }
+                    this.twist = this.pickTwist();
                     this.render();
                   },
                 },
@@ -486,11 +531,8 @@ export class App {
             },
           })
         : null,
-      onPlayAgain: () => void this.startGame(session.tier),
-      onChangeTier: () => {
-        this.session = null;
-        this.go({ name: 'tiers' }, false);
-      },
+      onPlayAgain: () => void this.startGame(session.tier, true),
+      onChangeTier: () => this.back(),
     });
   }
 
@@ -521,7 +563,7 @@ export class App {
         this.go({ name: 'settings' }, false);
         return null;
       },
-      onBack: () => this.go({ name: 'tiers' }, false),
+      onBack: () => this.back(),
     });
 
     // The code is deflated asynchronously; the field fills in when it lands
@@ -543,10 +585,10 @@ export class App {
       onRecycle: () => {
         void this.deckFor(tier).then((deck) => {
           deck.recycle();
-          void this.startGame(tier);
+          void this.startGame(tier, true);
         });
       },
-      onBack: () => this.go({ name: 'tiers' }, false),
+      onBack: () => this.back(),
     });
   }
 

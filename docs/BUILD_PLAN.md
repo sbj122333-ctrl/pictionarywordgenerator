@@ -100,20 +100,22 @@ Lazy per-tier bundle fetch, `RuntimeBundle` typing, `src/ui/tokens.css`.
 **Deps:** 6 · Spec: TECHNICAL_SPEC §5
 
 - [x] Every transition in the diagram is reachable; no others are
-- [x] Only `cover → playing` draws a word
-- [x] `resolved → cover` does not draw
+- [x] `reveal()` is the only thing that draws a word
+- [x] `resolve()` does not draw
 - [x] Browser back from a game returns to tier select without corrupting state
+- [x] **Back leaves the app only from tier select** (Sep 2026 — every other
+      screen owns a history entry; see TECHNICAL_SPEC §5.1)
 
-### Task 8 · Cover and word screens
-**Deps:** 7 · Spec: DESIGN_SPEC §3.3, §3.4
+### Task 8 · Word screen
+**Deps:** 7 · Spec: DESIGN_SPEC §3.4
 
-- [x] **Before reveal, the word string is absent from `document.body.innerHTML`**
-      (FR-08 — the one bug that silently ruins gameplay)
+- [x] **A session has nothing to paint until `reveal()`, and `reveal()` burns it**
+      (FR-08, rewritten — the one bug that silently ruins gameplay)
 - [x] Pips render for 1–4 words; 5+ shows a numeric badge
-- [x] Cover screen is a `<button>` with an accessible name, spanning the viewport
 - [x] Renders correctly at 360×640 and 1440×900
-- [x] God Mode shows the hint control; revealing halves the round score and is
-      irreversible
+- [x] God Mode prints the word's meaning under it, unconditionally and for free
+- [x] No meaning renders on easy, moderate or hard
+- ~~Cover screen~~ — removed Sep 2026, see DESIGN_SPEC §3.3
 
 ### Task 9 · Timer, outcomes, wake lock
 **Deps:** 8 · Spec: DESIGN_SPEC §3.4, §4
@@ -141,7 +143,7 @@ Lazy per-tier bundle fetch, `RuntimeBundle` typing, `src/ui/tokens.css`.
 **Deps:** 10 · Spec: DESIGN_SPEC §3.2, §3.5
 
 - [x] Skip is as prominent as Start; skipping runs the game with no scoring
-- [x] Tier-weighted points (1/2/3/4), halved on a revealed hint
+- [x] Tier-weighted points (1/2/3/4), never halved — the hint mechanic is gone
 - [x] Summary lists every word with its outcome, dot **and** text label
 - [x] Last 3 sessions retrievable
 

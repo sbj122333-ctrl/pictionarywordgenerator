@@ -1,17 +1,14 @@
 /**
- * Cover and word screens. DESIGN_SPEC §3.3, §3.4.
+ * The word screen. DESIGN_SPEC §3.4.
  *
- * The cover screen is the most important screen in the app, and the reason is
- * one line long:
+ * The word is drawn and painted in one step — there is no cover interstitial in
+ * front of it any more. Whoever taps "Next drawer" is the person holding the
+ * phone, so the handover happens on the resolved screen instead.
  *
- *   INVARIANT 4 — the word is not in the document until the drawer asks for it.
- *
- * Not pre-rendered, not `hidden`, not at `opacity: 0`, not in a detached node
- * that gets attached later. A word glimpsed while the phone is being handed
- * across a room ruins the round, and it ruins it invisibly — nobody files a bug
- * saying "I saw the word early", they just stop believing the game is fair.
- * There is a test asserting the string is absent from `document.body.innerHTML`
- * before the reveal, and it is not a formality.
+ * On God Mode the word carries a one-line meaning, printed under it and always
+ * visible. God Mode terms are named things from a specialist domain; a room that
+ * cannot define "apoptosis" is not having a hard round, it is having a dead one.
+ * The meaning is for the drawer, who has to draw the idea, not the word.
  */
 import type { RuntimeWord, Tier } from '../../engine/types';
 import { DEPLETION_WARNING, TIER_LABELS } from '../../engine/types';
@@ -22,50 +19,6 @@ export interface ScreenHandle {
   node: HTMLElement;
   destroy?: () => void;
   onKey?: (event: KeyboardEvent) => void;
-}
-
-// ---------------------------------------------------------------------------
-// Cover
-// ---------------------------------------------------------------------------
-
-export interface CoverProps {
-  tier: Tier;
-  teamName: string | null;
-  round: number;
-  onReveal: () => void;
-}
-
-export function coverScreen(props: CoverProps): ScreenHandle {
-  const meta = props.teamName
-    ? `${props.teamName} · Round ${props.round}`
-    : `Round ${props.round}`;
-
-  // A <button> spanning the viewport, not a click-handled <div>: it needs a real
-  // accessible name and to answer to the keyboard. DESIGN_SPEC §5.
-  const node = el(
-    'button',
-    {
-      class: 'cover',
-      type: 'button',
-      style: `--tier-ink: var(--t-${props.tier}); --tier-tint: var(--t-${props.tier}-soft)`,
-      'aria-label': 'Reveal the word. Only the drawer should be looking.',
-      on: { click: props.onReveal },
-    },
-    el('span', { class: 'cover__mark', 'aria-hidden': 'true', text: '▲' }),
-    el('span', { class: 'cover__title', text: 'Drawer only' }),
-    el('span', { class: 'cover__hint', text: 'Tap when you’re holding the phone' }),
-    el('span', { class: 'cover__meta', text: meta }),
-  );
-
-  return {
-    node: el('div', { class: 'screen screen--flush' }, node),
-    onKey: (event) => {
-      if (event.key === ' ' || event.key === 'Enter') {
-        event.preventDefault();
-        props.onReveal();
-      }
-    },
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -83,7 +36,6 @@ export interface PlayProps {
   timerSeconds: number | null;
   twist: string | null;
   onResolve: (outcome: Outcome) => void;
-  onHint: () => void;
   onQuit: () => void;
 }
 
@@ -126,35 +78,15 @@ export function playScreen(props: PlayProps): ScreenHandle {
       class: `word${word.text.length > 18 ? ' word--long' : ''}`,
       text: word.text,
     }),
+    // God Mode only, and always on: no button, no points penalty. Set as the
+    // element's text rather than interpolated as markup — corpus copy contains
+    // apostrophes and quotation marks.
+    word.meaning ? el('p', { class: 'meaning', text: word.meaning }) : null,
     el('p', {
       class: 'play__points',
       text: `${word.points} ${word.points === 1 ? 'point' : 'points'}`,
     }),
   );
-
-  // God Mode only. Revealing is irreversible and halves the round's award, so
-  // the cost is in the label rather than in a confirmation people would tap
-  // through anyway.
-  if (word.hint) {
-    const hintSlot = el('div', {});
-    const button = el(
-      'button',
-      {
-        class: 'hint-btn',
-        type: 'button',
-        on: {
-          click: () => {
-            hintSlot.textContent = '';
-            hintSlot.appendChild(el('p', { class: 'hint-text', text: word.hint ?? '' }));
-            props.onHint();
-          },
-        },
-      },
-      'Show hint (½ points)',
-    );
-    hintSlot.appendChild(button);
-    stage.appendChild(hintSlot);
-  }
 
   const outcome = (label: string, kind: Outcome, primary = false): HTMLElement =>
     el(

@@ -2,10 +2,10 @@
  * Session state machine and scoring. BUILD_PLAN tasks 7 and 11,
  * TECHNICAL_SPEC §5.
  *
- * The machine is worth testing in its own right because one edge in it carries
- * the whole burn-on-reveal guarantee: `cover → playing` is the only transition
- * that draws. If a draw ever moved to entering the cover screen, a passed phone
- * would burn a word nobody saw, and no other test in this suite would notice.
+ * The machine is worth testing in its own right because one method in it carries
+ * the whole burn-on-reveal guarantee: `reveal()` is the only thing that draws.
+ * If a draw ever moved anywhere else, a word could be burned that nobody saw,
+ * and no other test in this suite would notice.
  */
 import { describe, it, expect } from 'vitest';
 import type { Deck, PackedWord, RuntimeBundle, Tier } from '../../src/engine/types';
@@ -15,7 +15,7 @@ import type { Phase } from '../../src/state/session';
 import { GameSession, canTransition } from '../../src/state/session';
 import { historySummary } from '../../src/ui/screens/settings';
 
-const PHASES: Phase[] = ['idle', 'ready', 'cover', 'playing', 'resolved', 'summary'];
+const PHASES: Phase[] = ['idle', 'ready', 'playing', 'resolved', 'summary'];
 
 function bundle(count: number, tier: Tier = 'moderate'): RuntimeBundle {
   const words: PackedWord[] = Array.from({ length: count }, (_, i) => ({
@@ -23,7 +23,7 @@ function bundle(count: number, tier: Tier = 'moderate'): RuntimeBundle {
     t: `word ${i}`,
     w: 1,
     c: `cat-${i % 4}`,
-    ...(tier === 'god' ? { h: `hint ${i}` } : {}),
+    ...(tier === 'god' ? { m: `meaning ${i}` } : {}),
   }));
   return {
     corpusVersion: 't',
@@ -49,10 +49,10 @@ function make(count = 20, tier: Tier = 'moderate', teams: string[] = []): GameSe
 describe('transition table', () => {
   const legal: Array<[Phase, Phase]> = [
     ['idle', 'ready'],
-    ['ready', 'cover'],
-    ['cover', 'playing'],
+    ['ready', 'playing'],
     ['playing', 'resolved'],
-    ['resolved', 'cover'],
+    ['playing', 'summary'],
+    ['resolved', 'playing'],
     ['resolved', 'summary'],
     ['summary', 'idle'],
     ['summary', 'ready'],
@@ -66,14 +66,13 @@ describe('transition table', () => {
 
   it('allows leaving any in-game phase for tier select, and nothing else extra', () => {
     // Esc and browser-back. DESIGN_SPEC §5.
-    for (const phase of ['ready', 'cover', 'playing', 'resolved'] as Phase[]) {
+    for (const phase of ['ready', 'playing', 'resolved'] as Phase[]) {
       expect(canTransition(phase, 'idle'), `${phase} -> idle`).toBe(true);
     }
 
     const allowed = new Set([
       ...legal.map(([a, b]) => `${a}->${b}`),
       'ready->idle',
-      'cover->idle',
       'playing->idle',
       'resolved->idle',
     ]);
@@ -97,7 +96,6 @@ describe('drawing', () => {
   it('draws on the reveal and nowhere else', () => {
     const session = make(10);
 
-    session.toCover();
     expect(session.remaining()).toBe(10);
     expect(session.current).toBeNull();
 
@@ -105,38 +103,50 @@ describe('drawing', () => {
     expect(session.remaining()).toBe(9);
     expect(session.current).not.toBeNull();
 
+    // Resolving must not draw: the burn already happened, and drawing here
+    // would spend a word on a screen nobody is looking at.
     session.resolve('got');
     expect(session.remaining()).toBe(9);
 
-    // resolved -> cover must not draw. This is the edge that keeps the burn
-    // crash-safe.
-    session.nextRound();
-    expect(session.remaining()).toBe(9);
-    expect(session.current).toBeNull();
+    // nextRound() is a reveal, so exactly one more word leaves the deck.
+    expect(session.nextRound()).not.toBeNull();
+    expect(session.remaining()).toBe(8);
+    expect(session.current).not.toBeNull();
   });
 
   it('reports exhaustion instead of throwing when the tier runs dry', () => {
     const session = make(1);
-    session.toCover();
     expect(session.reveal()).not.toBeNull();
     session.resolve('got');
-    session.nextRound();
-    expect(session.reveal()).toBeNull();
+    expect(session.nextRound()).toBeNull();
     expect(session.exhausted).toBe(true);
+  });
+
+  it('lets an exhausted draw fall through to the summary', () => {
+    const session = make(1);
+    session.reveal();
+    session.resolve('got');
+    session.nextRound();
+    expect(() => session.end()).not.toThrow();
+    expect(session.phase).toBe('summary');
+  });
+
+  it('takes a second abandon without throwing', () => {
+    // Esc, browser-back and an explicit quit can all land here for one
+    // departure. Navigation must not be able to throw.
+    const session = make(5);
+    session.reveal();
+    session.abandon();
+    expect(() => session.abandon()).not.toThrow();
+    expect(session.phase).toBe('idle');
   });
 });
 
 describe('scoring', () => {
-  const playRound = (
-    session: GameSession,
-    outcome: 'got' | 'pass' | 'timeout',
-    hint = false,
-  ): void => {
-    // nextRound() has already landed on cover; entering it twice is not a legal
-    // edge and the machine is right to refuse it.
-    if (session.phase !== 'cover') session.toCover();
-    session.reveal();
-    if (hint) session.revealHint();
+  const playRound = (session: GameSession, outcome: 'got' | 'pass' | 'timeout'): void => {
+    // A round that has just been resolved is already drawn by nextRound(); only
+    // the first round of a session needs a reveal of its own.
+    if (session.phase !== 'playing') session.reveal();
     session.resolve(outcome);
   };
 
@@ -154,12 +164,11 @@ describe('scoring', () => {
     expect(session.teams[0]?.score).toBe(2);
   });
 
-  it('halves the award when the hint was revealed', () => {
+  it('awards God Mode in full — the meaning is free, there is no hint to pay for', () => {
     const session = make(10, 'god', ['A']);
-    playRound(session, 'got', true);
-    expect(session.rounds[0]?.points).toBe(2);
-    expect(session.rounds[0]?.hintUsed).toBe(true);
-    expect(session.teams[0]?.score).toBe(2);
+    playRound(session, 'got');
+    expect(session.rounds[0]?.points).toBe(4);
+    expect(session.teams[0]?.score).toBe(4);
   });
 
   it('rotates teams between rounds', () => {
@@ -168,11 +177,9 @@ describe('scoring', () => {
     playRound(session, 'got');
     session.nextRound();
     expect(session.activeTeam).toBe(1);
-    session.reveal();
     session.resolve('got');
     session.nextRound();
     expect(session.activeTeam).toBe(2);
-    session.reveal();
     session.resolve('got');
     session.nextRound();
     expect(session.activeTeam).toBe(0);
@@ -191,7 +198,6 @@ describe('scoring', () => {
     const session = make(10, 'moderate', ['A', 'B']);
     playRound(session, 'got');
     session.nextRound();
-    session.reveal();
     session.resolve('got');
     expect(session.teams[0]?.score).toBe(2);
     expect(session.teams[1]?.score).toBe(2);
@@ -202,7 +208,6 @@ describe('scoring', () => {
     const session = make(10, 'moderate', ['A']);
     playRound(session, 'got');
     session.nextRound();
-    session.reveal();
     session.resolve('timeout');
 
     expect(session.rounds).toHaveLength(2);

@@ -121,7 +121,7 @@ export function createDeck(
     text: packed.t,
     words: packed.w,
     category: packed.c,
-    hint: packed.h ?? null,
+    meaning: packed.m ?? null,
     tier: bundle.tier,
     points: bundle.points,
   });

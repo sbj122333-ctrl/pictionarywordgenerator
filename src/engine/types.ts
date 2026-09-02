@@ -12,7 +12,7 @@ export type Tier = 'easy' | 'moderate' | 'hard' | 'god';
 
 export const TIERS: readonly Tier[] = ['easy', 'moderate', 'hard', 'god'] as const;
 
-/** Tier-weighted scoring. A revealed hint halves the round's award. */
+/** Tier-weighted scoring. */
 export const TIER_POINTS: Readonly<Record<Tier, number>> = {
   easy: 1,
   moderate: 2,
@@ -41,8 +41,12 @@ export interface PackedWord {
   w: number;
   /** Category slug, used for anti-clustering. */
   c: string;
-  /** Hint. Present on god tier only, where it is mandatory. */
-  h?: string;
+  /**
+   * Plain-English meaning, shown under the word. Present on god tier only,
+   * where it is mandatory — a God Mode term nobody in the room can define is
+   * not a hard word, it is a dead round.
+   */
+  m?: string;
 }
 
 export interface RuntimeBundle {
@@ -60,7 +64,8 @@ export interface RuntimeWord {
   text: string;
   words: number;
   category: string;
-  hint: string | null;
+  /** God Mode only: the one-line meaning shown under the word. */
+  meaning: string | null;
   tier: Tier;
   points: number;
 }

@@ -1,25 +1,28 @@
 /**
  * Session state machine. TECHNICAL_SPEC §5.
  *
- *   idle ──pick tier──► ready ──start──► cover ──reveal──► playing
- *                         ▲                                   │
- *                         │                          ┌────────┴────────┐
- *                         │                       got it / pass / timeout
- *                         │                                   │
- *                         └──────── next drawer ◄─────── resolved
- *                                        │
- *                                   end session
- *                                        ▼
- *                                     summary
+ *   idle ──pick tier──► ready ──reveal──► playing
+ *                         ▲                  │
+ *                         │         ┌────────┴────────┐
+ *                         │      got it / pass / timeout
+ *                         │                  │
+ *                         └── next drawer ◄─ resolved
+ *                                  │
+ *                             end session
+ *                                  ▼
+ *                               summary
  *
- * Only `cover → playing` draws a word, and it draws on the reveal, not on entry
- * to the cover screen. That ordering is what makes the burn crash-safe: the word
- * does not exist until someone has asked to see it, and by the time they do the
- * burn is already durable.
+ * `reveal()` is the only edge that draws, and it draws at the moment the word is
+ * about to paint. That ordering is what makes the burn crash-safe: the burn is
+ * durable before the caller has anything to render.
+ *
+ * There is no cover screen. The interstitial was removed at Sabuj's request
+ * (Sep 2026): the handover moment is now the "Next drawer" button on the
+ * resolved screen, which is where the phone actually changes hands.
  */
 import type { Deck, RuntimeWord, Tier } from '../engine/types';
 
-export type Phase = 'idle' | 'ready' | 'cover' | 'playing' | 'resolved' | 'summary';
+export type Phase = 'idle' | 'ready' | 'playing' | 'resolved' | 'summary';
 export type Outcome = 'got' | 'pass' | 'timeout';
 
 export interface Team {
@@ -32,7 +35,6 @@ export interface Round {
   text: string;
   outcome: Outcome;
   points: number;
-  hintUsed: boolean;
   team: number | null;
 }
 
@@ -47,10 +49,12 @@ export interface Round {
  */
 const TRANSITIONS: Readonly<Record<Phase, readonly Phase[]>> = {
   idle: ['ready'],
-  ready: ['cover', 'idle'],
-  cover: ['playing', 'idle'],
-  playing: ['resolved', 'idle'],
-  resolved: ['cover', 'summary', 'idle'],
+  ready: ['playing', 'idle'],
+  // `playing → summary` is the exhausted draw: `reveal()` has already entered
+  // `playing` when the deck answers null, and the only thing left to do with a
+  // tier that has run dry is end the session.
+  playing: ['resolved', 'summary', 'idle'],
+  resolved: ['playing', 'summary', 'idle'],
   summary: ['idle', 'ready'],
 };
 
@@ -69,7 +73,6 @@ export interface SessionOptions {
 export class GameSession {
   phase: Phase = 'ready';
   current: RuntimeWord | null = null;
-  hintRevealed = false;
   rounds: Round[] = [];
   activeTeam = 0;
   /** Set when the tier runs dry mid-session. */
@@ -106,19 +109,11 @@ export class GameSession {
     this.phase = phase;
   }
 
-  /** ready → cover, and resolved → cover. Never draws. */
-  toCover(): void {
-    this.to('cover');
-    this.current = null;
-    this.hintRevealed = false;
-  }
-
   /**
-   * cover → playing. The only edge that draws.
+   * ready → playing, and resolved → playing. The only edge that draws.
    *
-   * INVARIANT 4: the word is not in the document before this runs. The caller
-   * renders the word screen from the value returned here — it must not have been
-   * fetched, pre-rendered, hidden or held at opacity 0 beforehand.
+   * INVARIANT 2: the burn is persisted inside `deck.draw()` before it returns,
+   * so it is already durable by the time the caller has a word to paint.
    */
   reveal(): RuntimeWord | null {
     this.to('playing');
@@ -133,11 +128,6 @@ export class GameSession {
     return word;
   }
 
-  /** God Mode only. Irreversible, and halves the round's award. */
-  revealHint(): void {
-    if (this.phase === 'playing' && this.current?.hint) this.hintRevealed = true;
-  }
-
   resolve(outcome: Outcome): void {
     const word = this.current;
     this.to('resolved');
@@ -145,7 +135,7 @@ export class GameSession {
 
     // All three outcomes burn the word — the burn already happened on reveal.
     // Only "got it" scores.
-    const points = outcome === 'got' ? this.award(word.points) : 0;
+    const points = outcome === 'got' ? word.points : 0;
     if (points > 0 && this.scoring) {
       const team = this.teams[this.activeTeam];
       if (team) team.score += points;
@@ -156,19 +146,17 @@ export class GameSession {
       text: word.text,
       outcome,
       points,
-      hintUsed: this.hintRevealed,
       team: this.scoring ? this.activeTeam : null,
     });
   }
 
-  private award(base: number): number {
-    return this.hintRevealed ? Math.ceil(base / 2) : base;
-  }
-
-  /** resolved → cover, passing the device to the next drawer. */
-  nextRound(): void {
+  /**
+   * resolved → playing, passing the device to the next drawer and drawing their
+   * word in one step. Returns null when the tier ran dry.
+   */
+  nextRound(): RuntimeWord | null {
     if (this.scoring) this.activeTeam = (this.activeTeam + 1) % this.teams.length;
-    this.toCover();
+    return this.reveal();
   }
 
   end(): void {
@@ -176,7 +164,13 @@ export class GameSession {
     this.current = null;
   }
 
+  /**
+   * Leave the game. Idempotent on purpose: browser-back, Esc and an explicit
+   * quit can all reach this, sometimes twice for one departure, and a thrown
+   * "illegal transition" in the middle of navigation is worse than a no-op.
+   */
   abandon(): void {
+    if (this.phase === 'idle') return;
     this.to('idle');
     this.current = null;
   }

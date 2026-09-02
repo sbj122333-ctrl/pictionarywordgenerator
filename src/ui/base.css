@@ -91,11 +91,6 @@ body {
   animation: screen-in var(--screen-in) var(--ease);
 }
 
-.screen--flush {
-  padding: 0;
-  animation: none;
-}
-
 @keyframes screen-in {
   from {
     opacity: 0;
@@ -240,57 +235,6 @@ body {
   font-weight: 500;
 }
 
-/* --- Cover — DESIGN_SPEC §3.3 -------------------------------------------- */
-
-.cover {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--s3);
-  border: 0;
-  padding: var(--s6) var(--s5);
-  padding-bottom: max(var(--s6), env(safe-area-inset-bottom));
-  background: var(--tier-tint);
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-  text-align: center;
-  /* No entry animation. A transition here reads as a reveal and makes people
-     glance up at exactly the wrong moment. */
-  animation: none;
-}
-
-.cover__mark {
-  color: var(--tier-ink);
-  font-size: 1.75rem;
-  line-height: 1;
-}
-
-.cover__title {
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 2rem;
-  margin: 0;
-}
-
-.cover__hint {
-  color: var(--ink-2);
-  max-width: 22ch;
-  margin: 0;
-}
-
-.cover__meta {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: var(--s5);
-}
-
 /* --- Playing — DESIGN_SPEC §3.4 ------------------------------------------ */
 
 .play {
@@ -383,24 +327,13 @@ body {
   padding: var(--s1) var(--s3);
 }
 
-.hint-btn {
-  font: inherit;
-  font-size: 0.9375rem;
-  background: none;
-  border: 0;
+.meaning {
   color: var(--ink-2);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  min-height: 48px;
-  padding: 0 var(--s3);
-}
-
-.hint-text {
-  color: var(--muted);
-  font-style: italic;
-  max-width: 32ch;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  max-width: 34ch;
   margin: 0;
+  text-wrap: balance;
 }
 
 .outcomes {
@@ -717,16 +650,6 @@ kbd {
     width: 100%;
   }
 
-  /* Repeated inside the breakpoint on purpose. The rule above has the same
-     specificity and comes later in the cascade, so without this the cover
-     screen gets a 720px column and 48px of padding — and the cover has to be
-     the whole viewport at every size, because the whole viewport is the tap
-     target. DESIGN_SPEC §3.3. */
-  .screen--flush {
-    padding: 0;
-    max-width: none;
-  }
-
   .title {
     font-size: 2rem;
   }
@@ -769,6 +692,13 @@ kbd {
 
   .word--long {
     font-size: clamp(3rem, 5vw, 5rem);
+  }
+
+  /* The word grows a lot at this size; the meaning has to grow with it or it
+     reads as a footnote from across a room. */
+  .meaning {
+    font-size: 1.25rem;
+    max-width: 42ch;
   }
 
   /* The ring sits above the word on the shared screen, not in a corner. */
@@ -848,10 +778,6 @@ kbd {
 
   .outcomes__split {
     display: contents;
-  }
-
-  .cover__title {
-    font-size: 1.5rem;
   }
 }
 

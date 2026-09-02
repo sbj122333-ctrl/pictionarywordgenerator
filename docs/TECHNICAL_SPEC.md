@@ -60,7 +60,7 @@ interface WordRecord {
   score: number;         // 20 - (C+F+D+R)
   computedTier: Tier;    // must equal `tier` or the build fails
   override: null;        // always null; the field exists to stay explicit about it
-  hint: string | null;   // required for god, null elsewhere
+  meaning: string | null;  // required for god, null elsewhere
   locale: string[];      // ["global"] at V1.0
   volatility: "evergreen" | "topical";
   addedIn: string;       // corpus version
@@ -84,7 +84,7 @@ interface RuntimeBundle {
     t: string;           // text
     w: number;           // word count
     c: string;           // category
-    h?: string;          // hint — god tier only
+    m?: string;          // meaning — god tier only, printed under the word
   }>;
 }
 ```
@@ -363,20 +363,49 @@ throwing.
 ## 5. Session state machine
 
 ```
-  idle ──pick tier──► ready ──start──► cover ──reveal──► playing
-                        ▲                                   │
-                        │                          ┌────────┴────────┐
-                        │                       got it / pass / timeout
-                        │                                   │
-                        └──────── next drawer ◄─────── resolved
-                                       │
-                                  end session
-                                       ▼
-                                    summary
+  idle ──pick tier──► ready ──reveal──► playing
+                        ▲                  │
+                        │         ┌────────┴────────┐
+                        │      got it / pass / timeout
+                        │                  │
+                        └── next drawer ◄─ resolved
+                                 │
+                            end session
+                                 ▼
+                              summary
 ```
 
-Only `cover → playing` burns a word. `resolved → cover` does not draw; the draw
-happens on the reveal. This ordering is what makes the burn crash-safe.
+`reveal()` is the only edge that draws, and `nextRound()` is a team rotation
+followed by a `reveal()`. The burn is persisted inside `deck.draw()` before it
+returns, so it is durable before the caller has anything to paint — which is
+what makes it crash-safe.
+
+`playing → summary` exists for the exhausted draw: `reveal()` has already
+entered `playing` when the deck answers null, and the only thing left to do with
+a dry tier is end the session.
+
+The `cover` phase was removed in Sep 2026 along with the screen it drove. The
+guarantee it carried — that no word exists before someone asked for it — now
+lives in `reveal()` itself.
+
+### 5.1 History and the back button
+
+Every view except tier select gets a `history.pushState`, and the view it
+represents is carried **in that entry's state** rather than in a shadow stack.
+Back therefore means "the view the previous entry describes", forward works for
+free, and at tier select there is no entry of ours left to pop, so the browser
+leaves the app — which is the only place it should.
+
+`go(view, push=false)` replaces the current entry instead of adding one. That is
+right where a screen stands in for the one already there (loading → game,
+game → summary, recycle → game, "play again") and wrong everywhere else.
+In-app Back buttons call `history.back()` rather than navigating themselves, so
+the two never drift apart.
+
+The bug this replaced: entries were pushed only when the *current* view was
+`tiers`, and `startGame()` switches to `loading` before it navigates — so the
+game screen was entered with no entry at all and Android's back button closed
+the app mid-round.
 
 ---
 
@@ -386,6 +415,11 @@ happens on the reveal. This ordering is what makes the burn crash-safe.
 validates and emits. Words are edited **only** in `corpus-src/`; everything under
 `data/` and `public/corpus/` is generated.
 
+`norm()` is the key ordinals are assigned against. **Never change it.** Altering
+it renumbers the corpus, which resurrects every word every device has already
+played, silently and everywhere at once. When you need a different normalisation
+for some other purpose, add a function — that is why `word_count()` exists.
+
 ### 6.1 Gates — all fail the build
 
 | Gate | Rule |
@@ -394,8 +428,8 @@ validates and emits. Words are edited **only** in `corpus-src/`; everything unde
 | Tier agreement | `assign_tier(score, category)` must equal the file the word is in |
 | Easy gate | C ≥ 4 **and** R = 5 |
 | Fun gate | Moderate and above: T ≥ 2 |
-| Hints | Every god-tier word has a hint, 8–90 chars |
-| Word count | 1–7; Easy 1–3 |
+| Meanings | Every god-tier word has a meaning, 8–120 chars |
+| Word count | 1–7; Easy 1–3. Counted by `word_count()`, NOT `norm()` — apostrophes and hyphens are inside words |
 | Uniqueness | Normalised text globally unique across all tiers |
 | Near-duplicate | Stem-key collisions reported as warnings for human review |
 | Ban list | Expand `BANNED` before production — the current list is illustrative |
@@ -413,7 +447,8 @@ plainly harder to draw than "cat" (5,5,5,5 = 0).
 **The four axes cannot separate Hard from God Mode.** Both tiers are abstract,
 so both land at 8–16 and the boundary was arbitrary: "peer pressure" and "the
 bystander effect" both score 11. What actually separates them is *register* —
-God Mode words are named terms of art from a specialist domain and need a hint;
+God Mode words are named terms of art from a specialist domain and need their
+meaning printed under them;
 Hard words are abstract but everyday language. So:
 
 ```python
@@ -496,9 +531,15 @@ including the throw path (private-mode Safari).
 
 ### 8.3 Integration
 
-`cover → reveal` puts the word in the DOM; before reveal, assert the word string
-is **absent** from `document.body.innerHTML` (FR-08). This is a real test, not a
-formality — it is the one bug that silently ruins gameplay.
+`tests/integration/word-screen.test.ts` asserts that a session has nothing to
+paint until `reveal()` is called, that `reveal()` burns the word, and that the
+God Mode meaning renders under the word on god tier and on no other tier.
+
+`tests/integration/navigation.test.ts` drives the real `App` against a stubbed
+fetch and asserts that the game screen owns a history entry, that back returns
+to tier select rather than leaving, and that an unfinished game is abandoned on
+the way out with its drawn words still burned. That last one is the regression
+test for the back-button bug in §5.1.
 
 ### 8.4 CI
 
