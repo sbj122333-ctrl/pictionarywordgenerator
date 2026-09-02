@@ -1,0 +1,124 @@
+/**
+ * Design tokens. DESIGN_SPEC §2.
+ *
+ * Every token is declared in the bare :root first. A colour whose only
+ * definition sits inside a media query renders one theme's text on the other
+ * theme's ground — so the dark blocks below only ever REDEFINE, never introduce.
+ *
+ * No colour literal may appear anywhere outside this file.
+ */
+
+:root {
+  /* neutrals — cool, blue-biased. Chosen, not inherited. */
+  --bg: #f1f4f7;
+  --surface: #ffffff;
+  --surface-2: #e7ecf1;
+  --ink: #111820;
+  --ink-2: #3d4a57;
+  --muted: #697887;
+  --line: #d3dbe3;
+  --line-soft: #e3e9ef;
+
+  /* tier inks — whiteboard markers */
+  --t-easy: #1f8a54;
+  --t-easy-soft: #e2f2ea;
+  --t-moderate: #1a6bb0;
+  --t-moderate-soft: #e4eff8;
+  --t-hard: #c2521c;
+  --t-hard-soft: #faebe1;
+  --t-god: #8e2a6b;
+  --t-god-soft: #f7e6f1;
+
+  /* semantic — separate from tier colour, never reused as accent */
+  --ok: #1f8a54;
+  --warn: #b4761a;
+  --warn-soft: #f8efe0;
+  --crit: #be3b2e;
+
+  /* type */
+  --display: 'Bricolage Grotesque', 'IBM Plex Sans', system-ui, sans-serif;
+  --sans: 'IBM Plex Sans', -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* spacing — 4px base */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  /* motion — DESIGN_SPEC §4. Restrained on purpose: this is a utility used
+     under time pressure, not a showpiece. */
+  --screen-in: 180ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0d1117;
+    --surface: #151c24;
+    --surface-2: #1e2732;
+    --ink: #e9eef3;
+    --ink-2: #bac6d2;
+    --muted: #8494a3;
+    --line: #2a3540;
+    --line-soft: #212b35;
+    --t-easy: #4fc08a;
+    --t-easy-soft: #13291f;
+    --t-moderate: #5fa8e0;
+    --t-moderate-soft: #13273a;
+    --t-hard: #e8853f;
+    --t-hard-soft: #2e1e14;
+    --t-god: #d471ac;
+    --t-god-soft: #2b1626;
+    --ok: #4fc08a;
+    --warn: #dba24a;
+    --warn-soft: #2c2313;
+    --crit: #e8695b;
+  }
+}
+
+/* Repeated so an explicit toggle wins over the system preference in both
+   directions, not just when the system is light. */
+:root[data-theme='dark'] {
+  --bg: #0d1117;
+  --surface: #151c24;
+  --surface-2: #1e2732;
+  --ink: #e9eef3;
+  --ink-2: #bac6d2;
+  --muted: #8494a3;
+  --line: #2a3540;
+  --line-soft: #212b35;
+  --t-easy: #4fc08a;
+  --t-easy-soft: #13291f;
+  --t-moderate: #5fa8e0;
+  --t-moderate-soft: #13273a;
+  --t-hard: #e8853f;
+  --t-hard-soft: #2e1e14;
+  --t-god: #d471ac;
+  --t-god-soft: #2b1626;
+  --ok: #4fc08a;
+  --warn: #dba24a;
+  --warn-soft: #2c2313;
+  --crit: #e8695b;
+}
+
+/* prefers-contrast: more drops the soft tier tints for solid borders.
+   DESIGN_SPEC §5. */
+@media (prefers-contrast: more) {
+  :root {
+    --t-easy-soft: transparent;
+    --t-moderate-soft: transparent;
+    --t-hard-soft: transparent;
+    --t-god-soft: transparent;
+    --line: var(--ink);
+  }
+}

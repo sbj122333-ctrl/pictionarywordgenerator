@@ -1,0 +1,837 @@
+<title>Drawn &amp; Quartered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<style>
+  /* ---------- tokens: complete light palette on bare :root ---------- */
+  :root{
+    --bg:#F1F4F7;
+    --surface:#FFFFFF;
+    --surface-2:#E7ECF1;
+    --ink:#111820;
+    --ink-2:#3D4A57;
+    --muted:#697887;
+    --line:#D3DBE3;
+    --line-soft:#E3E9EF;
+    --accent:#1A6BB0;
+    --accent-soft:#E4EFF8;
+
+    /* marker inks — one per tier */
+    --t1:#1F8A54;  --t1-soft:#E2F2EA;
+    --t2:#1A6BB0;  --t2-soft:#E4EFF8;
+    --t3:#C2521C;  --t3-soft:#FAEBE1;
+    --t4:#8E2A6B;  --t4-soft:#F7E6F1;
+
+    --ok:#1F8A54; --warn:#B4761A; --crit:#BE3B2E;
+
+    --shadow:0 1px 2px rgba(17,24,32,.05), 0 8px 24px -12px rgba(17,24,32,.16);
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --display:"Bricolage Grotesque","IBM Plex Sans",-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1117; --surface:#151C24; --surface-2:#1E2732;
+      --ink:#E9EEF3; --ink-2:#BAC6D2; --muted:#8494A3;
+      --line:#2A3540; --line-soft:#212B35;
+      --accent:#5FA8E0; --accent-soft:#16283A;
+      --t1:#4FC08A; --t1-soft:#13291F;
+      --t2:#5FA8E0; --t2-soft:#13273A;
+      --t3:#E8853F; --t3-soft:#2E1E14;
+      --t4:#D471AC; --t4-soft:#2B1626;
+      --ok:#4FC08A; --warn:#DBA24A; --crit:#E8695B;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 28px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1117; --surface:#151C24; --surface-2:#1E2732;
+    --ink:#E9EEF3; --ink-2:#BAC6D2; --muted:#8494A3;
+    --line:#2A3540; --line-soft:#212B35;
+    --accent:#5FA8E0; --accent-soft:#16283A;
+    --t1:#4FC08A; --t1-soft:#13291F;
+    --t2:#5FA8E0; --t2-soft:#13273A;
+    --t3:#E8853F; --t3-soft:#2E1E14;
+    --t4:#D471AC; --t4-soft:#2B1626;
+    --ok:#4FC08A; --warn:#DBA24A; --crit:#E8695B;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 28px -14px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:16px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-soft); color:var(--ink)}
+  a{color:var(--accent)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+  html{scroll-behavior:smooth}
+
+  /* ---------- shell ---------- */
+  .shell{max-width:1180px; margin:0 auto; padding:0 24px 96px}
+  .cols{display:grid; grid-template-columns:200px minmax(0,1fr); gap:56px; align-items:start}
+  @media (max-width:960px){ .cols{grid-template-columns:1fr; gap:0} .toc{display:none} }
+
+  /* ---------- masthead ---------- */
+  header.top{padding:56px 0 32px; border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--display); font-weight:800; font-size:clamp(2.5rem,6vw,4rem);
+    line-height:1.02; letter-spacing:-.028em; margin:0; text-wrap:balance; color:var(--ink);
+  }
+  .standfirst{
+    font-size:1.16rem; line-height:1.55; color:var(--ink-2); max-width:62ch; margin:18px 0 0;
+  }
+  .meta{
+    display:flex; flex-wrap:wrap; gap:0 32px; row-gap:14px; margin-top:32px;
+    font-family:var(--mono); font-size:12px;
+  }
+  .meta div{display:flex; flex-direction:column; gap:3px}
+  .meta dt{color:var(--muted); letter-spacing:.08em; text-transform:uppercase; font-size:10.5px}
+  .meta dd{margin:0; color:var(--ink); font-weight:500}
+
+  /* ---------- toc ---------- */
+  .toc{position:sticky; top:24px; padding-top:52px}
+  .toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
+  .toc a{
+    display:flex; gap:10px; text-decoration:none; color:var(--muted);
+    font-size:13px; line-height:1.35; padding:5px 8px; border-radius:5px;
+    border-left:2px solid transparent; margin-left:-10px;
+  }
+  .toc a span{font-family:var(--mono); font-size:11px; opacity:.75; padding-top:1px}
+  .toc a:hover{color:var(--ink); background:var(--surface-2)}
+
+  /* ---------- sections ---------- */
+  main{padding-top:52px; display:flex; flex-direction:column; gap:64px}
+  section{scroll-margin-top:20px}
+  h2{
+    font-family:var(--display); font-weight:600; font-size:1.62rem; letter-spacing:-.018em;
+    margin:0 0 6px; color:var(--ink); text-wrap:balance;
+    display:flex; align-items:baseline; gap:12px;
+  }
+  h2 em{
+    font-family:var(--mono); font-style:normal; font-size:12px; font-weight:400;
+    color:var(--muted); letter-spacing:.06em;
+  }
+  h3{
+    font-family:var(--display); font-weight:600; font-size:1.08rem; letter-spacing:-.008em;
+    margin:34px 0 10px; color:var(--ink);
+  }
+  .lede{color:var(--muted); font-size:.95rem; margin:0 0 22px; max-width:70ch}
+  p{margin:0 0 15px; max-width:70ch; color:var(--ink-2)}
+  p strong, li strong{color:var(--ink); font-weight:600}
+  ul.body{margin:0 0 15px; padding-left:20px; max-width:70ch; color:var(--ink-2)}
+  ul.body li{margin-bottom:7px}
+  code{
+    font-family:var(--mono); font-size:.86em; background:var(--surface-2);
+    padding:1.5px 5px; border-radius:4px; color:var(--ink);
+  }
+
+  /* ---------- callout: the three decisions ---------- */
+  /* four items -> 2x2, never a 3-wide row with an orphan */
+  .decisions{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  @media (max-width:620px){ .decisions{grid-template-columns:1fr} }
+  .decisions > div{background:var(--surface); padding:20px 22px 22px}
+  .decisions h4{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 10px; font-weight:500;
+  }
+  .decisions p{font-size:.925rem; margin:0; color:var(--ink-2); line-height:1.55}
+  .decisions b{color:var(--ink); font-weight:600}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto; border:1px solid var(--line); border-radius:10px; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px}
+  th,td{text-align:left; padding:11px 16px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+  thead th{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); font-weight:500; background:var(--surface-2);
+    border-bottom:1px solid var(--line); white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+  td.id{font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap; padding-top:13px}
+  caption{caption-side:bottom; text-align:left; padding:11px 16px; font-size:12px; color:var(--muted); border-top:1px solid var(--line-soft)}
+
+  .pill{
+    display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.05em;
+    padding:2px 7px; border-radius:20px; white-space:nowrap; font-weight:500;
+  }
+  .p-must{background:var(--t3-soft); color:var(--t3)}
+  .p-should{background:var(--accent-soft); color:var(--accent)}
+  .p-could{background:var(--surface-2); color:var(--muted)}
+  .p-hi{background:var(--t3-soft); color:var(--t3)}
+  .p-md{background:var(--t2-soft); color:var(--t2)}
+  .p-lo{background:var(--surface-2); color:var(--muted)}
+
+  /* ---------- tier cards ---------- */
+  .tiers{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+  @media (max-width:620px){ .tiers{grid-template-columns:1fr} }
+  .tier{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:0 0 18px; overflow:hidden; display:flex; flex-direction:column;
+  }
+  .tier .cap{padding:16px 18px 14px; border-bottom:1px solid var(--line-soft)}
+  .tier .rule{height:4px}
+  .tier h4{font-family:var(--display); font-size:1.16rem; font-weight:600; margin:0; letter-spacing:-.01em}
+  .tier .sub{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:5px 0 0}
+  .tier .band{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin:9px 0 0}
+  .tier .desc{padding:14px 18px 4px; font-size:.88rem; color:var(--ink-2); line-height:1.5; margin:0}
+  .tier ul{list-style:none; margin:10px 0 0; padding:0 18px; display:flex; flex-wrap:wrap; gap:6px}
+  .tier li{
+    font-size:12.5px; padding:3px 9px; border-radius:5px; line-height:1.3;
+    background:var(--surface-2); color:var(--ink-2);
+  }
+  .t1 .rule{background:var(--t1)} .t1 h4{color:var(--t1)} .t1 li{background:var(--t1-soft)}
+  .t2 .rule{background:var(--t2)} .t2 h4{color:var(--t2)} .t2 li{background:var(--t2-soft)}
+  .t3 .rule{background:var(--t3)} .t3 h4{color:var(--t3)} .t3 li{background:var(--t3-soft)}
+  .t4 .rule{background:var(--t4)} .t4 h4{color:var(--t4)} .t4 li{background:var(--t4-soft)}
+
+  /* ---------- axes ---------- */
+  .axes{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin:20px 0}
+  .axis{border-left:2px solid var(--accent); padding:2px 0 2px 14px}
+  .axis .k{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:500}
+  .axis .n{display:block; font-weight:600; font-size:.95rem; margin:3px 0 2px; color:var(--ink)}
+  .axis .d{font-size:.85rem; color:var(--muted); line-height:1.45}
+
+  /* ---------- formula ---------- */
+  .formula{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:22px 24px; font-family:var(--mono); font-size:14px; color:var(--ink);
+    display:flex; flex-direction:column; gap:9px; overflow-x:auto;
+  }
+  .formula .big{font-size:16px; font-weight:500}
+  .formula .cmt{color:var(--muted); font-size:12px}
+
+  /* ---------- code block ---------- */
+  pre{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:20px 22px; overflow-x:auto; margin:0;
+    font-family:var(--mono); font-size:12.5px; line-height:1.65; color:var(--ink-2);
+  }
+  pre .c{color:var(--muted)}
+  pre .s{color:var(--t1)}
+  pre .k{color:var(--accent)}
+
+  /* ---------- flow ---------- */
+  .flow{display:flex; flex-direction:column; gap:0; counter-reset:step}
+  .step{display:grid; grid-template-columns:auto minmax(0,1fr); gap:18px; align-items:start}
+  .step .rail{display:flex; flex-direction:column; align-items:center; gap:0; align-self:stretch}
+  .step .dot{
+    width:26px; height:26px; border-radius:50%; flex:none; display:grid; place-items:center;
+    background:var(--surface); border:1px solid var(--line); color:var(--muted);
+    font-family:var(--mono); font-size:11px; font-weight:500;
+  }
+  .step .wire{width:1px; flex:1; background:var(--line); min-height:14px}
+  .step:last-child .wire{display:none}
+  .step .txt{padding-bottom:20px}
+  .step h4{font-family:var(--display); font-size:1rem; font-weight:600; margin:2px 0 4px; color:var(--ink)}
+  .step p{font-size:.9rem; margin:0; color:var(--ink-2)}
+  .step .note{font-size:.83rem; color:var(--muted); margin-top:5px; display:block}
+
+  /* ---------- key figure ---------- */
+  .figures{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  .figures > div{background:var(--surface); padding:18px 20px}
+  .figures .v{font-family:var(--display); font-size:1.85rem; font-weight:600; letter-spacing:-.02em; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.1}
+  .figures .l{font-size:12px; color:var(--muted); margin-top:5px; line-height:1.4}
+
+  /* ---------- scope ---------- */
+  .scope{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px}
+  .scope h3{margin-top:0}
+  .scope ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px}
+  .scope li{display:grid; grid-template-columns:auto 1fr; gap:9px; font-size:.9rem; color:var(--ink-2); line-height:1.45}
+  .scope .mk{font-family:var(--mono); font-size:12px; padding-top:1px}
+  .in .mk{color:var(--ok)} .out .mk{color:var(--muted)}
+
+  footer{
+    margin-top:72px; padding-top:24px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--muted);
+    display:flex; flex-wrap:wrap; gap:8px 28px;
+  }
+</style>
+
+<div class="shell">
+
+<header class="top">
+  <p class="eyebrow">Product Requirements Document · v1.0 draft</p>
+  <h1>Drawn &amp; Quartered</h1>
+  <p class="standfirst">A Pictionary word generator that remembers. Four curated difficulty tiers, single words and short phrases, and a word you have seen once will not come back — not this session, and not for the next several dozen. Launching at 4,800 words against a 23,700-word ceiling.</p>
+  <dl class="meta">
+    <div><dt>Owner</dt><dd>Sabuj</dd></div>
+    <div><dt>Status</dt><dd>Draft — for review</dd></div>
+    <div><dt>Date</dt><dd>2 Sep 2026</dd></div>
+    <div><dt>Target</dt><dd>V1.0 · static web + PWA</dd></div>
+    <div><dt>Corpus</dt><dd>4,800 → 23,700</dd></div>
+    <div><dt>Backend</dt><dd>None</dd></div>
+  </dl>
+</header>
+
+<div class="cols">
+  <nav class="toc" aria-label="Contents">
+    <ol>
+      <li><a href="#summary"><span>01</span>Summary</a></li>
+      <li><a href="#problem"><span>02</span>Problem &amp; market</a></li>
+      <li><a href="#users"><span>03</span>Users &amp; jobs</a></li>
+      <li><a href="#memory"><span>04</span>The memory engine</a></li>
+      <li><a href="#tiers"><span>05</span>Difficulty system</a></li>
+      <li><a href="#corpus"><span>06</span>Corpus plan</a></li>
+      <li><a href="#loop"><span>07</span>Game loop &amp; UX</a></li>
+      <li><a href="#fr"><span>08</span>Functional reqs</a></li>
+      <li><a href="#nfr"><span>09</span>Non-functional reqs</a></li>
+      <li><a href="#data"><span>10</span>Data model</a></li>
+      <li><a href="#scope"><span>11</span>Scope boundary</a></li>
+      <li><a href="#risks"><span>12</span>Risks</a></li>
+      <li><a href="#metrics"><span>13</span>Metrics</a></li>
+      <li><a href="#roadmap"><span>14</span>Roadmap</a></li>
+      <li><a href="#open"><span>15</span>Open questions</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <!-- 01 -->
+  <section id="summary">
+    <h2>Summary <em>01</em></h2>
+    <p class="lede">Four decisions carry this product. Everything else follows from them.</p>
+    <div class="decisions">
+      <div>
+        <h4>Guarantee, not heuristic</h4>
+        <p>Don't build a "last 10 sessions" window. Deal the whole tier as a <b>shuffled deck with a cursor</b> and no word repeats until the deck is empty — <b>12 to 27 sessions</b> depending on tier. Strictly stronger than the requirement, and materially simpler to build.</p>
+      </div>
+      <div>
+        <h4>Difficulty is drawability</h4>
+        <p>Hard does not mean obscure — obscure is just annoying. Tiers are set by a <b>four-axis score</b> covering concreteness, canonical form, decomposability and recognition. Obscurity is a side effect, never the goal.</p>
+      </div>
+      <div>
+        <h4>Install is a P0, not a nicety</h4>
+        <p>iOS Safari <b>wipes all local storage after 7 days</b> without a visit. A monthly party game hits that every time. Home-screen install is the only exemption, so the install prompt <em>is</em> the memory feature.</p>
+      </div>
+      <div>
+        <h4>Corpus is capped by editors, not engineers</h4>
+        <p>Every technical limit is slack — <b>23,700 words is 256 KB gzipped</b> and a 2.9 KB bitmap. What binds is how many entries can pass the quality gate, and it binds hardest on God Mode.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="problem">
+    <h2>Problem &amp; market <em>02</em></h2>
+    <p>Pictionary word generators are a commodity. A search returns a dozen free tools, several of them competent: <a href="https://miniwebtool.com/pictionary-word-generator/">miniwebtool</a> already ships four tiers, a timer, difficulty-weighted team scoring and no-repeat-within-a-cycle; <a href="https://pictionarygen.com/">pictionarygen</a> carries 2,040 prompts across 3 levels and 18 categories. <strong>Any PRD that claims tiers and non-repetition as the differentiator is wrong.</strong></p>
+    <p>The gaps that survive contact with the incumbents are narrower and more defensible:</p>
+    <ul class="body">
+      <li><strong>Non-repetition doesn't survive the browser closing.</strong> Competitors dedupe within a cycle held in page state. Nobody commits to a guarantee that spans sessions, weeks, and a phone that has been rebooted — which is the actual shape of party-game usage.</li>
+      <li><strong>The tiers are undocumented taste.</strong> No competitor publishes what makes a word "hard". Without a rubric, tiers drift as the list grows, and "Expert" quietly becomes "words the author found unusual".</li>
+      <li><strong>Volume without curation.</strong> 2,040 prompts sounds like plenty until you notice how many are filler. There is no stated quality gate, so lists pad out with near-duplicates and dull nouns.</li>
+      <li><strong>Nothing works in a living room.</strong> These are ad-supported SEO pages that need a network. The game is played on a sofa with four people, patchy wifi and one phone being passed around.</li>
+    </ul>
+    <p>So the wedge is <strong>durability and editorial standard</strong>, not feature count. That is a harder thing to copy than a fourth difficulty button.</p>
+  </section>
+
+  <!-- 03 -->
+  <section id="users">
+    <h2>Users &amp; jobs <em>03</em></h2>
+    <div class="tw">
+      <table>
+        <caption>Primary and secondary users. The host is the one who chooses the tool; design for the host.</caption>
+        <thead><tr><th>Who</th><th>Job to be done</th><th>What failure looks like</th></tr></thead>
+        <tbody>
+          <tr><td><strong>The host</strong><br><span style="color:var(--muted);font-size:12.5px">picks the tool, runs the game</span></td><td>Get a game going in under 20 seconds without printing anything or explaining rules.</td><td>Fumbling with settings while six people wait. Or: "we had this one last time."</td></tr>
+          <tr><td><strong>The drawer</strong><br><span style="color:var(--muted);font-size:12.5px">holds the phone, then draws</span></td><td>See the word privately, understand how many words it is, start drawing.</td><td>The word flashes on screen as the phone is passed. Round ruined.</td></tr>
+          <tr><td><strong>The room</strong><br><span style="color:var(--muted);font-size:12.5px">guessing, watching, heckling</span></td><td>Words that are fun to fail at — near-misses, groans, the satisfying reveal.</td><td>A word nobody has heard of. Not a challenge, just a dead round.</td></tr>
+          <tr><td><strong>Teacher / facilitator</strong><br><span style="color:var(--muted);font-size:12.5px">secondary</span></td><td>Run the same activity across many groups without recycling words.</td><td>Second class gets the first class's words. Kids compare notes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="memory">
+    <h2>The memory engine <em>04</em></h2>
+    <p class="lede">The core requirement — no repeats across at least 10 sessions on a device — and why the obvious implementation is the wrong one.</p>
+
+    <h3>The counter-intuitive part</h3>
+    <p>A literal "no repeats within the last 10 sessions" needs per-session word lists, session boundary detection, timestamps and an eviction policy — <em>and it still permits a repeat at session eleven.</em> Dealing the entire tier as one shuffled deck and walking a cursor through it needs <strong>two numbers and a bitmap</strong>, and permits no repeat at all until the tier is exhausted. The stronger guarantee is the cheaper one. Build that.</p>
+
+    <div class="formula">
+      <div class="cmt">// per tier, persisted</div>
+      <div class="big">deck = seededShuffle(unseenWordIds, seed)</div>
+      <div class="big">draw() → deck[cursor++], then seen[wordId] = 1</div>
+      <div class="cmt">// the bitmap is the source of truth. the deck is a materialised view of it.</div>
+    </div>
+
+    <h3>Why keep a bitmap when a cursor would do</h3>
+    <p>Because the word list will change. Add 200 words, retire 50, move three from Hard to Moderate, and a cursor into an old shuffle points at nothing meaningful. The bitmap is keyed by a <strong>frozen, append-only ordinal</strong> — assigned once at authoring, never reused, never re-sorted; retired words keep their ordinal as a tombstone. On any corpus update the app recomputes <code>unseen</code> from the bitmap and reshuffles only that, so <strong>the guarantee survives content releases</strong>. Verified in simulation: 500 draws, then a +200/−50 corpus update, then 150 more draws — zero repeats across the boundary.</p>
+
+    <h3>A word is spent when it is seen, not when it is guessed</h3>
+    <p>The word burns at <strong>reveal</strong>, committed to storage before it paints — regardless of whether the team got it, passed, or ran out of time. The drawer has seen it; serving it to the same group again is a repeat by any definition a player would recognise. This also makes the system crash-safe: a tab closed mid-round loses one word from the pool, where burning on "correct" would leak repeats instead.</p>
+
+    <h3>Running out</h3>
+    <p>At <strong>90% depletion</strong> the tier shows a quiet "42 words left" marker, so exhaustion is never a mid-party surprise. At 100% the app celebrates it — a deck-complete screen with the count and a badge — and offers a fresh cycle. The new shuffle applies a <strong>cooldown</strong>: the 50 most recently seen words are forced into the back half of the new deck, so a new cycle never opens with déjà vu.</p>
+
+    <h3>Storage, and the thing that breaks it</h3>
+    <p>Footprint is a non-issue, and stays one at any corpus size: even at the 23,700-word ceiling with every tier and pack exhausted, the record is <strong>2.9 KB</strong> against a 5 MB quota. The real threat is eviction. WebKit "deletes all cookies created in JavaScript and all other script-writeable storage after 7 days of no user interaction with the website" — localStorage, IndexedDB, service worker registrations, the lot. A game played monthly trips this <em>every single time</em>. WebKit grants exactly one exemption: "the first-party domain of home screen web applications is exempt from ITP's 7-day cap." Hence three mitigations, all P0:</p>
+    <ul class="body">
+      <li><strong>Install prompt</strong> after the first completed session — framed as "keep your word history", because that is literally what it does.</li>
+      <li><strong>Memory Code</strong> — the bitmap compressed to a short shareable string, exportable and importable. Restores after a wipe, and moves history between browsers or devices without a server.</li>
+      <li><strong>Honest state</strong> — a heartbeat key detects a wipe on load and says so plainly, offering the code, rather than silently starting over.</li>
+    </ul>
+  </section>
+
+  <!-- 05 -->
+  <section id="tiers">
+    <h2>Difficulty system <em>05</em></h2>
+    <p class="lede">The tiers have to be a defensible measure, or they drift into personal taste as the corpus grows.</p>
+    <p>Difficulty in Pictionary is not vocabulary difficulty. It is <strong>drawability</strong>. Score each candidate 1–5 on four axes; the composite sets the tier.</p>
+
+    <div class="axes">
+      <div class="axis"><span class="k">C</span><span class="n">Concreteness</span><span class="d">Can you point at it in the physical world? 5 = an object. 1 = a pure abstraction.</span></div>
+      <div class="axis"><span class="k">F</span><span class="n">Canonical form</span><span class="d">Does one image come to everyone's mind? 5 = banana. 1 = freedom.</span></div>
+      <div class="axis"><span class="k">D</span><span class="n">Decomposability</span><span class="d">Can it be split into drawable parts or sequenced? 5 = trivially. 1 = not at all.</span></div>
+      <div class="axis"><span class="k">R</span><span class="n">Recognition</span><span class="d">Will 9 of 10 adults in the room know the term? 5 = universal. 1 = niche.</span></div>
+    </div>
+
+    <div class="formula">
+      <div class="big">difficulty = 20 − (C + F + D + R)</div>
+      <div class="cmt">Easy 0–1 &nbsp;·&nbsp; Moderate 2–7 &nbsp;·&nbsp; above 7: Hard or God Mode by domain</div>
+    </div>
+
+    <h3>Two corrections from building the corpus</h3>
+    <p>The bands above are not the ones this document first carried. Authoring the 1,100-word seed corpus and running every entry through the rubric forced two changes, and both are worth stating because they are the kind of thing that quietly drifts back.</p>
+    <p><strong>Easy is 0–1, not 0–2.</strong> A word scoring 2 has two axes below perfect, which in practice means a composed drawing rather than one canonical shape. "Vending machine" (5,4,4,5&nbsp;=&nbsp;2) looks like a fair Easy score and is plainly harder to draw than "cat" (5,5,5,5&nbsp;=&nbsp;0). Roller coaster moves to Moderate for the same reason.</p>
+    <p><strong>The four axes cannot separate Hard from God Mode.</strong> Both tiers are abstract, so both land in 8–16 and any boundary between them is arbitrary — "peer pressure" and "the bystander effect" both score 11. What actually separates them is <em>register</em>: God Mode words are named terms of art from a specialist domain and need a hint; Hard words are abstract but everyday language. So above 7 the tier is decided by domain, not by score:</p>
+    <div class="formula">
+      <div class="cmt">// specialist domains</div>
+      <div class="big">biases · philosophy · science · biology</div>
+      <div class="big">economics · internet · maths · literature</div>
+      <div class="cmt">score &gt; 7 and a specialist domain → God Mode. Otherwise → Hard.</div>
+    </div>
+    <p>This also correctly demotes drawable science. "Black hole" scores 6, "solar eclipse" 5, "photosynthesis" 7 — all Moderate, not God Mode, which is right: everyone can draw a black hole. Tier is now a pure function of score and domain, with <strong>no override mechanism at all</strong>; a word that feels wrong gets its scores or its category fixed, never a special case.</p>
+
+    <p>A fifth axis, <strong>Trap (T)</strong>, is scored separately and does not affect difficulty — it drives <em>fun</em>. Trap measures how many wrong-but-close guesses the obvious drawing invites. "Dolphin" is trivially easy and scores a 5, because every room shouts "shark!" first.</p>
+
+    <h3>The fun gate</h3>
+    <p>A word that clears the difficulty rubric can still be dull. Two gates, tier-aware, because a trap is a virtue above Easy and a nuisance inside it:</p>
+    <ul class="body">
+      <li><strong>Easy</strong> — must be instantly drawable (C ≥ 4) <em>and</em> universally known (R = 5). Speed and certainty are the point; ambiguity here just stalls the warm-up.</li>
+      <li><strong>Moderate and above</strong> — must score <strong>T ≥ 2</strong>, or carry a documented delight property: funny to draw, satisfying to land, a groan on the reveal. Words that are merely hard and boring get cut.</li>
+    </ul>
+
+    <h3>Calibration: the rubric versus intuition</h3>
+    <p>Tested on 19 hand-placed words, the rubric agreed with intuition on 18. The one disagreement is the useful one — and the full 1,100-word seed build later forced the two corrections above, which is exactly what a calibration corpus is for:</p>
+    <div class="tw">
+      <table>
+        <caption>Scored sample under the corrected rules. "Schrödinger's cat" <em>feels</em> like God Mode, but it has a canonical image — cat, box — is highly decomposable, is meme-famous, and sits in an everyday domain. Hard is right.</caption>
+        <thead><tr><th>Word</th><th>C</th><th>F</th><th>D</th><th>R</th><th>Score</th><th>Tier</th></tr></thead>
+        <tbody>
+          <tr><td>cat</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">5</td><td class="num">0</td><td><span class="pill" style="background:var(--t1-soft);color:var(--t1)">Easy</span></td></tr>
+          <tr><td>roller coaster</td><td class="num">5</td><td class="num">4</td><td class="num">4</td><td class="num">5</td><td class="num">2</td><td><span class="pill" style="background:var(--t2-soft);color:var(--t2)">Moderate</span></td></tr>
+          <tr><td>food truck</td><td class="num">5</td><td class="num">4</td><td class="num">4</td><td class="num">4</td><td class="num">3</td><td><span class="pill" style="background:var(--t2-soft);color:var(--t2)">Moderate</span></td></tr>
+          <tr><td>brain freeze</td><td class="num">2</td><td class="num">3</td><td class="num">4</td><td class="num">4</td><td class="num">7</td><td><span class="pill" style="background:var(--t2-soft);color:var(--t2)">Moderate</span></td></tr>
+          <tr><td>deja vu</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">5</td><td class="num">9</td><td><span class="pill" style="background:var(--t3-soft);color:var(--t3)">Hard</span></td></tr>
+          <tr><td>Schrödinger's cat</td><td class="num">2</td><td class="num">3</td><td class="num">3</td><td class="num">3</td><td class="num">9</td><td><span class="pill" style="background:var(--t3-soft);color:var(--t3)">Hard</span></td></tr>
+          <tr><td>peer pressure</td><td class="num">1</td><td class="num">1</td><td class="num">3</td><td class="num">4</td><td class="num">11</td><td><span class="pill" style="background:var(--t3-soft);color:var(--t3)">Hard</span></td></tr>
+          <tr><td>the Streisand effect</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">2</td><td class="num">12</td><td><span class="pill" style="background:var(--t4-soft);color:var(--t4)">God Mode</span></td></tr>
+          <tr><td>cognitive dissonance</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">13</td><td><span class="pill" style="background:var(--t4-soft);color:var(--t4)">God Mode</span></td></tr>
+          <tr><td>quantum entanglement</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">14</td><td><span class="pill" style="background:var(--t4-soft);color:var(--t4)">God Mode</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:15px">There is no override mechanism, and that is deliberate. An override field becomes a place to hide disagreements with the rubric rather than fix them. If a word sits wrong, the fix is its axis scores or its category — both of which are reviewable, and both of which improve the rubric for every future word.</p>
+
+    <h3>The four tiers</h3>
+    <div class="tiers">
+      <div class="tier t1"><div class="rule"></div><div class="cap"><h4>Doodle</h4><p class="sub">Easy · score 0–1</p><p class="band">One object. One image. Fifteen seconds.</p></div>
+        <p class="desc">Concrete nouns a child can draw and any room names instantly. The warm-up tier — and the one you hand to the person who insists they can't draw.</p>
+        <ul><li>cat</li><li>pizza</li><li>lighthouse</li><li>umbrella</li><li>snowman</li><li>giraffe</li><li>guitar</li><li>anchor</li><li>rainbow</li><li>umbrella</li></ul>
+      </div>
+      <div class="tier t2"><div class="rule"></div><div class="cap"><h4>Sketch</h4><p class="sub">Moderate · score 2–7</p><p class="band">A scene, not an object.</p></div>
+        <p class="desc">Two or more elements in relation, or an everyday compound. Still concrete, but you have to compose something rather than name it.</p>
+        <ul><li>food truck</li><li>brain freeze</li><li>traffic jam</li><li>time zone</li><li>eavesdrop</li><li>message in a bottle</li><li>night shift</li><li>treasure map</li><li>wind chime</li><li>hitchhiker</li></ul>
+      </div>
+      <div class="tier t3"><div class="rule"></div><div class="cap"><h4>Cryptic</h4><p class="sub">Hard · score &gt;7, everyday</p><p class="band">Metaphor required.</p></div>
+        <p class="desc">Abstract states, idioms and social dynamics. There is no literal picture, so the drawer has to invent an angle — which is where the good rounds live.</p>
+        <ul><li>deja vu</li><li>writer's block</li><li>peer pressure</li><li>cold turkey</li><li>cabin fever</li><li>red tape</li><li>culture shock</li><li>small talk</li><li>ghosting</li><li>devil's advocate</li></ul>
+      </div>
+      <div class="tier t4"><div class="rule"></div><div class="cap"><h4>God Mode</h4><p class="sub">Impossible · &gt;7, specialist</p><p class="band">Ships with a hint. It has to.</p></div>
+        <p class="desc">Multi-word concepts from science, philosophy and economics. Every entry carries a one-line hint the team can burn for half points — without it the tier stalls instead of escalating.</p>
+        <ul><li>quantum entanglement</li><li>cognitive dissonance</li><li>survivorship bias</li><li>the Streisand effect</li><li>Occam's razor</li><li>sunk cost fallacy</li><li>uncanny valley</li><li>Ship of Theseus</li><li>diminishing returns</li><li>planned obsolescence</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section id="corpus">
+    <h2>Corpus plan <em>06</em></h2>
+    <p class="lede">The word list is the product. The code is a weekend; the corpus is the moat. Maximise it — but know which wall you hit first.</p>
+    <p>Sizing works backwards from the requirement. A heavy session runs about <strong>50 draws</strong> (P90); a typical one about 25. God Mode sessions are short by nature — 8 to 15 — because nobody plays forty rounds of "survivorship bias". Worst case is a group that plays one tier exclusively, so each tier must independently clear ten heavy sessions.</p>
+
+    <h3>Nothing technical limits corpus size</h3>
+    <p>Worth settling first, because it removes the constraint most teams assume is binding. Authoring fields — the four axis scores, override justification, volatility, provenance — are <strong>build-time only</strong> and stripped from the shipped bundle, which carries just <code>ord</code>, <code>text</code>, <code>words</code>, <code>category</code> and (God Mode only) <code>hint</code>. At that density:</p>
+    <div class="tw">
+      <table>
+        <caption>Every technical budget has slack even at the absolute ceiling. Tiers lazy-load, so a session downloads only the tier being played.</caption>
+        <thead><tr><th>Corpus</th><th>Shipped JSON</th><th>Gzipped, all tiers</th><th>One tier lazy-loaded</th><th>Saturated bitmap</th></tr></thead>
+        <tbody>
+          <tr><td>4,800 · V1.0</td><td class="num">0.22 MB</td><td class="num">52 KB</td><td class="num">13 KB</td><td class="num">0.6 KB</td></tr>
+          <tr><td>13,000 · V2 core</td><td class="num">0.60 MB</td><td class="num">140 KB</td><td class="num">35 KB</td><td class="num">1.6 KB</td></tr>
+          <tr><td>23,700 · core + packs</td><td class="num">1.09 MB</td><td class="num">256 KB</td><td class="num">64 KB</td><td class="num">2.9 KB</td></tr>
+          <tr><td><strong>Budget</strong></td><td class="num">—</td><td class="num"><strong>300 KB</strong></td><td class="num">—</td><td class="num"><strong>5,120 KB</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:15px">The bitmap is the pleasant surprise: at 23,700 words, a device that has seen <em>every word ever written</em> stores 2.9 KB. Shuffling 23,700 integers in JavaScript is imperceptible. <strong>So the answer to "how big?" is set entirely by editorial supply.</strong></p>
+
+    <h3>Where the supply actually runs out</h3>
+    <p>Each tier has a different natural reservoir, and they are not the same size. This is the real ceiling:</p>
+    <div class="tw">
+      <table>
+        <caption>Realistic supply of entries that pass both the difficulty rubric and the fun gate. God Mode is the scarce tier by a wide margin.</caption>
+        <thead><tr><th>Tier</th><th>Reservoir</th><th>Ceiling</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill" style="background:var(--t1-soft);color:var(--t1)">Easy</span></td><td>Concrete everyday nouns a child can draw and any room names instantly. Bounded by the size of shared visual vocabulary, not by English.</td><td class="num">~3,500</td></tr>
+          <tr><td><span class="pill" style="background:var(--t2-soft);color:var(--t2)">Moderate</span></td><td>Compounds, scenes, occupations, places, activities and imageable idioms. The largest reservoir — compounding generates candidates faster than any other tier.</td><td class="num">~4,500</td></tr>
+          <tr><td><span class="pill" style="background:var(--t3-soft);color:var(--t3)">Hard</span></td><td>Abstract states, idioms, social dynamics. English holds roughly 25,000 idioms; only a fraction are both drawable and widely known.</td><td class="num">~3,500</td></tr>
+          <tr><td><span class="pill" style="background:var(--t4-soft);color:var(--t4)">God&nbsp;Mode</span></td><td>Named biases (~200), logical fallacies (~150), lay-known physics and biology (~500), philosophy (~300), economics (~200), paradoxes (~100), literary devices (~100), internet phenomena (~150), mathematics (~200).</td><td class="num">~1,500</td></tr>
+          <tr><td><strong>Core total</strong></td><td>—</td><td class="num"><strong>~13,000</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:15px"><strong>God Mode cannot be scaled proportionally, and should not be.</strong> Push it past roughly 1,500 and you are adding terms that fail the Recognition axis — obscure rather than hard, which is precisely the trap the rubric exists to avoid. A God Mode tier at 1,500 words already supports 100 heavy sessions; it does not need parity with Easy, and forcing parity would destroy it.</p>
+
+    <h3>Beyond the core: packs</h3>
+    <p>Past 13,000, growth comes from <strong>additional corpora</strong> rather than deeper tiers. Each pack is independently sized to clear the 10-session bar on its own, because a pack that runs dry mid-party is worse than no pack.</p>
+    <div class="tw">
+      <table>
+        <caption>Packs are opt-in and load on demand. A device's seen-bitmap extends across packs without re-architecture — ordinals are global and append-only.</caption>
+        <thead><tr><th>Locale packs</th><th>Words</th><th>Themed packs</th><th>Words</th></tr></thead>
+        <tbody>
+          <tr><td>India</td><td class="num">2,000</td><td>Film &amp; TV</td><td class="num">1,500</td></tr>
+          <tr><td>US / UK</td><td class="num">2,000</td><td>Science</td><td class="num">1,200</td></tr>
+          <tr><td></td><td class="num"></td><td>Food &amp; drink</td><td class="num">1,000</td></tr>
+          <tr><td></td><td class="num"></td><td>Sport</td><td class="num">1,000</td></tr>
+          <tr><td></td><td class="num"></td><td>Music</td><td class="num">1,000</td></tr>
+          <tr><td></td><td class="num"></td><td>History</td><td class="num">1,000</td></tr>
+          <tr><td><strong>Subtotal</strong></td><td class="num"><strong>4,000</strong></td><td><strong>Subtotal</strong></td><td class="num"><strong>6,700</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Targets</h3>
+    <div class="tw">
+      <table>
+        <caption>Sessions before deck exhaustion, at heavy (50-draw) play. V1.0 clears the 10-session requirement by 2.4× at its tightest point; V2 clears it by 7×.</caption>
+        <thead><tr><th>Tier</th><th>Bare floor</th><th>V1.0 launch</th><th>Heavy play</th><th>V2.0 ceiling</th><th>Heavy play</th></tr></thead>
+        <tbody>
+          <tr><td>Easy</td><td class="num">500</td><td class="num"><strong>1,500</strong></td><td class="num">30 sessions</td><td class="num">3,500</td><td class="num">70 sessions</td></tr>
+          <tr><td>Moderate</td><td class="num">500</td><td class="num"><strong>1,500</strong></td><td class="num">30 sessions</td><td class="num">4,500</td><td class="num">90 sessions</td></tr>
+          <tr><td>Hard</td><td class="num">500</td><td class="num"><strong>1,200</strong></td><td class="num">24 sessions</td><td class="num">3,500</td><td class="num">70 sessions</td></tr>
+          <tr><td>God Mode</td><td class="num">150</td><td class="num"><strong>600</strong></td><td class="num">40 sessions</td><td class="num">1,500</td><td class="num">100 sessions</td></tr>
+          <tr><td><strong>Core</strong></td><td class="num">1,650</td><td class="num"><strong>4,800</strong></td><td class="num">—</td><td class="num"><strong>13,000</strong></td><td class="num">—</td></tr>
+          <tr><td><strong>+ packs</strong></td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>23,700</strong></td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px"><strong>Do not ship the bare floor.</strong> At exactly 500 words the deck runs dry on the final draw of session ten — the requirement is met and the product is broken.</p>
+    <p><strong>And note where the genuine diminishing return sits.</strong> At the V2 ceiling a device needs 70 to 100 heavy sessions — years of monthly play — to exhaust one tier. Words beyond that point will be seen by almost no one. That is an argument for pushing hard to 13,000 and then spending the next increment on <em>packs people choose</em> rather than depth nobody reaches.</p>
+
+    <h3>How 13,000 curated words actually gets made</h3>
+    <p>Volume at this scale is only achievable as a pipeline. Hand-authoring is the failure mode — it is slow, and it drifts. The gates are what create the value; generation is the cheap part.</p>
+    <div class="flow" style="margin-top:16px">
+      <div class="step"><div class="rail"><div class="dot">1</div><div class="wire"></div></div><div class="txt">
+        <h4>Overgenerate against category quotas</h4>
+        <p>Produce 3–5× the target per category, so the gates have something to reject. Quotas prevent a corpus that is 40% animals.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">2</div><div class="wire"></div></div><div class="txt">
+        <h4>Mechanical filters — free, and they cut hardest</h4>
+        <p>Exact and fuzzy-stem dedupe against the entire existing corpus; ban-list; word-count bounds; and a <strong>frequency check against a reference corpus</strong> as an objective proxy for the Recognition axis, which is otherwise the most subjective of the four.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">3</div><div class="wire"></div></div><div class="txt">
+        <h4>Assisted scoring, calibrated on a golden set</h4>
+        <p>Score survivors on all five axes automatically, with a human-scored golden set of ~200 words used to check calibration each run. Drift on the golden set halts the batch.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">4</div><div class="wire"></div></div><div class="txt">
+        <h4>Human review on survivors only</h4>
+        <p>By this point the batch is small and pre-sorted. The reviewer is making taste calls on the fun gate, not grinding through raw candidates — which is the only step that genuinely needs a person and the only one worth their time.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">5</div></div><div class="txt">
+        <h4>Playtest gate — God Mode only</h4>
+        <p>Ships only if at least one of three playtest groups guessed it with the hint. Restricted to God Mode because it is the expensive gate and the only tier that needs it.</p>
+      </div></div>
+    </div>
+
+    <h3>Editorial rules</h3>
+    <ul class="body">
+      <li><strong>One word, one tier.</strong> A word lives in exactly one tier, globally unique across the corpus. Otherwise the no-repeat guarantee becomes incoherent the moment someone switches tiers.</li>
+      <li><strong>Near-duplicate check at build time.</strong> "ice cream" and "ice cream truck" may both exist; "cell phone" and "mobile phone" may not. Fuzzy match on normalised stems, flagged for human review.</li>
+      <li><strong>Category quotas.</strong> Each tier draws across 8–12 named categories with a cap per category, so the corpus doesn't become 300 animals.</li>
+      <li><strong>Anti-clustering at deal time.</strong> Look ahead 8 cards and swap to enforce: no two consecutive words from one category, and no more than 3 of any category per 20 draws. Swaps happen <em>within</em> the remaining deck, so the permutation — and the guarantee — is untouched.</li>
+      <li><strong>Volatility tag.</strong> Every word marked <code>evergreen</code> or <code>topical</code>. Memes rot; topical entries get reviewed at each content release and pruned without ceremony.</li>
+      <li><strong>Ban list.</strong> No slurs, violence, sexual content, real private individuals, or anything requiring specialist professional knowledge. Brands only where genuinely evergreen and iconic.</li>
+      <li><strong>Playtest gate for God Mode.</strong> A God Mode word ships only if at least one of three playtest groups guessed it with the hint. Unguessable isn't a difficulty tier, it's a bug.</li>
+      <li><strong>Locale tags.</strong> Every word tagged <code>global</code> or with a locale. V1.0 ships <code>global</code> only; an India pack and a US pack are V1.2, not an afterthought bolted onto a list that already assumes one culture.</li>
+    </ul>
+  </section>
+
+  <!-- 07 -->
+  <section id="loop">
+    <h2>Game loop &amp; UX <em>07</em></h2>
+    <p class="lede">One phone, passed around a room, in bad light, with people watching. That is the whole design constraint.</p>
+    <div class="flow">
+      <div class="step"><div class="rail"><div class="dot">1</div><div class="wire"></div></div><div class="txt">
+        <h4>Land and pick a tier</h4>
+        <p>Four tier cards, colour-coded, each showing words remaining. No sign-up, no modal, no cookie banner. Tapping a tier starts a game.</p>
+        <span class="note">Target: first word on screen within 20 seconds of landing, two taps maximum.</span>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">2</div><div class="wire"></div></div><div class="txt">
+        <h4>Optional team setup</h4>
+        <p>Skippable. 2–6 teams, editable names, defaults to "Team 1 / Team 2". Skipping it runs the generator with no scoring at all.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">3</div><div class="wire"></div></div><div class="txt">
+        <h4>The privacy guard</h4>
+        <p>A full-screen cover reading "Drawer only — tap when you're holding the phone". The word is <strong>never</strong> rendered behind it. This is the single most important screen in the app: a word glimpsed during the hand-off kills the round.</p>
+        <span class="note">The word burns here, on reveal — committed to storage before it paints.</span>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">4</div><div class="wire"></div></div><div class="txt">
+        <h4>The word</h4>
+        <p>Large type, tier colour, and <strong>word-count pips</strong> — ●● for two words, ●●● for three — so the drawer can signal the count, which is standard play. God Mode adds a "Show hint (½ points)" control.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">5</div><div class="wire"></div></div><div class="txt">
+        <h4>Draw, with an optional twist</h4>
+        <p>Timer ring: 60 / 90 / 120s or off, colour-shifting for the last ten seconds. A <strong>Twist</strong> toggle injects a random constraint into roughly one round in five — non-dominant hand, no lifting the pen, only circles, 15-second lightning.</p>
+        <span class="note">Twists are the cheapest fun-per-word in the product: they multiply variety without consuming corpus.</span>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">6</div><div class="wire"></div></div><div class="txt">
+        <h4>Resolve and pass on</h4>
+        <p>Three outcomes — Got it / Pass / Time's up. All three burn the word; only the first scores. Then straight back to the cover screen for the next drawer.</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="dot">7</div></div><div class="txt">
+        <h4>Session summary</h4>
+        <p>Words played, hit rate, winning team, and the full list of words seen — so the room can relitigate the round that was robbed. First completed session triggers the install prompt.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="fr">
+    <h2>Functional requirements <em>08</em></h2>
+    <p class="lede">Acceptance criteria are written to be executable as tests, not read as prose.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>ID</th><th>Requirement</th><th>Acceptance criteria</th><th>Pri</th></tr></thead>
+        <tbody>
+          <tr><td class="id">FR-01</td><td>Non-repetition within a tier</td><td>Given a device with cleared memory, when 500 consecutive draws are taken from any one tier, then zero word IDs repeat.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-02</td><td>Non-repetition across sessions</td><td>Given 10 sessions of 50 draws each, separated by full app termination, then zero word IDs repeat across all 500.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-03</td><td>Survives corpus updates</td><td>Given a corpus release adding 200 and retiring 50 words, when the app next loads, then no previously-seen word ID is ever served again.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-04</td><td>Burn on reveal</td><td>Given a word is revealed and the app is force-quit before an outcome is recorded, when reopened, then that word is not served again.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-05</td><td>Four tiers, independent memory</td><td>Exhausting one tier leaves the other three pools untouched; each maintains its own deck, cursor and bitmap.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-06</td><td>Depletion warning</td><td>At ≥90% of a tier consumed, the tier card and in-game header display remaining count.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-07</td><td>Exhaustion &amp; recycle</td><td>At 100%, a completion screen offers a fresh cycle. The new deck places the 50 most recent words in its back half.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-08</td><td>Reveal privacy guard</td><td>The word string is absent from the DOM until the cover screen is dismissed. Verified by DOM inspection pre-reveal.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-09</td><td>Multi-word support &amp; pips</td><td>Entries of 1–3 words render with a matching count of pips. Hyphenated forms count as one word.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-10</td><td>Install prompt</td><td>After the first completed session, an install prompt appears once, framed around preserving word history. Dismissal is remembered.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-11</td><td>Memory Code export / import</td><td>Export produces a string under 400 characters encoding all four bitmaps. Import on a fresh device reproduces the exact seen-set.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-12</td><td>Storage-wipe detection</td><td>Given storage is cleared externally, when the app loads, then it states that history was lost and offers Memory Code import — it does not silently reset.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-13</td><td>God Mode hints</td><td>Every God Mode word carries a hint. Revealing it flags the round as half-points. Corpus linter fails the build on any God word missing a hint.</td><td><span class="pill p-must">Must</span></td></tr>
+          <tr><td class="id">FR-14</td><td>Timer</td><td>Selectable 60 / 90 / 120s or off. Visual ring plus optional sound. Colour shift at 10s remaining.</td><td><span class="pill p-should">Should</span></td></tr>
+          <tr><td class="id">FR-15</td><td>Team scoring</td><td>2–6 named teams, tier-weighted points (1/2/3/4), half points on a hint. Fully skippable.</td><td><span class="pill p-should">Should</span></td></tr>
+          <tr><td class="id">FR-16</td><td>Category anti-clustering</td><td>Across any 20 consecutive draws, no category appears more than 3 times and never twice consecutively.</td><td><span class="pill p-should">Should</span></td></tr>
+          <tr><td class="id">FR-17</td><td>Twist modifiers</td><td>Toggleable. When on, ~20% of rounds attach a random constraint from a defined set. Off by default.</td><td><span class="pill p-should">Should</span></td></tr>
+          <tr><td class="id">FR-18</td><td>Session summary &amp; history</td><td>End of session shows words played, hit rate and winner. Last 3 sessions' word lists are retrievable.</td><td><span class="pill p-should">Should</span></td></tr>
+          <tr><td class="id">FR-19</td><td>Mixed-tier ladder</td><td>An escalating mode that walks Easy → God Mode across a session.</td><td><span class="pill p-could">Could</span></td></tr>
+          <tr><td class="id">FR-20</td><td>Custom word list</td><td>Host can add their own words to a local-only tier. Never merged into the shipped corpus.</td><td><span class="pill p-could">Could</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section id="nfr">
+    <h2>Non-functional requirements <em>09</em></h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>ID</th><th>Area</th><th>Requirement</th></tr></thead>
+        <tbody>
+          <tr><td class="id">NFR-01</td><td>Offline</td><td>Full functionality with no network after first load. Service worker precaches app shell and all four tier bundles.</td></tr>
+          <tr><td class="id">NFR-02</td><td>Performance</td><td>First contentful paint under 1.5s on a mid-tier Android over 4G. Total transfer under 300 KB gzipped at the full 23,700-word ceiling.</td></tr>
+          <tr><td class="id">NFR-02b</td><td>Corpus delivery</td><td>Tiers and packs are separately chunked and lazy-loaded — starting a game downloads only that tier. Authoring fields (axis scores, override, volatility, provenance) are stripped at build; shipping them is a build failure.</td></tr>
+          <tr><td class="id">NFR-03</td><td>Privacy</td><td>No accounts, no cookies, no third-party scripts, no network calls after load. Nothing leaves the device — stated plainly in the UI.</td></tr>
+          <tr><td class="id">NFR-04</td><td>Accessibility</td><td>WCAG 2.2 AA. The word renders at ≥32px, contrast ≥7:1. Full keyboard operation. Tier meaning never carried by colour alone. Respects reduced-motion.</td></tr>
+          <tr><td class="id">NFR-05</td><td>Device</td><td>Portrait phone first, 360px up. Screen-wake held during an active timer. Large touch targets — the phone is being handed around.</td></tr>
+          <tr><td class="id">NFR-06</td><td>Durability</td><td>State written to localStorage with an IndexedDB mirror; either can restore the other. Writes are synchronous with reveal.</td></tr>
+          <tr><td class="id">NFR-07</td><td>Integrity</td><td>CI runs 10,000 simulated draws per tier asserting zero repeats, plus a corpus linter: schema validity, global uniqueness, near-duplicate flags, tier-vs-score agreement, hint presence, ban-list clean.</td></tr>
+          <tr><td class="id">NFR-08</td><td>Hosting</td><td>Static files on a CDN. No server, no database, no runtime cost.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section id="data">
+    <h2>Data model <em>10</em></h2>
+    <h3>Word record — shipped, immutable</h3>
+<pre><span class="c">// ord is frozen at authoring, append-only, never reused.
+// Retired words keep their ord as a tombstone so no bitmap ever shifts.</span>
+{
+  <span class="k">"id"</span>:       <span class="s">"god-0417"</span>,
+  <span class="k">"ord"</span>:      <span class="s">3241</span>,
+  <span class="k">"text"</span>:     <span class="s">"quantum entanglement"</span>,
+  <span class="k">"tier"</span>:     <span class="s">"god"</span>,
+  <span class="k">"words"</span>:    <span class="s">2</span>,
+  <span class="k">"category"</span>: <span class="s">"science"</span>,
+  <span class="k">"axes"</span>:     { <span class="k">"C"</span>:<span class="s">1</span>, <span class="k">"F"</span>:<span class="s">1</span>, <span class="k">"D"</span>:<span class="s">2</span>, <span class="k">"R"</span>:<span class="s">2</span>, <span class="k">"T"</span>:<span class="s">3</span> },
+  <span class="k">"score"</span>:    <span class="s">14</span>,
+  <span class="k">"override"</span>: <span class="s">null</span>,          <span class="c">// {to:"hard", why:"..."} if an editor moved it</span>
+  <span class="k">"hint"</span>:     <span class="s">"Two particles. One fate. Any distance."</span>,
+  <span class="k">"locale"</span>:   [<span class="s">"global"</span>],
+  <span class="k">"volatility"</span>: <span class="s">"evergreen"</span>,
+  <span class="k">"addedIn"</span>:  <span class="s">"2026.09.1"</span>
+}</pre>
+
+      <h3>Device memory — the only thing persisted</h3>
+<pre>{
+  <span class="k">"v"</span>: <span class="s">1</span>,
+  <span class="k">"corpusVersion"</span>: <span class="s">"2026.09.1"</span>,
+  <span class="k">"heartbeat"</span>: <span class="s">1756800000000</span>,     <span class="c">// wipe detection</span>
+  <span class="k">"tiers"</span>: {
+    <span class="k">"easy"</span>: { <span class="k">"seed"</span>:<span class="s">812734</span>, <span class="k">"cursor"</span>:<span class="s">137</span>, <span class="k">"seen"</span>:<span class="s">"&lt;base64 bitmap&gt;"</span> },
+    <span class="k">"moderate"</span>: { ... }, <span class="k">"hard"</span>: { ... }, <span class="k">"god"</span>: { ... }
+  },
+  <span class="k">"recent"</span>: [<span class="s">3241</span>, <span class="s">118</span>, ...],           <span class="c">// last 50 ords, for recycle cooldown</span>
+  <span class="k">"sessions"</span>: [ {<span class="k">"at"</span>:<span class="s">...</span>, <span class="k">"tier"</span>:<span class="s">"hard"</span>, <span class="k">"ords"</span>:[<span class="s">...</span>], <span class="k">"hits"</span>:<span class="s">14</span>} ],  <span class="c">// last 3</span>
+  <span class="k">"settings"</span>: { <span class="k">"timer"</span>:<span class="s">90</span>, <span class="k">"twists"</span>:<span class="s">false</span>, <span class="k">"sound"</span>:<span class="s">true</span> }
+}</pre>
+      <div class="figures" style="margin-top:22px">
+        <div><div class="v">2.9 KB</div><div class="l">Saturated record at the 23,700-word ceiling</div></div>
+        <div><div class="v">5 MB</div><div class="l">localStorage quota — 1,700× the need</div></div>
+        <div><div class="v">256 KB</div><div class="l">Entire corpus gzipped, every pack</div></div>
+        <div><div class="v">64 KB</div><div class="l">What one session actually downloads</div></div>
+      </div>
+      <p style="margin-top:18px">Storage is effectively free, which is worth stating explicitly: there is no reason to economise on session history, no reason to prune anything for space, and <strong>no technical argument against growing the corpus as far as editorial can carry it</strong>.</p>
+  </section>
+
+  <!-- 11 -->
+  <section id="scope">
+    <h2>Scope boundary <em>11</em></h2>
+    <div class="scope">
+      <div class="in">
+        <h3>In for V1.0</h3>
+        <ul>
+          <li><span class="mk">✓</span><span>Four tiers with a launch corpus of 4,800 curated words</span></li>
+          <li><span class="mk">✓</span><span>Chunked, lazy-loaded corpus built to scale to 23,700 without re-architecture</span></li>
+          <li><span class="mk">✓</span><span>Cross-session non-repetition with the bitmap engine</span></li>
+          <li><span class="mk">✓</span><span>Memory Code export / import</span></li>
+          <li><span class="mk">✓</span><span>Timer, team scoring, twists, session summary</span></li>
+          <li><span class="mk">✓</span><span>Installable offline PWA</span></li>
+          <li><span class="mk">✓</span><span>English, <code>global</code> locale only</span></li>
+        </ul>
+      </div>
+      <div class="out">
+        <h3>Explicitly out</h3>
+        <ul>
+          <li><span class="mk">✕</span><span><strong>A drawing canvas.</strong> Pictionary is played on paper. Adding a canvas makes this a different, much larger product competing with skribbl.io.</span></li>
+          <li><span class="mk">✕</span><span><strong>Accounts and server sync.</strong> The Memory Code covers the real need without a backend, a privacy policy, or a hosting bill.</span></li>
+          <li><span class="mk">✕</span><span><strong>Online multiplayer.</strong> Different product, different market.</span></li>
+          <li><span class="mk">✕</span><span><strong>Ads.</strong> The incumbents' business model is also their weakness. Don't inherit it.</span></li>
+          <li><span class="mk">✕</span><span><strong>Other languages.</strong> Translation of idioms and God Mode concepts is authorship, not translation. Do it properly later or not at all.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section id="risks">
+    <h2>Risks <em>12</em></h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Risk</th><th>Sev</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>iOS storage eviction.</strong> WebKit wipes script-writable storage after 7 days without a visit — the exact cadence of a party game.</td><td><span class="pill p-hi">High</span></td><td>Home-screen install is the only WebKit exemption, so the install prompt is P0. Memory Code as the recovery path. Wipe detection so failure is visible, never silent.</td></tr>
+          <tr><td><strong>"Device" is really "browser profile".</strong> Chrome and Safari on one phone hold two separate memories. The requirement as written cannot be fully met client-side.</td><td><span class="pill p-hi">High</span></td><td>Memory Code transfers history between browsers. State the limitation plainly in-product rather than implying a guarantee that isn't there.</td></tr>
+          <tr><td><strong>Corpus authorship is the real cost.</strong> 4,800 scored, deduped, playtested entries at launch — and 13,000 after — is months of editorial work, not an afternoon of prompting. It is the critical path for every release.</td><td><span class="pill p-hi">High</span></td><td>Staff it first and run it as the pipeline in §06. Overgenerate, filter mechanically, score with calibration, and spend human attention only on survivors. Ship corpus growth as its own release train, decoupled from app releases.</td></tr>
+          <tr><td><strong>God Mode supply ceiling.</strong> Roughly 1,500 entries exist that are hard <em>and</em> recognisable. Pressure to grow the tier in step with the others would push it past that.</td><td><span class="pill p-hi">High</span></td><td>Cap God Mode at its reservoir and say so in the plan. 1,500 words already supports 100 heavy sessions. Growth beyond it comes from themed packs, never from lowering the Recognition floor.</td></tr>
+          <tr><td><strong>Quality decays as volume rises.</strong> Chasing a number rather than a standard is how a 13,000-word corpus ends up worse than a 4,000-word one.</td><td><span class="pill p-md">Med</span></td><td>The gates are fixed and CI-enforced; volume is whatever survives them. Track gate rejection rate per batch — a rate that falls over time means the gates are being loosened, not that generation improved.</td></tr>
+          <tr><td><strong>God Mode is unplayable rather than hard.</strong> A tier nobody can guess gets used once and abandoned.</td><td><span class="pill p-md">Med</span></td><td>Mandatory hints, half-point scoring, and the 1-of-3 playtest gate before a word ships.</td></tr>
+          <tr><td><strong>Tier drift.</strong> As the corpus grows, "hard" quietly becomes "words the author found unusual".</td><td><span class="pill p-md">Med</span></td><td>The rubric is enforced in CI: computed band must match assigned tier, or carry a logged ±1 override with justification.</td></tr>
+          <tr><td><strong>Commodity category, zero switching cost.</strong> A dozen free competitors rank ahead of you on search.</td><td><span class="pill p-md">Med</span></td><td>Compete on the two things an SEO page can't fake — durable memory and curation quality. Installed users don't re-search.</td></tr>
+          <tr><td><strong>Topical words rot.</strong> Meme-derived entries age badly and date the whole product.</td><td><span class="pill p-lo">Low</span></td><td>Volatility tag on every word; topical entries reviewed and pruned at each content release.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section id="metrics">
+    <h2>Metrics <em>13</em></h2>
+    <p class="lede">An honest complication: no backend means most of these are unmeasurable at launch.</p>
+    <p>With NFR-03 as written — nothing leaves the device — there is no analytics pipeline, and success metrics become an act of faith. That trade-off should be made deliberately rather than discovered later. Three options, in preference order:</p>
+    <ul class="body">
+      <li><strong>Recommended for V1.0 — local-only stats, surfaced to the user.</strong> The app computes its own numbers and shows them in a "your stats" view. The player gets something; the team gets nothing. Privacy stays absolute and becomes a marketing claim rather than a compromise.</li>
+      <li><strong>V1.1 if measurement matters — consent-gated aggregate ping.</strong> One anonymous, opt-in event per completed session carrying tier, draw count and app version. No word IDs, no identifiers, no timestamps finer than the day.</li>
+      <li><strong>Rejected — third-party analytics.</strong> Breaks NFR-03 and the offline guarantee, and hands the one genuinely differentiating claim to a vendor.</li>
+    </ul>
+    <div class="tw" style="margin-top:20px">
+      <table>
+        <thead><tr><th>Metric</th><th>Target</th><th>Measurable at V1.0?</th></tr></thead>
+        <tbody>
+          <tr><td>Repeat rate within a device's deck cycle</td><td class="num">0%</td><td>Yes — CI assertion, not telemetry</td></tr>
+          <tr><td>Time from landing to first word</td><td class="num">&lt; 20s</td><td>Yes — usability testing</td></tr>
+          <tr><td>Install rate after first session</td><td class="num">&gt; 25%</td><td>No — needs the V1.1 ping</td></tr>
+          <tr><td>Sessions per installed device per month</td><td class="num">&gt; 2</td><td>No — needs the V1.1 ping</td></tr>
+          <tr><td>God Mode guess rate with hint</td><td class="num">&gt; 40%</td><td>Partly — playtest panel only</td></tr>
+          <tr><td>Devices reaching tier exhaustion</td><td class="num">&lt; 5% in 6 months</td><td>No — needs the V1.1 ping</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section id="roadmap">
+    <h2>Roadmap <em>14</em></h2>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Release</th><th>Contents</th><th>Gate to ship</th></tr></thead>
+        <tbody>
+          <tr><td class="id">V0.1<br><span style="color:var(--muted)">spike</span></td><td>Memory engine only — deck, cursor, bitmap, corpus-update reshuffle. No UI beyond a draw button.</td><td>10,000-draw CI assertion passes, including across a simulated corpus release.</td></tr>
+          <tr><td class="id">V0.5<br><span style="color:var(--muted)">private beta</span></td><td>Full game loop, all four tiers at 150 words each, timer, privacy guard. Corpus pipeline running end to end. Playtested with 3 real groups.</td><td>No group reports a repeat. God Mode guessed at least once per group. Pipeline produces a clean batch without manual repair.</td></tr>
+          <tr><td class="id">V1.0<br><span style="color:var(--muted)">launch</span></td><td><strong>4,800-word corpus</strong>, PWA install, Memory Code, teams, twists, summary, accessibility pass.</td><td>All Must-priority FRs pass. WCAG 2.2 AA audit clean. Lighthouse PWA green. Corpus linter clean at full volume.</td></tr>
+          <tr><td class="id">V1.1</td><td>Custom word lists (FR-20), mixed-tier ladder (FR-19), consent-gated telemetry, stats view. Corpus to <strong>8,000</strong>.</td><td>Gate rejection rate holds steady across batches.</td></tr>
+          <tr><td class="id">V1.2</td><td>Core corpus to its <strong>13,000</strong> ceiling. Locale packs — India, then US / UK.</td><td>Each pack independently clears the 10-session bar.</td></tr>
+          <tr><td class="id">V2.0</td><td>Themed packs to the <strong>23,700</strong> ceiling: film &amp; TV, science, food, sport, music, history.</td><td>Total gzipped payload still under 300 KB; per-session download still under 100 KB.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section id="open">
+    <h2>Open questions <em>15</em></h2>
+    <p class="lede">Five calls that change the build. Worth settling before V0.1.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>#</th><th>Question</th><th>Why it matters</th><th>Lean</th></tr></thead>
+        <tbody>
+          <tr><td class="id">Q1</td><td>Is the "10 sessions" requirement satisfied by the stronger full-deck guarantee, or does it specifically need a rolling window?</td><td>Determines whether the whole engine design holds. The full-deck approach is simpler and stronger, but it is not literally what was asked for.</td><td>Full deck</td></tr>
+          <tr><td class="id">Q2</td><td>Should the Memory Code be a P0, or does install alone cover the durability need?</td><td>It is the only answer to the browser-profile problem, but it is also a feature most users will never touch. Roughly a week of work.</td><td>P0 — it is the recovery path when eviction wins</td></tr>
+          <tr><td class="id">Q3</td><td>Launch English-global only, or ship an India pack at V1.0?</td><td>Locale packs need their own 10-session sizing, so an India pack is not 50 extra words — it is a fifth corpus.</td><td>Global at V1.0</td></tr>
+          <tr><td class="id">Q4</td><td>Accept zero measurement at launch, or take the consent-gated ping into V1.0?</td><td>"We collect nothing" is the sharpest differentiator against ad-funded incumbents — and it means flying blind on every adoption metric.</td><td>Zero at V1.0; revisit at V1.1</td></tr>
+          <tr><td class="id">Q5</td><td>Is 4,800 words fundable as editorial work for V1.0?</td><td>Corpus is the critical path and the moat. Launching thin against incumbents holding 2,000+ undercuts the entire positioning — but 4,800 curated entries is a real budget line, not a weekend.</td><td>Hold at 4,800 — it is the product</td></tr>
+          <tr><td class="id">Q6</td><td>Should God Mode be allowed to stay proportionally small — roughly 12% of the corpus at the ceiling?</td><td>The only tier with a hard supply limit. Forcing parity with Easy means admitting terms that fail the Recognition axis, which converts the flagship tier from hard into obscure.</td><td>Yes — cap it and grow via packs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Drawn &amp; Quartered · PRD v1.0 draft</span>
+    <span>Sabuj · 2 Sep 2026</span>
+    <span>Corpus figures verified by simulation</span>
+  </footer>
+
+  </main>
+</div>
+</div>

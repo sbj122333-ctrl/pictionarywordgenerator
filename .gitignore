@@ -1,0 +1,18 @@
+node_modules/
+dist/
+dev-dist/
+*.local
+.DS_Store
+.vite/
+coverage/
+
+# corpus-src build artefacts
+__pycache__/
+*.pyc
+
+# NOT ignored, and must stay that way:
+#   data/ordinals.lock.json   — the frozen ordinal registry. Losing it breaks
+#                               every device's word history irrecoverably.
+#   data/words.seed.json      — corpus source of truth
+#   public/corpus/*.json      — generated, but committed so the app builds
+#                               without a Python toolchain in CI

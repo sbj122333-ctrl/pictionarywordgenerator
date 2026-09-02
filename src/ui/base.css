@@ -1,0 +1,873 @@
+/**
+ * Layout and components. DESIGN_SPEC §1, §3, §4, §5.
+ *
+ * Mobile first, two real breakpoints, and the phone and laptop treated as two
+ * designs rather than one that stretches — the phone is the device being passed
+ * to one drawer, the laptop is the shared screen the room is watching.
+ *
+ * No colour literal appears in this file. Everything comes from tokens.css.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+#app {
+  min-height: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Focus is never removed, only replaced. DESIGN_SPEC §5. */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Type ---------------------------------------------------------------- */
+
+.title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: var(--s1) 0 0;
+}
+
+.label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* --- Screen shell -------------------------------------------------------- */
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s5) var(--s4);
+  padding-bottom: max(var(--s5), env(safe-area-inset-bottom));
+  animation: screen-in var(--screen-in) var(--ease);
+}
+
+.screen--flush {
+  padding: 0;
+  animation: none;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.screen__head {
+  margin-bottom: var(--s5);
+}
+
+.screen__body {
+  flex: 1;
+}
+
+.screen__foot {
+  margin-top: var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+/* --- Buttons ------------------------------------------------------------- */
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  min-height: 48px;
+  padding: var(--s3) var(--s5);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  transition: transform 90ms ease-out;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.btn--quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink-2);
+  font-weight: 400;
+}
+
+.btn--danger {
+  border-color: var(--crit);
+  color: var(--crit);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-row {
+  display: flex;
+  gap: var(--s2);
+}
+
+.btn-row > .btn {
+  flex: 1;
+}
+
+/* --- Tier select --------------------------------------------------------- */
+
+.tiers {
+  display: grid;
+  gap: var(--s3);
+}
+
+.tier-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tier-ink);
+  border-radius: var(--radius);
+  padding: var(--s4) var(--s4) var(--s4) var(--s5);
+  cursor: pointer;
+  transition: transform 90ms ease-out;
+  touch-action: manipulation;
+}
+
+.tier-card:active {
+  transform: scale(0.99);
+}
+
+.tier-card--done {
+  opacity: 0.62;
+}
+
+.tier-card__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+}
+
+.tier-card__name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--tier-ink);
+}
+
+.tier-card__desc {
+  color: var(--ink-2);
+  margin: var(--s1) 0 var(--s3);
+}
+
+.tier-card__left {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.tier-card__left--warn {
+  color: var(--warn);
+}
+
+.tier-card__left--done {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+/* --- Cover — DESIGN_SPEC §3.3 -------------------------------------------- */
+
+.cover {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s3);
+  border: 0;
+  padding: var(--s6) var(--s5);
+  padding-bottom: max(var(--s6), env(safe-area-inset-bottom));
+  background: var(--tier-tint);
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+  /* No entry animation. A transition here reads as a reveal and makes people
+     glance up at exactly the wrong moment. */
+  animation: none;
+}
+
+.cover__mark {
+  color: var(--tier-ink);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.cover__title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.cover__hint {
+  color: var(--ink-2);
+  max-width: 22ch;
+  margin: 0;
+}
+
+.cover__meta {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: var(--s5);
+}
+
+/* --- Playing — DESIGN_SPEC §3.4 ------------------------------------------ */
+
+.play {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s4);
+  padding-bottom: max(var(--s4), env(safe-area-inset-bottom));
+}
+
+.play__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  min-height: 64px;
+}
+
+.play__tier {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tier-ink);
+}
+
+.play__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s3);
+  text-align: center;
+}
+
+.pips {
+  display: flex;
+  gap: var(--s2);
+  align-items: center;
+  justify-content: center;
+  min-height: 12px;
+}
+
+.pips__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tier-ink);
+}
+
+.pips__count {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.word {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.5rem, 11vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--tier-ink);
+  text-wrap: balance;
+  margin: 0;
+  max-width: 18ch;
+}
+
+.word--long {
+  font-size: clamp(2rem, 8vw, 3rem);
+}
+
+.play__points {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.twist {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-radius: 999px;
+  padding: var(--s1) var(--s3);
+}
+
+.hint-btn {
+  font: inherit;
+  font-size: 0.9375rem;
+  background: none;
+  border: 0;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 48px;
+  padding: 0 var(--s3);
+}
+
+.hint-text {
+  color: var(--muted);
+  font-style: italic;
+  max-width: 32ch;
+  margin: 0;
+}
+
+.outcomes {
+  display: grid;
+  gap: var(--s2);
+  margin-top: var(--s5);
+}
+
+.outcomes .btn {
+  min-height: 56px;
+}
+
+.outcomes__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s2);
+}
+
+/* --- Timer ring ---------------------------------------------------------- */
+
+.timer {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+
+.timer__ring {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.timer__track {
+  stroke: var(--line);
+}
+
+.timer__value {
+  stroke: var(--tier-ink);
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer__digits {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.timer--crit .timer__value {
+  stroke: var(--crit);
+}
+
+.timer--crit .timer__digits {
+  color: var(--crit);
+}
+
+.timer--pulse {
+  animation: pulse 200ms ease-in-out;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+/* --- Teams --------------------------------------------------------------- */
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s2);
+}
+
+.team-row__input {
+  flex: 1;
+  font: inherit;
+  min-height: 48px;
+  padding: 0 var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.icon-btn {
+  min-width: 48px;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+/* --- Summary ------------------------------------------------------------- */
+
+.stat {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0;
+}
+
+.scores {
+  list-style: none;
+  padding: 0;
+  margin: var(--s4) 0 0;
+}
+
+.scores li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.scores li:last-child {
+  border-bottom: 0;
+}
+
+.scores__winner {
+  font-weight: 600;
+}
+
+.words {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.words li {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.words__text {
+  flex: 1;
+}
+
+.words__outcome {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* Outcome is never colour alone — the dot is decoration, the word carries it. */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dot--got {
+  background: var(--ok);
+}
+
+.dot--pass {
+  background: var(--muted);
+}
+
+.dot--timeout {
+  background: var(--crit);
+}
+
+/* --- Cards, banners, rows ------------------------------------------------ */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--s4);
+}
+
+.banner {
+  background: var(--warn-soft);
+  border: 1px solid var(--warn);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  margin-bottom: var(--s4);
+}
+
+.banner__title {
+  font-weight: 600;
+  margin: 0 0 var(--s1);
+}
+
+.banner p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding: var(--s4) 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.row:last-of-type {
+  border-bottom: 0;
+}
+
+.row__label {
+  font-weight: 500;
+}
+
+.row__note {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: var(--s1) 0 0;
+}
+
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex: none;
+}
+
+.seg button {
+  font: inherit;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 0 var(--s3);
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.seg button:first-child {
+  border-left: 0;
+}
+
+.seg button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.code {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  width: 100%;
+  min-height: 88px;
+  padding: var(--s3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  resize: vertical;
+  word-break: break-all;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--crit);
+  font-size: 0.875rem;
+  margin: var(--s2) 0 0;
+}
+
+.keys {
+  display: none;
+  gap: var(--s3);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  justify-content: center;
+  margin-top: var(--s4);
+}
+
+kbd {
+  font-family: var(--mono);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* --- Laptop, >= 768px ---------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .screen {
+    padding: var(--s7) var(--s5);
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Repeated inside the breakpoint on purpose. The rule above has the same
+     specificity and comes later in the cascade, so without this the cover
+     screen gets a 720px column and 48px of padding — and the cover has to be
+     the whole viewport at every size, because the whole viewport is the tap
+     target. DESIGN_SPEC §3.3. */
+  .screen--flush {
+    padding: 0;
+    max-width: none;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  body {
+    font-size: 1.0625rem;
+  }
+
+  .label {
+    font-size: 0.8125rem;
+  }
+
+  /* Four tiers means 2x2. Never a 3-wide row with an orphan cell. */
+  .tiers {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s4);
+  }
+
+  .screen__foot {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .screen__foot .btn {
+    flex: none;
+    min-width: 180px;
+  }
+
+  .play {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    padding: var(--s6) var(--s5);
+  }
+
+  .word {
+    font-size: clamp(4rem, 7vw, 7rem);
+    max-width: 14ch;
+  }
+
+  .word--long {
+    font-size: clamp(3rem, 5vw, 5rem);
+  }
+
+  /* The ring sits above the word on the shared screen, not in a corner. */
+  .play__head {
+    flex-direction: column;
+    gap: var(--s2);
+  }
+
+  .timer {
+    width: 96px;
+    height: 96px;
+  }
+
+  .timer__digits {
+    font-size: 1.5rem;
+  }
+
+  .outcomes {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 560px;
+    margin-inline: auto;
+  }
+
+  .outcomes .btn {
+    min-height: 48px;
+  }
+
+  .outcomes__split {
+    display: contents;
+  }
+
+  .summary--wide {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s6);
+    align-items: start;
+  }
+
+  .keys {
+    display: flex;
+  }
+}
+
+/* Pointer-coarse devices never show the keyboard hints, whatever the width. */
+@media (pointer: coarse) {
+  .keys {
+    display: none;
+  }
+}
+
+/* --- Landscape phone ----------------------------------------------------- */
+/* Not designed for, but it must not break. DESIGN_SPEC §1. */
+
+@media (max-height: 480px) {
+  .word {
+    font-size: clamp(1.75rem, 7vw, 2.5rem);
+  }
+
+  .timer {
+    width: auto;
+    height: auto;
+  }
+
+  .timer__ring {
+    display: none;
+  }
+
+  .play,
+  .screen {
+    padding-block: var(--s3);
+  }
+
+  .outcomes {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: var(--s3);
+  }
+
+  .outcomes__split {
+    display: contents;
+  }
+
+  .cover__title {
+    font-size: 1.5rem;
+  }
+}
+
+/* --- Reduced motion ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn:active,
+  .tier-card:active {
+    transform: none;
+  }
+}

@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# The gates from TECHNICAL_SPEC §8.4, in the order that fails cheapest first:
+# corpus gates before lint, lint before a build, the 10,000-draw property tests
+# last. A corpus that does not validate makes everything after it meaningless.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      # The corpus pipeline is Python; the app does not need it, but the gates do.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: npm ci
+
+      - name: Corpus gates
+        run: npm run corpus:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck and build
+        run: npm run build
+
+      - name: Unit and integration tests
+        run: npm test
+
+      - name: Property tests — the no-repeat guarantee
+        run: npm run test:property
+
+      - name: Payload budget
+        run: npm run size
+
+      # Generated artefacts are committed so the app builds without a Python
+      # toolchain. If a build changes them, the commit was incomplete.
+      - name: No uncommitted generated files
+        run: git diff --exit-code -- public/corpus data
