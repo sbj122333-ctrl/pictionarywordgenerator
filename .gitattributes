@@ -1,0 +1,10 @@
+# Normalise to LF in the repository and on checkout.
+#
+# Generated artefacts are committed and CI asserts they are unchanged after a
+# rebuild (`git diff --exit-code -- public/corpus data`). If Windows checked
+# them out as CRLF, that assertion would fail on every Windows clone for a
+# reason that has nothing to do with the corpus.
+* text=auto eol=lf
+
+# Binary — never touch these.
+*.png binary
