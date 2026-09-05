@@ -9,8 +9,15 @@
  * There is exactly one persisted key (`dq.v1`) holding exactly one shape.
  * Anything else in localStorage is a bug.
  */
-import type { DeviceMemory, SessionRecord, StorageAdapter, Tier, TierMemory } from './types';
-import { TIERS, defaultSettings } from './types';
+import type {
+  DeckId,
+  DeviceMemory,
+  PlayableDeck,
+  SessionRecord,
+  StorageAdapter,
+  TierMemory,
+} from './types';
+import { DECKS, PLAYABLE_DECKS, defaultSettings } from './types';
 import { freshSeed } from './random';
 
 export function createTierMemory(): TierMemory {
@@ -18,8 +25,8 @@ export function createTierMemory(): TierMemory {
 }
 
 export function createDeviceMemory(corpusVersion: string): DeviceMemory {
-  const tiers = {} as Record<Tier, TierMemory>;
-  for (const tier of TIERS) tiers[tier] = createTierMemory();
+  const tiers = {} as Record<DeckId, TierMemory>;
+  for (const deck of DECKS) tiers[deck] = createTierMemory();
   return {
     v: 1,
     corpusVersion,
@@ -54,7 +61,10 @@ function readTierMemory(v: unknown): TierMemory {
   };
 }
 
-const TIER_SET = new Set<string>(TIERS);
+// Sessions are recorded against a PLAYABLE deck, which includes `mixed`. A
+// stored session naming a deck this build does not know is dropped rather than
+// rendered as "undefined" in front of a room.
+const DECK_SET = new Set<string>(PLAYABLE_DECKS);
 
 /**
  * A stored session is only worth keeping if it is whole — the summary screen
@@ -65,12 +75,12 @@ function readSessionRecord(v: unknown): SessionRecord | null {
   if (!isObject(v)) return null;
   const { at, tier, ords, hits, teams } = v;
   if (typeof at !== 'number') return null;
-  if (typeof tier !== 'string' || !TIER_SET.has(tier)) return null;
+  if (typeof tier !== 'string' || !DECK_SET.has(tier)) return null;
   if (!Array.isArray(ords) || typeof hits !== 'number') return null;
 
   const record: SessionRecord = {
     at,
-    tier: tier as Tier,
+    tier: tier as PlayableDeck,
     ords: ords.filter((n): n is number => typeof n === 'number'),
     hits,
   };
@@ -101,9 +111,12 @@ export function parseDeviceMemory(raw: string | null, corpusVersion: string): De
   if (!isObject(json) || json['v'] !== 1) return null;
 
   const base = createDeviceMemory(corpusVersion);
-  const tiers = {} as Record<Tier, TierMemory>;
+  // Decks absent from an older record read as a fresh TierMemory, which is the
+  // whole of the migration that added the two film decks: no schema bump, and
+  // nothing already stored changes meaning.
+  const tiers = {} as Record<DeckId, TierMemory>;
   const storedTiers = isObject(json['tiers']) ? json['tiers'] : {};
-  for (const tier of TIERS) tiers[tier] = readTierMemory(storedTiers[tier]);
+  for (const deck of DECKS) tiers[deck] = readTierMemory(storedTiers[deck]);
 
   const storedSettings = isObject(json['settings']) ? json['settings'] : {};
   const timer = storedSettings['timerSeconds'];

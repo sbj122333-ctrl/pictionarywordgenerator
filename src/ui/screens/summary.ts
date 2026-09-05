@@ -1,14 +1,14 @@
 /**
  * Summary. DESIGN_SPEC §3.5.
  *
- * The full word list is here so the room can relitigate the round that was
- * robbed. That is the actual use, and it is why every word carries its outcome
- * as text as well as a dot — colour alone would put the argument out of reach of
- * anyone who cannot see the difference between the green one and the red one.
+ * The full list is here so the room can relitigate the round that was robbed.
+ * That is the actual use, and it is why every entry carries its outcome as text
+ * as well as a dot — colour alone would put the argument out of reach of anyone
+ * who cannot see the difference between the green one and the red one.
  */
 import type { Outcome, Round, Team } from '../../state/session';
-import { TIER_LABELS } from '../../engine/types';
-import type { Tier } from '../../engine/types';
+import type { PlayableDeck } from '../../engine/types';
+import { DECK_LABELS } from '../../engine/types';
 import { el } from '../dom';
 
 const OUTCOME_LABEL: Readonly<Record<Outcome, string>> = {
@@ -18,29 +18,31 @@ const OUTCOME_LABEL: Readonly<Record<Outcome, string>> = {
 };
 
 export interface SummaryProps {
-  tier: Tier;
+  deck: PlayableDeck;
   rounds: readonly Round[];
   teams: readonly Team[];
   winner: Team | null;
   drawn: boolean;
   installCard: HTMLElement | null;
   onPlayAgain: () => void;
-  onChangeTier: () => void;
+  onChangeDeck: () => void;
 }
 
 export function summaryScreen(props: SummaryProps): HTMLElement {
   const played = props.rounds.length;
   const hits = props.rounds.filter((r) => r.outcome === 'got').length;
   const rate = played === 0 ? 0 : Math.round((hits / played) * 100);
+  const labels = DECK_LABELS[props.deck];
+  const heading = `${labels.unit.many.charAt(0).toUpperCase()}${labels.unit.many.slice(1)}`;
 
   const stats = el(
     'div',
     {},
-    el('p', { class: 'label', text: `${TIER_LABELS[props.tier].name} · session` }),
+    el('p', { class: 'label', text: `${labels.name} · session` }),
     el('p', { class: 'stat', text: `${hits}/${played}` }),
     el('p', {
       class: 'subtitle',
-      text: played === 0 ? 'No words played.' : `${rate}% guessed`,
+      text: played === 0 ? `No ${labels.unit.many} played.` : `${rate}% guessed`,
     }),
     props.teams.length > 0 ? scoreboard(props) : null,
     props.installCard,
@@ -49,9 +51,9 @@ export function summaryScreen(props: SummaryProps): HTMLElement {
   const list = el(
     'div',
     {},
-    el('p', { class: 'label', text: 'Words' }),
+    el('p', { class: 'label', text: heading }),
     played === 0
-      ? el('p', { class: 'note', text: 'Nothing drawn this session.' })
+      ? el('p', { class: 'note', text: `Nothing played this session.` })
       : el(
           'ul',
           { class: 'words' },
@@ -86,8 +88,8 @@ export function summaryScreen(props: SummaryProps): HTMLElement {
       ),
       el(
         'button',
-        { class: 'btn', type: 'button', on: { click: props.onChangeTier } },
-        'Change tier',
+        { class: 'btn', type: 'button', on: { click: props.onChangeDeck } },
+        'Change deck',
       ),
     ),
   );
@@ -144,7 +146,7 @@ export function installCard(options: {
       })
     : el('p', {
         class: 'row__note',
-        text: 'Browsers clear site data after a week or two of not visiting. Installing is what keeps your word history.',
+        text: 'Browsers clear site data after a week or two of not visiting. Installing is what keeps your history.',
       });
 
   const actions = el(
@@ -167,7 +169,7 @@ export function installCard(options: {
   return el(
     'div',
     { class: 'card', style: 'margin-top: var(--s5)' },
-    el('p', { class: 'banner__title', text: 'Keep your word history' }),
+    el('p', { class: 'banner__title', text: 'Keep your history' }),
     body,
     actions,
   );

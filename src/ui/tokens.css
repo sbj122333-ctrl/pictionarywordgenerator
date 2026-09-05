@@ -29,6 +29,20 @@
   --t-god: #8e2a6b;
   --t-god-soft: #f7e6f1;
 
+  /* film decks — Dumb Charades. Same marker family, three inks that do not
+     read as any of the four tiers above. */
+  --t-hindi: #b03f2f;
+  --t-hindi-soft: #f9e7e3;
+  --t-english: #0f6f78;
+  --t-english-soft: #dff0f1;
+  --t-mixed: #6a4bb5;
+  --t-mixed-soft: #ece6f8;
+
+  /* game inks — aliases, so the game cards follow their decks into dark mode
+     without a second set of values to keep in step. */
+  --g-pictionary: var(--t-moderate);
+  --g-charades: var(--t-hindi);
+
   /* semantic — separate from tier colour, never reused as accent */
   --ok: #1f8a54;
   --warn: #b4761a;
@@ -79,6 +93,12 @@
     --t-hard-soft: #2e1e14;
     --t-god: #d471ac;
     --t-god-soft: #2b1626;
+    --t-hindi: #f0857a;
+    --t-hindi-soft: #2e1a17;
+    --t-english: #45bfc9;
+    --t-english-soft: #10262a;
+    --t-mixed: #a48cf0;
+    --t-mixed-soft: #201a33;
     --ok: #4fc08a;
     --warn: #dba24a;
     --warn-soft: #2c2313;
@@ -105,6 +125,12 @@
   --t-hard-soft: #2e1e14;
   --t-god: #d471ac;
   --t-god-soft: #2b1626;
+  --t-hindi: #f0857a;
+  --t-hindi-soft: #2e1a17;
+  --t-english: #45bfc9;
+  --t-english-soft: #10262a;
+  --t-mixed: #a48cf0;
+  --t-mixed-soft: #201a33;
   --ok: #4fc08a;
   --warn: #dba24a;
   --warn-soft: #2c2313;
@@ -119,6 +145,9 @@
     --t-moderate-soft: transparent;
     --t-hard-soft: transparent;
     --t-god-soft: transparent;
+    --t-hindi-soft: transparent;
+    --t-english-soft: transparent;
+    --t-mixed-soft: transparent;
     --line: var(--ink);
   }
 }

@@ -3,14 +3,17 @@
  * Back-button routing.
  *
  * The bug this suite exists to prevent: back closed the app from every screen,
- * not just from tier select. `go()` pushed a history entry only when the
- * *current* view was `tiers`, and `startGame()` switches to `loading` before it
- * navigates — so the game screen was entered with no entry of its own, and the
- * hardware back button on Android sailed straight past the app mid-round.
+ * not just from the front one. `go()` pushed a history entry only when the
+ * *current* view was the deck list, and `startGame()` switches to `loading`
+ * before it navigates — so the game screen was entered with no entry of its own,
+ * and the hardware back button on Android sailed straight past the app
+ * mid-round.
  *
- * The rule now: every screen but tier select owns a history entry, so back is
- * always "the previous screen", and only at tier select — where the app has no
- * entry left to pop — does it leave.
+ * The rule now: every screen but the game picker owns a history entry, so back
+ * is always "the previous screen", and only at home — where the app has no entry
+ * left to pop — does it leave. Adding Dumb Charades put a screen in front of the
+ * deck list, which makes that rule load-bearing one level deeper: home → decks →
+ * game has to unwind one screen at a time.
  *
  * jsdom runs history traversals asynchronously, hence `popped()` rather than a
  * bare call to `history.back()`.
@@ -18,7 +21,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { App } from '../../src/ui/app';
 import { resetCorpusCache } from '../../src/state/corpus';
-import { TIERS } from '../../src/engine/types';
+import { DECKS } from '../../src/engine/types';
 
 const WORDS = Array.from({ length: 12 }, (_, i) => ({
   o: i,
@@ -30,13 +33,13 @@ const WORDS = Array.from({ length: 12 }, (_, i) => ({
 const manifest = {
   corpusVersion: 'test.1',
   tiers: Object.fromEntries(
-    TIERS.map((tier) => [tier, { count: WORDS.length, maxOrd: WORDS.length - 1, points: 2 }]),
+    DECKS.map((deck) => [deck, { count: WORDS.length, maxOrd: WORDS.length - 1, points: 2 }]),
   ),
 };
 
-const bundleFor = (tier: string): unknown => ({
+const bundleFor = (deck: string): unknown => ({
   corpusVersion: 'test.1',
-  tier,
+  tier: deck,
   points: 2,
   count: WORDS.length,
   maxOrd: WORDS.length - 1,
@@ -88,55 +91,82 @@ afterEach(() => {
 const viewName = (): string | undefined =>
   (history.state as { view?: { name?: string } } | null)?.view?.name;
 
-const startEasy = (): void => {
+/** Index 0 is Pictionary, index 1 is Dumb Charades — GAMES order. */
+const openGame = (index: number): void => {
+  root.querySelectorAll<HTMLButtonElement>('.game-card')[index]?.click();
+};
+
+const startFirstDeck = (): void => {
+  openGame(0);
   root.querySelectorAll<HTMLButtonElement>('.tier-card')[0]?.click();
 };
 
+const footButton = (label: string): HTMLButtonElement | undefined =>
+  [...root.querySelectorAll<HTMLButtonElement>('.screen__foot .btn')].find((b) =>
+    b.textContent?.includes(label),
+  );
+
 describe('history', () => {
-  it('lands on tier select with an entry of its own', () => {
-    expect(root.querySelector('.tiers')).not.toBeNull();
-    expect(viewName()).toBe('tiers');
+  it('lands on the game picker with an entry of its own', () => {
+    expect(root.querySelector('.games')).not.toBeNull();
+    expect(root.querySelectorAll('.game-card')).toHaveLength(2);
+    expect(viewName()).toBe('home');
+  });
+
+  it('opens a deck list per game — four tiers, three film decks', async () => {
+    openGame(0);
+    expect(root.querySelectorAll('.tier-card')).toHaveLength(4);
+    expect(viewName()).toBe('decks');
+
+    await popped(() => footButton('All games')?.click());
+    openGame(1);
+    expect(root.querySelectorAll('.tier-card')).toHaveLength(3);
+  });
+
+  it('returns to the game picker from a deck list', async () => {
+    openGame(1);
+    expect(root.querySelector('.games')).toBeNull();
+
+    await popped(() => history.back());
+    expect(root.querySelector('.games')).not.toBeNull();
+    expect(viewName()).toBe('home');
   });
 
   it('gives the game screen a history entry — the bug that closed the app', async () => {
-    startEasy();
+    startFirstDeck();
     await vi.waitFor(() => expect(root.querySelector('.play')).not.toBeNull());
     expect(viewName()).toBe('game');
   });
 
-  it('returns to tier select from the game instead of leaving the app', async () => {
-    startEasy();
+  it('returns to the deck list from the game instead of leaving the app', async () => {
+    startFirstDeck();
     await vi.waitFor(() => expect(root.querySelector('.play')).not.toBeNull());
 
     await popped(() => history.back());
 
     expect(root.querySelector('.tiers')).not.toBeNull();
     expect(root.querySelector('.play')).toBeNull();
-    expect(viewName()).toBe('tiers');
+    expect(viewName()).toBe('decks');
   });
 
-  it('returns to tier select from settings and from team setup', async () => {
+  it('returns to the deck list from settings and from team setup', async () => {
+    openGame(0);
     for (const label of ['Settings', 'Add teams']) {
-      const button = [...root.querySelectorAll<HTMLButtonElement>('.screen__foot .btn')].find((b) =>
-        b.textContent?.includes(label),
-      );
-      button?.click();
+      footButton(label)?.click();
       expect(root.querySelector('.tiers')).toBeNull();
 
       await popped(() => history.back());
       expect(root.querySelector('.tiers'), label).not.toBeNull();
-      expect(viewName()).toBe('tiers');
+      expect(viewName()).toBe('decks');
     }
   });
 
-  it('keeps one entry per visit, so one back always reaches tier select', async () => {
+  it('keeps one entry per visit, so one back always reaches the deck list', async () => {
     // An in-app Back button must spend the entry it arrived on rather than
     // stacking a second one — otherwise the hardware button appears to do
     // nothing the first time it is pressed.
-    const settings = [...root.querySelectorAll<HTMLButtonElement>('.screen__foot .btn')].find((b) =>
-      b.textContent?.includes('Settings'),
-    );
-    settings?.click();
+    openGame(0);
+    footButton('Settings')?.click();
 
     const done = [...root.querySelectorAll<HTMLButtonElement>('.screen__foot .btn')].find((b) =>
       b.textContent?.trim().startsWith('Done'),
@@ -145,20 +175,26 @@ describe('history', () => {
 
     await popped(() => done?.click());
     expect(root.querySelector('.tiers')).not.toBeNull();
-    expect(viewName()).toBe('tiers');
+    expect(viewName()).toBe('decks');
   });
 
   it('abandons an unfinished game on the way out, leaving drawn words burned', async () => {
-    startEasy();
+    startFirstDeck();
     await vi.waitFor(() => expect(root.querySelector('.play')).not.toBeNull());
 
-    const before = root.querySelector('.tier-card__left')?.textContent;
     await popped(() => history.back());
-    const after = root.querySelector('.tier-card__left')?.textContent;
 
     // One word was revealed, so one word is gone — leaving mid-round does not
     // hand it back.
-    expect(after).not.toBe(before);
+    const after = root.querySelector('.tier-card__left')?.textContent;
     expect(after).toContain(`${WORDS.length - 1} words left`);
+  });
+
+  it('counts the mixed deck as both film decks together', () => {
+    openGame(1);
+    const counts = [...root.querySelectorAll('.tier-card__left')].map((n) => n.textContent);
+    expect(counts[0]).toContain(`${WORDS.length} films left`);
+    expect(counts[1]).toContain(`${WORDS.length} films left`);
+    expect(counts[2]).toContain(`${WORDS.length * 2} films left`);
   });
 });

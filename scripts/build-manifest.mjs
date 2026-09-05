@@ -1,52 +1,57 @@
 #!/usr/bin/env node
 /**
- * Emits public/corpus/manifest.json from the tier bundles.
+ * Emits public/corpus/manifest.json from the deck bundles.
  *
- * The tier-select screen shows words-remaining for all four tiers on first
- * load, but bundles are fetched lazily — one tier, only when a game starts.
- * Both hold because `remaining` needs only the seen-bitmap and a total, and the
- * totals fit in a couple of hundred bytes.
+ * The deck-select screen shows how much is left in every deck on first load,
+ * but bundles are fetched lazily — one deck, only when a game starts. Both hold
+ * because `remaining` needs only the seen-bitmap and a total, and the totals fit
+ * in a couple of hundred bytes.
+ *
+ * Six decks now: four Pictionary tiers and two Dumb Charades film decks. Mixed
+ * is deliberately absent — it is not a deck, it deals alternately from the two
+ * film decks and shares their bitmaps, so it has no corpus and no total of its
+ * own. Giving it one would be the first step towards a film that can be served
+ * twice.
  *
  * Derived entirely from the generated bundles, so it cannot drift from them.
  * Regenerate whenever the corpus is rebuilt; `npm run corpus` and `npm run
  * build` both do.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const TIERS = ['easy', 'moderate', 'hard', 'god'];
+const DECKS = ['easy', 'moderate', 'hard', 'god', 'hindi', 'english'];
 const DIR = join('public', 'corpus');
-const CHECK = process.argv.includes('--check');
 
 const tiers = {};
 let corpusVersion = null;
 
-for (const tier of TIERS) {
-  const path = join(DIR, `${tier}.json`);
+for (const deck of DECKS) {
+  const path = join(DIR, `${deck}.json`);
   const bundle = JSON.parse(readFileSync(path, 'utf8'));
 
   if (corpusVersion === null) corpusVersion = bundle.corpusVersion;
   if (bundle.corpusVersion !== corpusVersion) {
     console.error(
-      `  FAIL: ${tier}.json is corpus ${bundle.corpusVersion}, expected ${corpusVersion}.\n` +
-        '  Mixed corpus versions would reconcile some tiers and not others.\n',
+      `  FAIL: ${deck}.json is corpus ${bundle.corpusVersion}, expected ${corpusVersion}.\n` +
+        '  Mixed corpus versions would reconcile some decks and not others.\n',
     );
     process.exit(1);
   }
   if (bundle.count !== bundle.words.length) {
-    console.error(`  FAIL: ${tier}.json says count ${bundle.count} but holds ${bundle.words.length}.\n`);
+    console.error(`  FAIL: ${deck}.json says count ${bundle.count} but holds ${bundle.words.length}.\n`);
     process.exit(1);
   }
 
-  tiers[tier] = { count: bundle.count, maxOrd: bundle.maxOrd, points: bundle.points };
+  tiers[deck] = { count: bundle.count, maxOrd: bundle.maxOrd, points: bundle.points };
 }
 
 const manifest = { corpusVersion, tiers };
 writeFileSync(join(DIR, 'manifest.json'), `${JSON.stringify(manifest)}\n`);
 
-const total = TIERS.reduce((n, t) => n + tiers[t].count, 0);
-console.log(`\n  corpus ${corpusVersion} — ${total} words`);
-for (const tier of TIERS) {
-  console.log(`    ${tier.padEnd(9)} ${String(tiers[tier].count).padStart(5)}`);
+const total = DECKS.reduce((n, d) => n + tiers[d].count, 0);
+console.log(`\n  corpus ${corpusVersion} — ${total} entries`);
+for (const deck of DECKS) {
+  console.log(`    ${deck.padEnd(9)} ${String(tiers[deck].count).padStart(5)}`);
 }
 console.log('');

@@ -1,14 +1,14 @@
 /**
  * Settings and Memory Code. DESIGN_SPEC §3.6.
  *
- * The Word history section says out loud that history is per-browser and that
+ * The history section says out loud that history is per-browser and that
  * clearing site data destroys it. That is not a disclaimer bolted on for
  * safety — a product whose whole claim is "it remembers" has to be exact about
  * where the memory lives, or the first time it is lost the claim looks like
  * marketing.
  */
-import type { Settings, Theme, Tier } from '../../engine/types';
-import { TIERS } from '../../engine/types';
+import type { DeckId, Settings, Theme } from '../../engine/types';
+import { DECKS } from '../../engine/types';
 import { el } from '../dom';
 
 export interface SettingsProps {
@@ -16,7 +16,7 @@ export interface SettingsProps {
   theme: Theme;
   degraded: boolean;
   memoryCode: string;
-  tierStatus: Readonly<Record<Tier, { remaining: number; total: number; cycles: number }>>;
+  deckStatus: Readonly<Record<DeckId, { remaining: number; total: number; cycles: number }>>;
   onSettings: (patch: Partial<Settings>) => void;
   onTheme: (theme: Theme) => void;
   onImport: (code: string) => Promise<string | null>;
@@ -38,7 +38,7 @@ export function settingsScreen(props: SettingsProps): HTMLElement {
 
   const twistsRow = toggle(
     'Twists',
-    'Occasional constraints — “non-dominant hand”. Off by default.',
+    'Occasional constraints — “non-dominant hand” drawing, “stay seated” acting. Off by default.',
     props.settings.twists,
     (on) => props.onSettings({ twists: on }),
   );
@@ -71,7 +71,7 @@ export function settingsScreen(props: SettingsProps): HTMLElement {
             { class: 'banner' },
             el('p', { class: 'banner__title', text: 'Memory is session-only' }),
             el('p', {
-              text: 'This browser is refusing to store data — private browsing usually does. Words played now will come back next time.',
+              text: 'This browser is refusing to store data — private browsing usually does. Anything played now will come back next time.',
             }),
           )
         : null,
@@ -90,8 +90,8 @@ export function settingsScreen(props: SettingsProps): HTMLElement {
 }
 
 function historySection(props: SettingsProps): HTMLElement {
-  const played = TIERS.reduce(
-    (total, tier) => total + (props.tierStatus[tier].total - props.tierStatus[tier].remaining),
+  const played = DECKS.reduce(
+    (total, deck) => total + (props.deckStatus[deck].total - props.deckStatus[deck].remaining),
     0,
   );
 
@@ -164,7 +164,7 @@ function historySection(props: SettingsProps): HTMLElement {
   return el(
     'section',
     { style: 'margin-top: var(--s6)' },
-    el('p', { class: 'label', text: 'Word history' }),
+    el('p', { class: 'label', text: 'History' }),
     el('p', {
       class: 'row__note',
       text: 'Your history lives in this browser only. Another browser on this device keeps its own. If you clear your browsing data, it goes. Copy this code to move or restore it.',
@@ -172,7 +172,7 @@ function historySection(props: SettingsProps): HTMLElement {
     el('p', {
       class: 'note',
       style: 'margin-top: var(--s3)',
-      text: historySummary(played, touchedTiers(props)),
+      text: historySummary(played, touchedDecks(props)),
     }),
     field,
     el('div', { class: 'btn-row', style: 'margin-top: var(--s2)' }, copy),
@@ -183,16 +183,16 @@ function historySection(props: SettingsProps): HTMLElement {
   );
 }
 
-function touchedTiers(props: SettingsProps): number {
-  return TIERS.filter((t) => props.tierStatus[t].total > props.tierStatus[t].remaining).length;
+function touchedDecks(props: SettingsProps): number {
+  return DECKS.filter((d) => props.deckStatus[d].total > props.deckStatus[d].remaining).length;
 }
 
-/** Exported for the unit test — "1 tiers" is the kind of thing nobody re-reads. */
-export function historySummary(words: number, tiers: number): string {
+/** Exported for the unit test — "1 decks" is the kind of thing nobody re-reads. */
+export function historySummary(words: number, decks: number): string {
   if (words === 0) return 'Nothing played yet on this browser.';
-  const w = `${words.toLocaleString('en-GB')} ${words === 1 ? 'word' : 'words'}`;
-  const t = `${tiers} ${tiers === 1 ? 'tier' : 'tiers'}`;
-  return `${w} played across ${t}.`;
+  const w = `${words.toLocaleString('en-GB')} ${words === 1 ? 'entry' : 'entries'}`;
+  const d = `${decks} ${decks === 1 ? 'deck' : 'decks'}`;
+  return `${w} played across ${d}.`;
 }
 
 function segmented<T>(

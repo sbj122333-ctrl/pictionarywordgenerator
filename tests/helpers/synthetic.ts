@@ -5,13 +5,13 @@
  * corpus, so they can exercise launch-scale volumes (10,000 words) instead of
  * the 1,100 that happen to exist today. TECHNICAL_SPEC §8.1.
  */
-import type { PackedWord, RuntimeBundle, Tier } from '../../src/engine/types';
+import type { DeckId, PackedWord, RuntimeBundle } from '../../src/engine/types';
 
 export function syntheticBundle(
   count: number,
   categories = 12,
   startOrd = 0,
-  tier: Tier = 'easy',
+  tier: DeckId = 'easy',
 ): RuntimeBundle {
   const words: PackedWord[] = [];
   for (let i = 0; i < count; i += 1) {

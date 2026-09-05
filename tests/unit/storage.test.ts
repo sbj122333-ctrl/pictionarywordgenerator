@@ -140,7 +140,14 @@ describe('parseDeviceMemory', () => {
     const parsed = parseDeviceMemory('{"v":1}', '2026.09.1');
     expect(parsed).not.toBeNull();
     expect(parsed!.corpusVersion).toBe('2026.09.1');
-    expect(Object.keys(parsed!.tiers).sort()).toEqual(['easy', 'god', 'hard', 'moderate']);
+    expect(Object.keys(parsed!.tiers).sort()).toEqual([
+      'easy',
+      'english',
+      'god',
+      'hard',
+      'hindi',
+      'moderate',
+    ]);
     expect(parsed!.settings.timerSeconds).toBe(90);
     expect(parsed!.recent).toEqual([]);
   });

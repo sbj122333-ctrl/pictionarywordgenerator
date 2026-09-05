@@ -73,6 +73,15 @@ Defined once in `src/ui/tokens.css`. No colour literal appears anywhere else.
   --t-hard:     #C2521C;  --t-hard-soft:     #FAEBE1;
   --t-god:      #8E2A6B;  --t-god-soft:      #F7E6F1;
 
+  /* film decks — Dumb Charades */
+  --t-hindi:    #B03F2F;  --t-hindi-soft:    #F9E7E3;
+  --t-english:  #0F6F78;  --t-english-soft:  #DFF0F1;
+  --t-mixed:    #6A4BB5;  --t-mixed-soft:    #ECE6F8;
+
+  /* game inks — aliases, so the game cards follow their decks into dark mode */
+  --g-pictionary: var(--t-moderate);
+  --g-charades:   var(--t-hindi);
+
   /* semantic — separate from tier colour, never reused as accent */
   --ok:   #1F8A54;
   --warn: #B4761A;
@@ -124,16 +133,53 @@ sits inside a media query renders one theme's text on the other theme's ground.
 
 ## 3. Screens
 
-Six screens. Each is specified at both sizes.
+Eight screens. Each is specified at both sizes.
 
-### 3.1 Tier select — the landing screen
+### 3.0 Game select — the landing screen
 
-The whole product in one view. No splash, no onboarding, no cookie banner.
+Two cards. No splash, no onboarding, no cookie banner.
 
-**Content per tier card:** tier name (Doodle / Sketch / Cryptic / God Mode),
-plain-English difficulty label, one-line character description, and **words
-remaining** — the remaining count is the product's differentiator, so it is on
-the surface from the first second, not buried in a settings screen.
+**Content per game card:** game name, the verb (Draw it / Act it out), a
+one-line description, and the entries remaining across that game's decks — the
+same evidence-on-the-surface rule as the deck cards below.
+
+```
+PHONE (<768px)                    LAPTOP (>=768px)
+┌─────────────────────┐           ┌───────────────────────────────────┐
+│ Drawn & Quartered   │           │        Drawn & Quartered          │
+│ Pick a game         │           │           Pick a game             │
+│                     │           │                                   │
+│ ┌─────────────────┐ │           │  ┌─────────────┐ ┌─────────────┐  │
+│ │▌Pictionary      │ │           │  │▌Pictionary  │ │▌Dumb        │  │
+│ │        Draw it  │ │           │  │    Draw it  │ │  Charades   │  │
+│ │ Four tiers...   │ │           │  │ Four tiers  │ │ Act it out  │  │
+│ │ 3,977 words left│ │           │  │ 3,977 left  │ │ 857 left    │  │
+│ └─────────────────┘ │           │  └─────────────┘ └─────────────┘  │
+│ ┌─────────────────┐ │           │                                   │
+│ │▌Dumb Charades   │ │           │            ⚙ Settings             │
+│ └─────────────────┘ │           └───────────────────────────────────┘
+│ ⚙ Settings          │
+└─────────────────────┘
+```
+
+This screen costs one tap on the way to a Pictionary game that used to start
+from the front door. A segmented control at the top of the deck list would have
+saved the tap and left the app unable to say what it now is: two games that
+share a memory.
+
+### 3.1 Deck select
+
+The whole of one game in one view, serving both — four difficulty tiers for
+Pictionary, three film decks for Dumb Charades. The card is the same object
+either way, because the thing it shows is the same thing: a deck, how much of it
+is left, and whether you have finished it.
+
+**Content per card:** deck name (Doodle / Sketch / Cryptic / God Mode, or
+Bollywood / Hollywood / Mixed Bag), a plain-English detail label, a one-line
+description, and **entries remaining** — the remaining count is the product's
+differentiator, so it is on the surface from the first second, not buried in a
+settings screen. The unit follows the game: Pictionary counts words, charades
+counts films.
 
 ```
 PHONE (<768px)                    LAPTOP (>=768px)
@@ -157,10 +203,12 @@ PHONE (<768px)                    LAPTOP (>=768px)
 
 - Phone: single column, cards stack, full width, 12px gap.
 - Laptop: 2×2 grid, max 720px, centred. **Four items means 2×2** — never a
-  3-wide row with an orphan.
+  3-wide row with an orphan. The three charades decks go 1×3 for the same
+  reason (`.tiers--3`), never 2 + an orphan.
 - `▌` is a 4px left rule in the tier ink. Tier is never conveyed by colour alone;
   the name and the label carry it (NFR-04).
 - At ≥90% depletion the count turns `--warn` and reads "42 left".
+- Footer carries Teams, Settings and "All games"; back from here reaches §3.0.
 - Exhausted tier: card dims, count reads "Deck complete", tapping opens the
   recycle screen rather than a game.
 

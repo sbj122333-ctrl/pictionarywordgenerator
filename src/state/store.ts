@@ -4,8 +4,8 @@
  * One record, one key, one migration path. The store owns it; nothing else
  * writes storage.
  */
-import type { DeviceMemory, SessionRecord, Settings, Theme, Tier, TierMemory } from '../engine/types';
-import { RECENT_WINDOW, TIERS } from '../engine/types';
+import type { DeckId, DeviceMemory, SessionRecord, Settings, Theme, TierMemory } from '../engine/types';
+import { DECKS, RECENT_WINDOW } from '../engine/types';
 import { createDeviceMemory } from '../engine/storage';
 import { reconcileWithMaxOrd } from '../engine/deck';
 import type { CorpusManifest } from './corpus';
@@ -37,12 +37,12 @@ export class AppStore {
     this.save();
   }
 
-  tierMemory(tier: Tier): TierMemory {
-    return this.memory.tiers[tier];
+  tierMemory(deck: DeckId): TierMemory {
+    return this.memory.tiers[deck];
   }
 
-  setTierMemory(tier: Tier, next: TierMemory): void {
-    this.memory.tiers[tier] = next;
+  setTierMemory(deck: DeckId, next: TierMemory): void {
+    this.memory.tiers[deck] = next;
     this.save();
   }
 
@@ -174,9 +174,9 @@ export async function boot(): Promise<BootResult> {
  * A banner here would be alarming about a non-event.
  */
 export function reconcileAll(memory: DeviceMemory, manifest: CorpusManifest): DeviceMemory {
-  const tiers = {} as Record<Tier, TierMemory>;
-  for (const tier of TIERS) {
-    tiers[tier] = reconcileWithMaxOrd(manifest.tiers[tier].maxOrd, memory.tiers[tier]);
+  const tiers = {} as Record<DeckId, TierMemory>;
+  for (const deck of DECKS) {
+    tiers[deck] = reconcileWithMaxOrd(manifest.tiers[deck].maxOrd, memory.tiers[deck]);
   }
   return { ...memory, corpusVersion: manifest.corpusVersion, tiers };
 }

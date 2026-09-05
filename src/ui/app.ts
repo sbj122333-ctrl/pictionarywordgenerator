@@ -1,17 +1,40 @@
 /**
  * The shell: routing, screen lifecycle, and the wiring between the engine and
- * the six screens.
+ * the screens.
  *
  * Deliberately the only place that knows about all of them. Screens take props
  * and return nodes; the engine takes a bundle and a memory and returns a deck.
  * Neither knows this file exists.
+ *
+ * Two games now sit above the decks, and this file is where that shows: `home`
+ * picks a game, `decks` lists that game's decks, and everything downstream —
+ * the play screen, the summary, the recycle prompt — takes a PlayableDeck and
+ * does not care which game it came from.
  */
 import './tokens.css';
 import './base.css';
 
-import type { Deck, RuntimeBundle, Settings, Theme, Tier } from '../engine/types';
-import { TIERS, TIER_LABELS } from '../engine/types';
+import type {
+  Deck,
+  DeckId,
+  Game,
+  PlayableDeck,
+  RuntimeBundle,
+  Settings,
+  Theme,
+} from '../engine/types';
+import {
+  CHARADES_DECKS,
+  DECKS,
+  DECK_LABELS,
+  GAMES,
+  GAME_DECKS,
+  MIXED_SOURCES,
+  gameOf,
+  plural,
+} from '../engine/types';
 import { createDeck } from '../engine/deck';
+import { createMixedDeck } from '../engine/mixed';
 import { decodeBitmap } from '../engine/bitmap';
 import { exportMemoryCode, importMemoryCode, mergeMemoryCode } from '../engine/memory-code';
 import type { CorpusManifest } from '../state/corpus';
@@ -23,8 +46,9 @@ import { GameSession } from '../state/session';
 import { clear, el } from './dom';
 import type { ScreenHandle } from './screens/game';
 import { playScreen } from './screens/game';
-import type { TierStatus } from './screens/tier-select';
-import { tierSelectScreen } from './screens/tier-select';
+import type { DeckStatus } from './screens/tier-select';
+import { deckSelectScreen } from './screens/tier-select';
+import { homeScreen } from './screens/home';
 import { teamSetupScreen } from './screens/teams';
 import { installCard, summaryScreen } from './screens/summary';
 import { settingsScreen } from './screens/settings';
@@ -33,20 +57,35 @@ import { recycleScreen } from './screens/recycle';
 type View =
   | { name: 'loading' }
   | { name: 'error'; message: string }
-  | { name: 'tiers' }
+  | { name: 'home' }
+  | { name: 'decks'; game: Game }
   | { name: 'teams' }
   | { name: 'game' }
   | { name: 'summary' }
   | { name: 'settings' }
-  | { name: 'recycle'; tier: Tier };
+  | { name: 'recycle'; deck: PlayableDeck };
 
-const TWISTS = [
-  'Non-dominant hand',
-  'Eyes closed',
-  'No lifting the pen',
-  'One continuous line',
-  'Ten seconds only',
-];
+/**
+ * Twists are flavour, not engine — and they have to be flavour the game can
+ * actually take. "No lifting the pen" means nothing to somebody miming Sholay,
+ * and a charades twist told to a drawer is just noise.
+ */
+const TWISTS: Readonly<Record<Game, readonly string[]>> = {
+  pictionary: [
+    'Non-dominant hand',
+    'Eyes closed',
+    'No lifting the pen',
+    'One continuous line',
+    'Ten seconds only',
+  ],
+  charades: [
+    'No pointing at anything',
+    'Stay seated',
+    'One hand behind your back',
+    'Feet must not move',
+    'Thirty seconds only',
+  ],
+};
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -59,8 +98,8 @@ export class App {
   private session: GameSession | null = null;
   private handle: ScreenHandle | null = null;
 
-  private readonly bundles = new Map<Tier, RuntimeBundle>();
-  private readonly decks = new Map<Tier, Deck>();
+  private readonly bundles = new Map<DeckId, RuntimeBundle>();
+  private readonly decks = new Map<PlayableDeck, Deck>();
 
   private teams: Team[] = [];
   private wiped = false;
@@ -81,22 +120,22 @@ export class App {
     // ----------------------------------------------------------------------
     // History
     //
-    // Every screen that is not tier select gets its own history entry, and the
-    // view it represents is carried *in* that entry's state. Back then means
+    // Every screen that is not the game picker gets its own history entry, and
+    // the view it represents is carried *in* that entry's state. Back then means
     // "the screen the entry before this one describes", which is the previous
-    // screen, and only at tier select — where there is no entry of ours left to
-    // pop — does back leave the app.
+    // screen, and only at home — where there is no entry of ours left to pop —
+    // does back leave the app.
     //
     // The bug this replaces: the old code pushed an entry only when leaving the
-    // `tiers` view, and `startGame()` switches to `loading` before it navigates.
-    // So the game screen never got an entry at all, and Android's back button
-    // went straight past the app and closed it mid-round.
+    // deck list, and `startGame()` switches to `loading` before it navigates. So
+    // the game screen never got an entry at all, and Android's back button went
+    // straight past the app and closed it mid-round.
     // ----------------------------------------------------------------------
-    history.replaceState({ view: { name: 'tiers' } satisfies View }, '');
+    history.replaceState({ view: { name: 'home' } satisfies View }, '');
 
     window.addEventListener('popstate', (event) => {
       const state = event.state as { view?: View } | null;
-      this.show(state?.view ?? { name: 'tiers' });
+      this.show(state?.view ?? { name: 'home' });
     });
 
     window.addEventListener('keydown', (event) => {
@@ -112,7 +151,7 @@ export class App {
       this.manifest = booted.manifest;
       this.wiped = booted.wiped;
       applyTheme(booted.store.theme);
-      this.view = { name: 'tiers' };
+      this.view = { name: 'home' };
     } catch {
       this.view = {
         name: 'error',
@@ -183,8 +222,10 @@ export class App {
           el('h1', { class: 'title', text: 'Something went wrong' }),
           el('p', { class: 'subtitle', text: this.view.message }),
         );
-      case 'tiers':
-        return this.tiers();
+      case 'home':
+        return this.home();
+      case 'decks':
+        return this.deckSelect(this.view.game);
       case 'teams':
         return this.teamSetup();
       case 'game':
@@ -194,76 +235,108 @@ export class App {
       case 'settings':
         return this.settings();
       case 'recycle':
-        return this.recycle(this.view.tier);
+        return this.recycle(this.view.deck);
     }
   }
 
   // -------------------------------------------------------------------------
-  // Tier status
+  // Deck status
   //
-  // Remaining is derived from the seen-bitmap and the manifest total, so all
-  // four counts are on screen from the first load without downloading four
-  // bundles. Once a tier's deck exists it answers for itself.
+  // Remaining is derived from the seen-bitmap and the manifest total, so every
+  // count is on screen from the first load without downloading six bundles.
+  // Once a deck exists it answers for itself.
+  //
+  // Mixed is the sum of its sources, because that is literally what it is.
   // -------------------------------------------------------------------------
 
-  private status(): Record<Tier, TierStatus> {
-    const out = {} as Record<Tier, TierStatus>;
-    for (const tier of TIERS) {
-      const total = this.manifest?.tiers[tier].count ?? 0;
-      const memory = this.store?.tierMemory(tier);
-      const deck = this.decks.get(tier);
-      const seen = memory ? decodeBitmap(memory.seen).size : 0;
-      out[tier] = {
-        total,
-        remaining: deck ? deck.remaining() : Math.max(0, total - seen),
-        cycles: memory?.cycles ?? 0,
-      };
-    }
+  private deckStatus(deck: DeckId): DeckStatus {
+    const total = this.manifest?.tiers[deck].count ?? 0;
+    const memory = this.store?.tierMemory(deck);
+    const live = this.decks.get(deck);
+    const seen = memory ? decodeBitmap(memory.seen).size : 0;
+    return {
+      total,
+      remaining: live ? live.remaining() : Math.max(0, total - seen),
+      cycles: memory?.cycles ?? 0,
+    };
+  }
+
+  private status(): Record<PlayableDeck, DeckStatus> {
+    const out = {} as Record<PlayableDeck, DeckStatus>;
+    for (const deck of DECKS) out[deck] = this.deckStatus(deck);
+
+    const sources = MIXED_SOURCES.map((deck) => out[deck]);
+    out.mixed = {
+      total: sources.reduce((n, s) => n + s.total, 0),
+      remaining: sources.reduce((n, s) => n + s.remaining, 0),
+      // A Mixed "round 2" only means something once BOTH film decks have been
+      // through a cycle — it deals from the pair, so the pair is what counts.
+      cycles: sources.reduce((n, s) => Math.min(n, s.cycles), Number.MAX_SAFE_INTEGER),
+    };
+    if (!Number.isFinite(out.mixed.cycles)) out.mixed.cycles = 0;
+
     return out;
   }
 
-  private tiers(): HTMLElement {
-    const banner = this.wiped
-      ? el(
-          'div',
-          { class: 'banner' },
-          el('p', { class: 'banner__title', text: 'Your word history is gone' }),
-          el('p', {
-            text: 'This browser cleared its stored data. If you kept a memory code, restore it in Settings.',
-          }),
-        )
-      : this.teams.length > 0
+  // -------------------------------------------------------------------------
+  // Home
+  // -------------------------------------------------------------------------
+
+  private home(): HTMLElement {
+    const status = this.status();
+
+    const line = (game: Game): string => {
+      const decks = game === 'pictionary' ? GAME_DECKS.pictionary : CHARADES_DECKS;
+      const total = decks.reduce((n, deck) => n + status[deck].total, 0);
+      if (total === 0) return 'Loading…';
+      const left = decks.reduce((n, deck) => n + status[deck].remaining, 0);
+      const unit = DECK_LABELS[decks[0] ?? 'easy'].unit;
+      return left === 0 ? 'Every deck complete' : `${plural(left, unit)} left`;
+    };
+
+    const screen = homeScreen({
+      status: Object.fromEntries(GAMES.map((game) => [game, line(game)])) as Record<Game, string>,
+      banner: this.wiped
         ? el(
             'div',
             { class: 'banner' },
-            el('p', { class: 'banner__title', text: `Scoring with ${this.teams.length} teams` }),
-            el('p', { text: 'Pick a tier to start. Tap “Teams” again to change them.' }),
+            el('p', { class: 'banner__title', text: 'Your history is gone' }),
+            el('p', {
+              text: 'This browser cleared its stored data. If you kept a memory code, restore it in Settings.',
+            }),
           )
-        : null;
-
-    const screen = tierSelectScreen({
-      status: this.status(),
-      banner,
-      onPick: (tier) => void this.startGame(tier),
-      onRecycle: (tier) => this.go({ name: 'recycle', tier }),
+        : null,
+      onPick: (game) => this.go({ name: 'decks', game }),
       onSettings: () => this.go({ name: 'settings' }),
     });
 
-    // Team setup is opt-in and lives beside Settings, because the default path
-    // is meant to be tap-a-tier-and-play. DESIGN_SPEC §3.2.
-    screen.querySelector('.screen__foot')?.prepend(
-      el(
-        'button',
-        {
-          class: 'btn btn--quiet',
-          type: 'button',
-          on: { click: () => this.go({ name: 'teams' }) },
-        },
-        this.teams.length > 0 ? 'Teams' : 'Add teams',
-      ),
-    );
-
     return screen;
+  }
+
+  // -------------------------------------------------------------------------
+  // Deck select
+  // -------------------------------------------------------------------------
+
+  private deckSelect(game: Game): HTMLElement {
+    return deckSelectScreen({
+      game,
+      status: this.status(),
+      teamsLabel: this.teams.length > 0 ? 'Teams' : 'Add teams',
+      banner:
+        this.teams.length > 0
+          ? el(
+              'div',
+              { class: 'banner' },
+              el('p', { class: 'banner__title', text: `Scoring with ${this.teams.length} teams` }),
+              el('p', { text: 'Pick a deck to start. Tap “Teams” again to change them.' }),
+            )
+          : null,
+      onPick: (deck) => void this.startGame(deck),
+      onRecycle: (deck) => this.go({ name: 'recycle', deck }),
+      onTeams: () => this.go({ name: 'teams' }),
+      onSettings: () => this.go({ name: 'settings' }),
+      onBack: () => this.back(),
+    });
   }
 
   private teamSetup(): HTMLElement {
@@ -284,59 +357,77 @@ export class App {
   // Game
   // -------------------------------------------------------------------------
 
-  private async deckFor(tier: Tier): Promise<Deck> {
-    const existing = this.decks.get(tier);
+  private async bundleFor(deck: DeckId): Promise<RuntimeBundle> {
+    // Lazily fetched: starting a deck downloads that deck and nothing else.
+    const bundle = this.bundles.get(deck) ?? (await loadBundle(deck));
+    this.bundles.set(deck, bundle);
+    return bundle;
+  }
+
+  private async deckFor(deck: PlayableDeck): Promise<Deck> {
+    const existing = this.decks.get(deck);
     if (existing) return existing;
 
     const store = this.store;
     if (!store) throw new Error('not booted');
 
-    // Lazily fetched: starting a tier downloads that tier and nothing else.
-    const bundle = this.bundles.get(tier) ?? (await loadBundle(tier));
-    this.bundles.set(tier, bundle);
+    // Mixed wraps the SAME Deck instances the film decks use, so a film burned
+    // here is burned there and the counts on the deck-select screen stay in
+    // agreement with themselves. A second set of instances over the same
+    // bitmaps would drift the moment either was played.
+    if (deck === 'mixed') {
+      const sources = await Promise.all(
+        MIXED_SOURCES.map(async (source) => ({
+          deck: await this.deckFor(source),
+          total: this.manifest?.tiers[source].count ?? 0,
+        })),
+      );
+      const mixed = createMixedDeck(sources);
+      this.decks.set('mixed', mixed);
+      return mixed;
+    }
 
-    const deck = createDeck(
-      bundle,
-      store.tierMemory(tier),
-      store.memory.recent,
-      (next) => store.setTierMemory(tier, next),
+    const bundle = await this.bundleFor(deck);
+    const built = createDeck(bundle, store.tierMemory(deck), store.memory.recent, (next) =>
+      store.setTierMemory(deck, next),
     );
-    this.decks.set(tier, deck);
-    return deck;
+    this.decks.set(deck, built);
+    return built;
   }
 
   /**
    * `replace` is set when the game is taking over a history entry that already
-   * belongs to this session — "play again" from the summary, or starting a tier
-   * you have just recycled. Backing out of those should land on tier select,
+   * belongs to this session — "play again" from the summary, or starting a deck
+   * you have just recycled. Backing out of those should land on the deck list,
    * not on a finished summary or a recycle prompt you already answered.
    */
-  private async startGame(tier: Tier, replace = false): Promise<void> {
+  private async startGame(deck: PlayableDeck, replace = false): Promise<void> {
     const store = this.store;
     if (!store) return;
 
     this.view = { name: 'loading' };
     this.render();
 
-    let deck: Deck;
+    let built: Deck;
     try {
-      deck = await this.deckFor(tier);
+      built = await this.deckFor(deck);
     } catch {
+      const labels = DECK_LABELS[deck];
       this.go(
-        { name: 'error', message: `The ${TIER_LABELS[tier].name} words could not be loaded.` },
+        { name: 'error', message: `The ${labels.name} ${labels.unit.many} could not be loaded.` },
         false,
       );
       return;
     }
 
-    if (deck.remaining() === 0) {
-      this.go({ name: 'recycle', tier }, !replace);
+    if (built.remaining() === 0) {
+      this.go({ name: 'recycle', deck }, !replace);
       return;
     }
 
     const session = new GameSession({
-      tier,
-      deck,
+      tier: deck,
+      deck: built,
       teams: this.teams,
       onDraw: (word) => {
         store.noteDrawn(word.ord);
@@ -348,19 +439,20 @@ export class App {
     // No cover screen: the first word is drawn here and painted immediately.
     if (!session.reveal()) {
       this.session = null;
-      this.go({ name: 'recycle', tier }, !replace);
+      this.go({ name: 'recycle', deck }, !replace);
       return;
     }
 
-    this.twist = this.pickTwist();
+    this.twist = this.pickTwist(deck);
     this.go({ name: 'game' }, !replace);
   }
 
   /** One in five rounds when twists are on. Not in the engine — this is flavour. */
-  private pickTwist(): string | null {
+  private pickTwist(deck: PlayableDeck): string | null {
     if (!this.store?.settings.twists) return null;
     if (Math.random() >= 0.2) return null;
-    return TWISTS[Math.floor(Math.random() * TWISTS.length)] ?? null;
+    const pool = TWISTS[gameOf(deck)];
+    return pool[Math.floor(Math.random() * pool.length)] ?? null;
   }
 
   private game(): HTMLElement {
@@ -371,7 +463,7 @@ export class App {
     if (session.phase === 'playing' && session.current) {
       const handle = playScreen({
         word: session.current,
-        tier: session.tier,
+        deck: session.tier,
         remaining: session.remaining(),
         depletion: session.depletion(),
         timerSeconds: store.settings.timerSeconds,
@@ -400,6 +492,7 @@ export class App {
 
     const last = session.rounds[session.rounds.length - 1];
     const outOfWords = session.remaining() === 0;
+    const labels = DECK_LABELS[session.tier];
 
     return el(
       'div',
@@ -407,7 +500,7 @@ export class App {
       el(
         'header',
         { class: 'screen__head' },
-        el('p', { class: 'label', text: 'Last word' }),
+        el('p', { class: 'label', text: `Last ${labels.unit.one}` }),
         el('h1', { class: 'title', text: last?.text ?? '' }),
         el('p', {
           class: 'subtitle',
@@ -441,8 +534,10 @@ export class App {
           ? el(
               'div',
               { class: 'banner' },
-              el('p', { class: 'banner__title', text: 'That was the last word' }),
-              el('p', { text: `You have played every word in ${TIER_LABELS[session.tier].name}.` }),
+              el('p', { class: 'banner__title', text: `That was the last ${labels.unit.one}` }),
+              el('p', {
+                text: `You have played every ${labels.unit.one} in ${labels.name}.`,
+              }),
             )
           : null,
       ),
@@ -464,12 +559,12 @@ export class App {
                       this.endSession();
                       return;
                     }
-                    this.twist = this.pickTwist();
+                    this.twist = this.pickTwist(session.tier);
                     this.render();
                   },
                 },
               },
-              session.scoring ? 'Next team' : 'Next drawer',
+              session.scoring ? 'Next team' : 'Next player',
             ),
         el(
           'button',
@@ -513,7 +608,7 @@ export class App {
       (this.installEvent !== null || isIos());
 
     return summaryScreen({
-      tier: session.tier,
+      deck: session.tier,
       rounds: session.rounds,
       teams: session.teams,
       winner: session.winner,
@@ -532,7 +627,7 @@ export class App {
           })
         : null,
       onPlayAgain: () => void this.startGame(session.tier, true),
-      onChangeTier: () => this.back(),
+      onChangeDeck: () => this.back(),
     });
   }
 
@@ -549,7 +644,7 @@ export class App {
       theme: store.theme,
       degraded: store.degraded,
       memoryCode: 'Generating…',
-      tierStatus: this.status(),
+      deckStatus: this.status(),
       onSettings: (patch: Partial<Settings>) => store.updateSettings(patch),
       onTheme: (theme: Theme) => store.setTheme(theme),
       onImport: async (code) => {
@@ -558,7 +653,7 @@ export class App {
         const merged = mergeMemoryCode(store.memory, parsed);
         store.memory = merged.next;
         store.save();
-        // A deck built from the old bitmap would still serve restored words.
+        // A deck built from the old bitmap would still serve restored entries.
         this.decks.clear();
         this.go({ name: 'settings' }, false);
         return null;
@@ -576,16 +671,16 @@ export class App {
     return screen;
   }
 
-  private recycle(tier: Tier): HTMLElement {
-    const store = this.store;
+  private recycle(deck: PlayableDeck): HTMLElement {
+    const status = this.status();
     return recycleScreen({
-      tier,
-      total: this.manifest?.tiers[tier].count ?? 0,
-      cycles: store?.tierMemory(tier).cycles ?? 0,
+      deck,
+      total: status[deck].total,
+      cycles: status[deck].cycles,
       onRecycle: () => {
-        void this.deckFor(tier).then((deck) => {
-          deck.recycle();
-          void this.startGame(tier, true);
+        void this.deckFor(deck).then((built) => {
+          built.recycle();
+          void this.startGame(deck, true);
         });
       },
       onBack: () => this.back(),

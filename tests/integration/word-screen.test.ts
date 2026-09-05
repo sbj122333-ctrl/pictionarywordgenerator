@@ -58,7 +58,7 @@ const render = (word: PackedWord, tier: RuntimeBundle['tier'] = 'hard'): HTMLEle
   const drawn = game.reveal();
   const node = playScreen({
     word: drawn!,
-    tier,
+    deck: tier,
     remaining: 0,
     depletion: 0,
     timerSeconds: null,
@@ -154,7 +154,7 @@ describe('the word screen', () => {
     const onQuit = vi.fn();
     const handle = playScreen({
       word: word!,
-      tier: 'hard',
+      deck: 'hard',
       remaining: 0,
       depletion: 0,
       timerSeconds: null,

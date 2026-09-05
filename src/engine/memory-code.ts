@@ -1,7 +1,7 @@
 /**
  * Memory Code. TECHNICAL_SPEC §4.3, FR-11.
  *
- * A portable string carrying all four seen-bitmaps and their cycle counts. It
+ * A portable string carrying every deck's seen-bitmap and cycle count. It
  * solves two problems: recovery after a WebKit storage eviction, and transfer
  * between browsers on one device — because "device" in this product really
  * means "browser profile", and the PRD is explicit about that.
@@ -15,8 +15,8 @@
  * code falls back to an uncompressed `DQ1U-` form rather than failing — a long
  * code still restores a history; no code at all does not.
  */
-import type { DeviceMemory, Tier, TierMemory } from './types';
-import { TIERS } from './types';
+import type { DeckId, DeviceMemory, TierMemory } from './types';
+import { DECKS } from './types';
 import { base64UrlToBytes, bytesToBase64Url } from './base64';
 import { decodeBitmap, encodeBitmap } from './bitmap';
 
@@ -26,7 +26,7 @@ const PREFIX_RAW = 'DQ1U-';
 interface CodePayload {
   v: 1;
   cv: string;
-  tiers: Record<Tier, { seen: string; cycles: number }>;
+  tiers: Record<DeckId, { seen: string; cycles: number }>;
 }
 
 async function deflate(bytes: Uint8Array): Promise<Uint8Array | null> {
@@ -51,9 +51,9 @@ async function inflate(bytes: Uint8Array): Promise<Uint8Array | null> {
 
 export async function exportMemoryCode(memory: DeviceMemory): Promise<string> {
   const tiers = {} as CodePayload['tiers'];
-  for (const tier of TIERS) {
-    const t = memory.tiers[tier];
-    tiers[tier] = { seen: t.seen, cycles: t.cycles };
+  for (const deck of DECKS) {
+    const t = memory.tiers[deck];
+    tiers[deck] = { seen: t.seen, cycles: t.cycles };
   }
   const json = JSON.stringify({ v: 1, cv: memory.corpusVersion, tiers } satisfies CodePayload);
   const raw = new TextEncoder().encode(json);
@@ -108,11 +108,14 @@ export async function importMemoryCode(code: string): Promise<ImportResult> {
     return { ok: false, error: 'That code is missing its word history.' };
   }
 
+  // A code written before the film decks existed simply has no entry for them,
+  // and an empty bitmap merges as a no-op. Old codes keep working; new ones
+  // carry more.
   const tiers = {} as CodePayload['tiers'];
-  for (const tier of TIERS) {
-    const entry = (storedTiers as Record<string, unknown>)[tier];
+  for (const deck of DECKS) {
+    const entry = (storedTiers as Record<string, unknown>)[deck];
     const obj = typeof entry === 'object' && entry !== null ? (entry as Record<string, unknown>) : {};
-    tiers[tier] = {
+    tiers[deck] = {
       seen: typeof obj['seen'] === 'string' ? obj['seen'] : '',
       cycles: typeof obj['cycles'] === 'number' && obj['cycles'] >= 0 ? Math.floor(obj['cycles']) : 0,
     };
@@ -138,20 +141,20 @@ export interface MergeReport {
 export function mergeMemoryCode(memory: DeviceMemory, payload: ImportResult): MergeReport {
   if (!payload.ok) return { next: memory, words: 0, tiers: 0 };
 
-  const tiers = {} as Record<Tier, TierMemory>;
+  const tiers = {} as Record<DeckId, TierMemory>;
   let words = 0;
   let touched = 0;
 
-  for (const tier of TIERS) {
-    const mine = memory.tiers[tier];
-    const theirs = payload.payload.tiers[tier];
+  for (const deck of DECKS) {
+    const mine = memory.tiers[deck];
+    const theirs = payload.payload.tiers[deck];
     const before = decodeBitmap(mine.seen);
     const incoming = decodeBitmap(theirs.seen);
     let added = 0;
     for (const ord of incoming) if (!before.has(ord)) added += 1;
 
     if (added === 0 && theirs.cycles <= mine.cycles) {
-      tiers[tier] = mine;
+      tiers[deck] = mine;
       continue;
     }
 
@@ -161,7 +164,7 @@ export function mergeMemoryCode(memory: DeviceMemory, payload: ImportResult): Me
     for (const ord of incoming) union.add(ord);
     let top = -1;
     for (const ord of union) if (ord > top) top = ord;
-    tiers[tier] = {
+    tiers[deck] = {
       seed: mine.seed,
       cursor: 0,
       seen: encodeBitmap(union, top),

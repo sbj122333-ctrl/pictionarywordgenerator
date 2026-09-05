@@ -219,9 +219,9 @@ describe('scoring', () => {
 
 describe('history summary copy', () => {
   it('does not say "1 tiers"', () => {
-    expect(historySummary(1, 1)).toBe('1 word played across 1 tier.');
-    expect(historySummary(32, 1)).toBe('32 words played across 1 tier.');
-    expect(historySummary(1_200, 4)).toBe('1,200 words played across 4 tiers.');
+    expect(historySummary(1, 1)).toBe('1 entry played across 1 deck.');
+    expect(historySummary(32, 1)).toBe('32 entries played across 1 deck.');
+    expect(historySummary(1_200, 6)).toBe('1,200 entries played across 6 decks.');
     expect(historySummary(0, 0)).toBe('Nothing played yet on this browser.');
   });
 });

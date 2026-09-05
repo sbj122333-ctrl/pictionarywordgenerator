@@ -797,3 +797,50 @@ kbd {
     transform: none;
   }
 }
+
+
+/* --- Game select — DESIGN_SPEC §3.0 --------------------------------------- */
+
+.games {
+  display: grid;
+  gap: var(--s3);
+}
+
+.game-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tier-ink);
+  border-radius: var(--radius);
+  padding: var(--s5) var(--s4) var(--s5) var(--s5);
+  cursor: pointer;
+}
+
+.game-card:active {
+  transform: scale(0.99);
+}
+
+.game-card__name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--tier-ink);
+}
+
+@media (min-width: 768px) {
+  .games {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s4);
+  }
+
+  /* Three film decks go 1x3, for the same reason four tiers go 2x2: never a
+     row with an orphan cell beside it. */
+  .tiers--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

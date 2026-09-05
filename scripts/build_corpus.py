@@ -1,19 +1,34 @@
 #!/usr/bin/env python3
 """
-Build and validate the shipped word corpus.
+Build and validate the shipped corpus.
 
 Reads the authored tuples in corpus-src/, assigns FROZEN append-only ordinals,
 enforces every gate from the PRD, and emits:
 
   data/words.seed.json      full authoring records (source of truth, versioned)
-  public/corpus/<tier>.json stripped runtime bundles, lazy-loaded by the app
+  public/corpus/<deck>.json stripped runtime bundles, lazy-loaded by the app
   data/ordinals.lock.json   the ordinal registry - NEVER regenerate from scratch
 
+There are two corpus families and they do not share gates.
+
+  pictionary  easy / moderate / hard / god. Scored on the four drawability axes,
+              tier computed from score and domain, fun gate applied.
+  charades    hindi / english. Film titles, acted rather than drawn, so the
+              drawability rubric is meaningless against them: "Sholay" has no
+              concreteness score. What is enforced instead is recognition (an
+              editorial call made when the title is added), a word count a
+              person can hold up on one hand, and the same ban list.
+
 CRITICAL INVARIANT
-  Ordinals are permanent. ordinals.lock.json maps text -> ord and is committed.
-  New words append at the next free ord. Retired words keep their ord as a
+  Ordinals are permanent. ordinals.lock.json maps key -> ord and is committed.
+  New entries append at the next free ord. Retired entries keep their ord as a
   tombstone. Never renumber: every device's seen-bitmap is indexed by ord, and
-  renumbering silently resurrects words people have already played.
+  renumbering silently resurrects entries people have already played.
+
+  Charades keys are namespaced `film:<norm>`; pictionary keys stay bare. That is
+  not tidiness — "Titanic" is a legitimate Pictionary word AND a film, they live
+  in different decks, and they must therefore hold different ordinals. Bare keys
+  are left exactly as they were so no existing ordinal moves.
 
 Usage:
   python3 scripts/build_corpus.py           # build + validate
@@ -25,7 +40,7 @@ from collections import Counter, defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "corpus-src"))
 
-CORPUS_VERSION = "2026.09.2"
+CORPUS_VERSION = "2026.09.3"
 # The version every device compares against. Bumping it triggers reconcile() on
 # next load: the seen-bitmap is kept, the unseen set is recomputed, and the new
 # words appear without resurrecting a single word anyone has already played.
@@ -50,6 +65,19 @@ TIER_ORDER = ["easy", "moderate", "hard", "god"]
 TIER_POINTS = {"easy": 1, "moderate": 2, "hard": 3, "god": 4}
 MAX_WORDS = 7   # idioms legitimately run long: "let the cat out of the bag" is 7 and is a great card.
                 # The UI shows pips for 1-4 words and a numeric badge for 5+ (see DESIGN_SPEC).
+
+# --- CHARADES -------------------------------------------------------------
+# Flat scoring, deliberately. The two decks hold films of every era and every
+# level of obscurity in no particular order, so there is no difficulty gradient
+# to weight - and one point per film makes a session score read as "we got nine",
+# which is the number the room is actually keeping.
+CHARADES_ORDER = ["hindi", "english"]
+CHARADES_POINTS = {"hindi": 1, "english": 1}
+CHARADES_MAX_WORDS = 8    # "Harry Potter and the Prisoner of Azkaban" is 6 and fine to signal.
+CHARADES_MAX_CHARS = 44   # what fits on a phone at the word screen's type size.
+
+DECK_ORDER = TIER_ORDER + CHARADES_ORDER
+DECK_POINTS = {**TIER_POINTS, **CHARADES_POINTS}
 
 
 def assign_tier(score, category):
@@ -87,7 +115,7 @@ def word_count(text):
     """
     t = unicodedata.normalize("NFKD", text.lower())
     t = "".join(c for c in t if not unicodedata.combining(c))
-    t = re.sub(r"[\u2019'\-]", "", t)            # possessives, contractions, compounds
+    t = re.sub(r"[’'\-]", "", t)            # possessives, contractions, compounds
     t = re.sub(r"[^a-z0-9]+", " ", t)             # everything else separates
     return len(t.split())
 
@@ -118,6 +146,14 @@ def load_tiers():
     }
 
 
+def load_charades():
+    import charades_hindi, charades_english
+    return {
+        "hindi": charades_hindi.WORDS,
+        "english": charades_english.WORDS,
+    }
+
+
 def load_lock():
     p = os.path.join(ROOT, "data", "ordinals.lock.json")
     if os.path.exists(p):
@@ -132,8 +168,20 @@ def load_lock():
     return {"nextOrd": 0, "assigned": {}, "tombstones": [], "addedIn": {}}
 
 
+def take_ordinal(lock, key):
+    """Frozen, append-only. Never reused, never renumbered."""
+    if key in lock["assigned"]:
+        return lock["assigned"][key]
+    ordinal = lock["nextOrd"]
+    lock["assigned"][key] = ordinal
+    lock["addedIn"][key] = CORPUS_VERSION
+    lock["nextOrd"] += 1
+    return ordinal
+
+
 def build():
     tiers = load_tiers()
+    charades = load_charades()
     lock = load_lock()
     errors, warnings = [], []
     records = []
@@ -198,7 +246,7 @@ def build():
             if tier == "easy" and wc > 3:
                 errors.append(f"[easy] '{text}': {wc} words. Easy entries are 1-3 words.")
 
-            # --- gate: global uniqueness ---
+            # --- gate: uniqueness within the pictionary corpus ---
             nk = norm(text)
             if nk in seen_norm:
                 errors.append(f"DUPLICATE: '{text}' ({tier}) already in {seen_norm[nk]}")
@@ -212,19 +260,13 @@ def build():
                 if bad in nk.split():
                     errors.append(f"[{tier}] '{text}': hits ban list ({bad})")
 
-            # --- frozen ordinal assignment ---
-            if nk in lock["assigned"]:
-                ordinal = lock["assigned"][nk]
-            else:
-                ordinal = lock["nextOrd"]
-                lock["assigned"][nk] = ordinal
-                lock["addedIn"][nk] = CORPUS_VERSION
-                lock["nextOrd"] += 1
+            ordinal = take_ordinal(lock, nk)
 
             records.append({
                 "id": f"{tier[:1]}-{ordinal:05d}",
                 "ord": ordinal,
                 "text": text,
+                "family": "pictionary",
                 "tier": tier,
                 "words": wc,
                 "category": cat,
@@ -238,11 +280,64 @@ def build():
                 "addedIn": lock["addedIn"].get(nk, CORPUS_VERSION),
             })
 
-    # --- near-duplicate report ---
-    for sk, group in seen_stem.items():
-        if len(group) > 1:
-            names = ", ".join(f"'{t}' ({tr})" for t, tr in group)
-            warnings.append(f"NEAR-DUPLICATE stem '{sk}': {names}")
+    # --- charades ---------------------------------------------------------
+    # Its own namespace for every gate that asks "have I seen this before".
+    # A film sharing a title with a Pictionary word is not a duplicate; they are
+    # two entries in two decks and each needs an ordinal of its own.
+    seen_film = {}
+    film_stem = defaultdict(list)
+
+    for deck in CHARADES_ORDER:
+        for title, cat in charades[deck]:
+            title = title.strip()
+
+            if not cat:
+                errors.append(f"[{deck}] '{title}': no category — anti-clustering needs one")
+
+            wc = word_count(title)
+            if not 1 <= wc <= CHARADES_MAX_WORDS:
+                errors.append(f"[{deck}] '{title}': {wc} words, max {CHARADES_MAX_WORDS}")
+            if len(title) > CHARADES_MAX_CHARS:
+                errors.append(
+                    f"[{deck}] '{title}': {len(title)} chars, max {CHARADES_MAX_CHARS}"
+                )
+
+            nk = norm(title)
+            if nk in seen_film:
+                errors.append(f"DUPLICATE FILM: '{title}' ({deck}) already in {seen_film[nk]}")
+            seen_film[nk] = deck
+            film_stem[stem_key(title)].append((title, deck))
+
+            for bad in BANNED:
+                if bad in nk.split():
+                    errors.append(f"[{deck}] '{title}': hits ban list ({bad})")
+
+            ordinal = take_ordinal(lock, f"film:{nk}")
+
+            records.append({
+                "id": f"{deck[:1]}-{ordinal:05d}",
+                "ord": ordinal,
+                "text": title,
+                "family": "charades",
+                "tier": deck,
+                "words": wc,
+                "category": cat,
+                "axes": None,
+                "score": None,
+                "computedTier": deck,
+                "override": None,
+                "meaning": None,
+                "locale": ["global"],
+                "volatility": "evergreen",
+                "addedIn": lock["addedIn"].get(f"film:{nk}", CORPUS_VERSION),
+            })
+
+    # --- near-duplicate report --------------------------------------------
+    for group_map in (seen_stem, film_stem):
+        for sk, group in group_map.items():
+            if len(group) > 1:
+                names = ", ".join(f"'{t}' ({tr})" for t, tr in group)
+                warnings.append(f"NEAR-DUPLICATE stem '{sk}': {names}")
 
     return records, lock, errors, warnings
 
@@ -257,7 +352,11 @@ def report(records, errors, warnings):
     LAUNCH_TARGET = {"easy": 1500, "moderate": 1500, "hard": 1200, "god": 600}
 
     by_tier = Counter(r["tier"] for r in records)
-    print(f"\n  {'tier':<10}{'words':>7}{'sessions':>11}{'10-ses bar':>13}"
+    pictionary = [r for r in records if r["family"] == "pictionary"]
+    films = [r for r in records if r["family"] == "charades"]
+
+    print(f"\n  PICTIONARY")
+    print(f"  {'tier':<10}{'words':>7}{'sessions':>11}{'10-ses bar':>13}"
           f"{'V1.0 target':>14}{'progress':>11}{'cats':>7}")
     for tier in TIER_ORDER:
         n, per = by_tier[tier], (15 if tier == "god" else 50)
@@ -267,10 +366,21 @@ def report(records, errors, warnings):
         print(f"  {tier:<10}{n:>7}{n/per:>9.0f} s{bar:>13}{tgt:>14,}"
               f"{n/tgt:>10.0%}{cats:>7}")
     tot_t = sum(LAUNCH_TARGET.values())
-    print(f"  {'TOTAL':<10}{len(records):>7}{'':>11}{'':>13}{tot_t:>14,}"
-          f"{len(records)/tot_t:>10.0%}")
-    print(f"\n  Seed corpus: sized to prove the schema and exercise the engine,")
-    print(f"  not to launch. Grow it with the pipeline in docs/TECHNICAL_SPEC.md.")
+    print(f"  {'TOTAL':<10}{len(pictionary):>7}{'':>11}{'':>13}{tot_t:>14,}"
+          f"{len(pictionary)/tot_t:>10.0%}")
+
+    # A charades session is shorter than a Pictionary one - acting a film takes
+    # longer than drawing a cat, and the room talks more between rounds - so the
+    # session bar is 25 draws, not 50. Mixed is not a deck: it deals from both.
+    print(f"\n  DUMB CHARADES")
+    print(f"  {'deck':<10}{'films':>7}{'sessions':>11}{'10-ses bar':>13}{'cats':>7}")
+    for deck in CHARADES_ORDER:
+        n = by_tier[deck]
+        cats = len({r["category"] for r in records if r["tier"] == deck})
+        bar = "met" if n / 25 >= 10 else f"{n/25/10:.0%}"
+        print(f"  {deck:<10}{n:>7}{n/25:>9.0f} s{bar:>13}{cats:>7}")
+    print(f"  {'mixed':<10}{len(films):>7}{len(films)/25:>9.0f} s"
+          f"{('met' if len(films)/25 >= 10 else 'x'):>13}")
 
     print(f"\n  multi-word entries: {sum(1 for r in records if r['words'] > 1)} "
           f"({sum(1 for r in records if r['words'] > 1)/len(records)*100:.0f}%)")
@@ -307,12 +417,12 @@ def emit(records, lock):
 
     # Runtime bundles: authoring fields stripped (NFR-02b)
     sizes = {}
-    for tier in TIER_ORDER:
-        rows = [r for r in records if r["tier"] == tier]
+    for deck in DECK_ORDER:
+        rows = [r for r in records if r["tier"] == deck]
         payload = {
             "corpusVersion": CORPUS_VERSION,
-            "tier": tier,
-            "points": TIER_POINTS[tier],
+            "tier": deck,
+            "points": DECK_POINTS[deck],
             "count": len(rows),
             "maxOrd": max(r["ord"] for r in rows),
             "words": [
@@ -323,19 +433,19 @@ def emit(records, lock):
                 for r in rows
             ],
         }
-        p = os.path.join(ROOT, "public", "corpus", f"{tier}.json")
+        p = os.path.join(ROOT, "public", "corpus", f"{deck}.json")
         with open(p, "w") as f:
             json.dump(payload, f, separators=(",", ":"), ensure_ascii=False)
-        sizes[tier] = os.path.getsize(p)
+        sizes[deck] = os.path.getsize(p)
 
     import gzip
     print("  runtime bundles (what the app downloads)")
     total_gz = 0
-    for tier in TIER_ORDER:
-        p = os.path.join(ROOT, "public", "corpus", f"{tier}.json")
+    for deck in DECK_ORDER:
+        p = os.path.join(ROOT, "public", "corpus", f"{deck}.json")
         gz = len(gzip.compress(open(p, "rb").read(), 9))
         total_gz += gz
-        print(f"    {tier:<10}{sizes[tier]/1024:>7.1f} KB raw   {gz/1024:>6.1f} KB gzipped")
+        print(f"    {deck:<10}{sizes[deck]/1024:>7.1f} KB raw   {gz/1024:>6.1f} KB gzipped")
     print(f"    {'ALL':<10}{sum(sizes.values())/1024:>7.1f} KB raw   {total_gz/1024:>6.1f} KB gzipped"
           f"   (budget 300 KB)")
     print()

@@ -20,7 +20,7 @@
  * (Sep 2026): the handover moment is now the "Next drawer" button on the
  * resolved screen, which is where the phone actually changes hands.
  */
-import type { Deck, RuntimeWord, Tier } from '../engine/types';
+import type { Deck, PlayableDeck, RuntimeWord } from '../engine/types';
 
 export type Phase = 'idle' | 'ready' | 'playing' | 'resolved' | 'summary';
 export type Outcome = 'got' | 'pass' | 'timeout';
@@ -63,7 +63,7 @@ export function canTransition(from: Phase, to: Phase): boolean {
 }
 
 export interface SessionOptions {
-  tier: Tier;
+  tier: PlayableDeck;
   deck: Deck;
   teams: Team[];
   /** Called after every draw so the cooldown window stays current. */
@@ -78,7 +78,7 @@ export class GameSession {
   /** Set when the tier runs dry mid-session. */
   exhausted = false;
 
-  readonly tier: Tier;
+  readonly tier: PlayableDeck;
   readonly teams: Team[];
   private readonly deck: Deck;
   private readonly onDraw: (word: RuntimeWord) => void;

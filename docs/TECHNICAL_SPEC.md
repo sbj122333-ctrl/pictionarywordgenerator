@@ -310,6 +310,48 @@ export function decodeBitmap(b64: string): Set<number>;
 
 Round-trip is property-tested: `decode(encode(s)) === s` for arbitrary sets.
 
+### 3.8 The Mixed deck (Dumb Charades)
+
+`mixed` is not a corpus. It is a `Deck` (`src/engine/mixed.ts`) holding the
+Bollywood and Hollywood decks, delegating each `draw()` to one of them. The film
+it serves is burned in **that** deck's bitmap and persisted through that deck's
+writer, so a film played in Mixed never comes back in Bollywood, and a film
+played in Bollywood never turns up in Mixed.
+
+```ts
+export interface MixedSource { deck: Deck; total: number }
+export function createMixedDeck(sources: readonly MixedSource[]): Deck;
+```
+
+The obvious alternative — a third bundle of "mixed" films — breaks the product's
+only promise in two directions at once: films duplicated across decks could be
+served twice, and films unique to Mixed would be unreachable to anyone who never
+picks it. Hence `PLAYABLE_DECKS` ⊃ `DECKS`: `mixed` can start a session but owns
+no bundle, no `TierMemory` and no manifest entry, and `public/corpus/mixed.json`
+must not exist. Asserted in `tests/property/corpus.test.ts`.
+
+**Source selection is proportional, not random.** Each draw goes to whichever
+source has served the smaller fraction of what it began the session holding.
+Equal decks strictly alternate; a deck twice the size of its partner is dealt
+twice as often. Same reasoning as §3.5: weighted-random selection across two
+430-film decks produces runs of five or six from one language often enough for a
+room to notice and call it broken. It also needs no PRNG, which the engine could
+not reach for anyway, and keeps the deal reproducible — ties go to the earlier
+source.
+
+`remaining()` and `depletion()` sum the sources. `recycle()` recycles both, and
+the recycle screen says so: Mixed has no history of its own to clear, so
+finishing it and starting again *is* starting both film decks again.
+
+**Charades has no rubric.** The four drawability axes describe how hard a word is
+to *draw*; a film title is acted. So `corpus-src/charades_*.py` carry
+`(title, category)` and nothing else, tier is the file the title sits in, and the
+gates are word count (1–8), title length (≤44 chars), uniqueness within the film
+namespace and the ban list. Ordinal keys are namespaced `film:<norm>` because
+sixteen film titles are also Pictionary words — "Gravity", "Queen", "Casino",
+"Ship of Theseus" — and they are different cards that must hold different
+ordinals.
+
 ---
 
 ## 4. Storage

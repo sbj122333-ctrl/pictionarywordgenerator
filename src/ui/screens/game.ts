@@ -2,16 +2,21 @@
  * The word screen. DESIGN_SPEC §3.4.
  *
  * The word is drawn and painted in one step — there is no cover interstitial in
- * front of it any more. Whoever taps "Next drawer" is the person holding the
+ * front of it any more. Whoever taps "Next player" is the person holding the
  * phone, so the handover happens on the resolved screen instead.
  *
  * On God Mode the word carries a one-line meaning, printed under it and always
  * visible. God Mode terms are named things from a specialist domain; a room that
  * cannot define "apoptosis" is not having a hard round, it is having a dead one.
  * The meaning is for the drawer, who has to draw the idea, not the word.
+ *
+ * The screen is deck-agnostic otherwise. A film title paints exactly like a
+ * Pictionary phrase, pips and all — the pip count is what a charades player
+ * holds up on their fingers before they start, so it is if anything more
+ * load-bearing there than it is in Pictionary.
  */
-import type { RuntimeWord, Tier } from '../../engine/types';
-import { DEPLETION_WARNING, TIER_LABELS } from '../../engine/types';
+import type { PlayableDeck, RuntimeWord } from '../../engine/types';
+import { DECK_LABELS, DEPLETION_WARNING, plural } from '../../engine/types';
 import type { Outcome } from '../../state/session';
 import { el } from '../dom';
 
@@ -30,7 +35,7 @@ const CRIT_AT = 10;
 
 export interface PlayProps {
   word: RuntimeWord;
-  tier: Tier;
+  deck: PlayableDeck;
   remaining: number;
   depletion: number;
   timerSeconds: number | null;
@@ -41,6 +46,7 @@ export interface PlayProps {
 
 export function playScreen(props: PlayProps): ScreenHandle {
   const { word } = props;
+  const labels = DECK_LABELS[props.deck];
 
   // One live region for everything spoken during a round: the word once, then
   // the timer at 30s, 10s and 0s. DESIGN_SPEC §5.
@@ -58,11 +64,11 @@ export function playScreen(props: PlayProps): ScreenHandle {
     el(
       'div',
       {},
-      el('div', { class: 'play__tier', text: TIER_LABELS[props.tier].name }),
+      el('div', { class: 'play__tier', text: labels.name }),
       props.depletion >= DEPLETION_WARNING
         ? el('div', {
             class: 'tier-card__left tier-card__left--warn',
-            text: `${props.remaining} words left`,
+            text: `${plural(props.remaining, labels.unit)} left`,
           })
         : null,
     ),
@@ -113,7 +119,7 @@ export function playScreen(props: PlayProps): ScreenHandle {
 
   const node = el(
     'div',
-    { class: 'play', style: `--tier-ink: var(--t-${props.tier})` },
+    { class: 'play', style: `--tier-ink: var(--t-${props.deck})` },
     live,
     header,
     stage,
