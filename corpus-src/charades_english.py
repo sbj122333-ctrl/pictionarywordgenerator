@@ -10,9 +10,14 @@
 # `category` drives anti-clustering only. Era for the pre-1970 shelf, genre
 # after that.
 #
-# Punctuation stays out of the middle of words: word_count() splits on
+# Full stops stay out of the middle of words: word_count() splits on
 # non-alphanumerics, so "Dr. Strangelove" would signal two words and "E.T." four.
 # Titles are written the way they can be counted honestly.
+#
+# Apostrophes DO belong, and are written: word_count() closes them up, and so
+# does film_norm(), so "Schindler's List" counts two words and keys to the same
+# ordinal it would without the apostrophe. A title printed in front of a room
+# should be spelled the way the room spells it.
 
 WORDS = [
 
@@ -21,7 +26,7 @@ WORDS = [
     ("Gone with the Wind", "classic"),
     ("Citizen Kane", "classic"),
     ("The Wizard of Oz", "classic"),
-    ("Singin in the Rain", "classic"),
+    ("Singin’ in the Rain", "classic"),
     ("Psycho", "classic"),
     ("Vertigo", "classic"),
     ("Rear Window", "classic"),
@@ -31,10 +36,10 @@ WORDS = [
     ("Ben-Hur", "classic"),
     ("Lawrence of Arabia", "classic"),
     ("The Sound of Music", "classic"),
-    ("Breakfast at Tiffanys", "classic"),
+    ("Breakfast at Tiffany’s", "classic"),
     ("To Kill a Mockingbird", "classic"),
     ("Sunset Boulevard", "classic"),
-    ("Its a Wonderful Life", "classic"),
+    ("It’s a Wonderful Life", "classic"),
     ("The Great Escape", "classic"),
     ("Dr Strangelove", "classic"),
     ("Bonnie and Clyde", "classic"),
@@ -62,7 +67,7 @@ WORDS = [
     ("The Godfather", "drama"),
     ("The Shawshank Redemption", "drama"),
     ("Forrest Gump", "drama"),
-    ("Schindlers List", "drama"),
+    ("Schindler’s List", "drama"),
     ("One Flew Over the Cuckoos Nest", "drama"),
     ("American Beauty", "drama"),
     ("Fight Club", "drama"),
@@ -128,7 +133,7 @@ WORDS = [
     ("Kill Bill", "action"),
     ("The Matrix", "action"),
     ("Rush Hour", "action"),
-    ("Oceans Eleven", "action"),
+    ("Ocean’s Eleven", "action"),
     ("The Italian Job", "action"),
     ("Taken", "action"),
     ("The Fast and the Furious", "action"),

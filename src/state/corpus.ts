@@ -32,15 +32,38 @@ const bundles = new Map<DeckId, Promise<RuntimeBundle>>();
 
 export function loadManifest(): Promise<CorpusManifest> {
   manifestPromise ??= fetch(corpusUrl('manifest.json'))
-    .then((r) => {
+    .then(async (r) => {
       if (!r.ok) throw new Error(`manifest ${r.status}`);
-      return r.json() as Promise<CorpusManifest>;
+      return fill((await r.json()) as CorpusManifest);
     })
     .catch((error: unknown) => {
       manifestPromise = null;
       throw error;
     });
   return manifestPromise;
+}
+
+/**
+ * Fills in any deck the fetched manifest does not mention.
+ *
+ * `manifest.json` is not content-hashed and vercel.json caches /corpus/ for an
+ * hour, so for up to an hour after a corpus release a returning browser can pair
+ * freshly-served app code with the manifest from the release before it. That is
+ * exactly what happened when the film decks were added: every read of
+ * `manifest.tiers.hindi` would have been `undefined.count` — boot throws,
+ * reconcile throws, and the app shows its error screen until the cache expires.
+ *
+ * A missing deck reads as zero instead. Its card says "Loading…", the bundle
+ * still fetches on tap, and the count corrects itself on the next load. Nothing
+ * is lost by under-reporting: `reconcileWithMaxOrd` never drops a bit above the
+ * ceiling it is given, so a short maxOrd cannot resurrect anything.
+ */
+function fill(manifest: CorpusManifest): CorpusManifest {
+  const tiers = {} as Record<DeckId, TierSummary>;
+  for (const deck of DECKS) {
+    tiers[deck] = manifest.tiers?.[deck] ?? { count: 0, maxOrd: 0, points: 1 };
+  }
+  return { corpusVersion: manifest.corpusVersion, tiers };
 }
 
 export function loadBundle(deck: DeckId): Promise<RuntimeBundle> {
@@ -67,7 +90,5 @@ export function resetCorpusCache(): void {
 }
 
 export function emptyManifest(): CorpusManifest {
-  const tiers = {} as Record<DeckId, TierSummary>;
-  for (const deck of DECKS) tiers[deck] = { count: 0, maxOrd: 0, points: 1 };
-  return { corpusVersion: '', tiers };
+  return fill({ corpusVersion: '', tiers: {} as Record<DeckId, TierSummary> });
 }

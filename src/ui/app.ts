@@ -271,9 +271,8 @@ export class App {
       remaining: sources.reduce((n, s) => n + s.remaining, 0),
       // A Mixed "round 2" only means something once BOTH film decks have been
       // through a cycle — it deals from the pair, so the pair is what counts.
-      cycles: sources.reduce((n, s) => Math.min(n, s.cycles), Number.MAX_SAFE_INTEGER),
+      cycles: sources.length === 0 ? 0 : Math.min(...sources.map((s) => s.cycles)),
     };
-    if (!Number.isFinite(out.mixed.cycles)) out.mixed.cycles = 0;
 
     return out;
   }

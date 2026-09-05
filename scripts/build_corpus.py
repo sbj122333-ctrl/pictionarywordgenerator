@@ -79,6 +79,16 @@ CHARADES_MAX_CHARS = 44   # what fits on a phone at the word screen's type size.
 DECK_ORDER = TIER_ORDER + CHARADES_ORDER
 DECK_POINTS = {**TIER_POINTS, **CHARADES_POINTS}
 
+# Every file this script writes, written the same way on every platform.
+#
+# Without this, Python picks the console codepage: on Windows that is cp1252,
+# which silently re-encodes the em dashes in the god-tier meanings and the curly
+# apostrophes in the film titles into bytes no UTF-8 reader can decode. The app
+# then paints a replacement character in front of a room, and the corpus diff
+# shows hundreds of edits nobody made. Newlines are pinned for the same reason
+# .gitattributes pins them: these files are committed and must not churn.
+TEXT = {"encoding": "utf-8", "newline": "\n"}
+
 
 def assign_tier(score, category):
     """Tier is fully determined by score and domain. There are no manual overrides."""
@@ -98,6 +108,24 @@ def norm(text):
     t = unicodedata.normalize("NFKD", text.lower())
     t = "".join(c for c in t if not unicodedata.combining(c))
     return re.sub(r"[^a-z0-9]+", " ", t).strip()
+
+def film_norm(title):
+    """
+    norm() for a film title, with apostrophes closed up first.
+
+    norm() turns every non-alphanumeric run into a space, so it would key
+    "It's a Wonderful Life" as "it s a wonderful life" - a stray one-letter token
+    that also breaks stem_key's near-duplicate matching. An apostrophe is inside
+    a word, not between two, which is exactly what word_count() already says
+    about "gambler's fallacy".
+
+    norm() itself must NOT be changed to fix this: it is the key every Pictionary
+    ordinal was assigned against. This applies only inside the `film:` namespace,
+    which was minted with the apostrophes already closed up, so every film keeps
+    the ordinal it was given.
+    """
+    return norm(re.sub(r"[’']", "", title))
+
 
 def word_count(text):
     """
@@ -157,7 +185,7 @@ def load_charades():
 def load_lock():
     p = os.path.join(ROOT, "data", "ordinals.lock.json")
     if os.path.exists(p):
-        with open(p) as f:
+        with open(p, encoding="utf-8") as f:
             lock = json.load(f)
         # "addedIn" arrived with the 2026.09.2 expansion. Anything already
         # holding an ordinal before it existed came in with the seed release.
@@ -302,11 +330,11 @@ def build():
                     f"[{deck}] '{title}': {len(title)} chars, max {CHARADES_MAX_CHARS}"
                 )
 
-            nk = norm(title)
+            nk = film_norm(title)
             if nk in seen_film:
                 errors.append(f"DUPLICATE FILM: '{title}' ({deck}) already in {seen_film[nk]}")
             seen_film[nk] = deck
-            film_stem[stem_key(title)].append((title, deck))
+            film_stem[stem_key(nk)].append((title, deck))
 
             for bad in BANNED:
                 if bad in nk.split():
@@ -409,10 +437,10 @@ def emit(records, lock):
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True)
     os.makedirs(os.path.join(ROOT, "public", "corpus"), exist_ok=True)
 
-    with open(os.path.join(ROOT, "data", "words.seed.json"), "w") as f:
+    with open(os.path.join(ROOT, "data", "words.seed.json"), "w", **TEXT) as f:
         json.dump({"corpusVersion": CORPUS_VERSION, "words": records}, f, indent=2, ensure_ascii=False)
 
-    with open(os.path.join(ROOT, "data", "ordinals.lock.json"), "w") as f:
+    with open(os.path.join(ROOT, "data", "ordinals.lock.json"), "w", **TEXT) as f:
         json.dump(lock, f, indent=2, ensure_ascii=False)
 
     # Runtime bundles: authoring fields stripped (NFR-02b)
@@ -434,7 +462,7 @@ def emit(records, lock):
             ],
         }
         p = os.path.join(ROOT, "public", "corpus", f"{deck}.json")
-        with open(p, "w") as f:
+        with open(p, "w", **TEXT) as f:
             json.dump(payload, f, separators=(",", ":"), ensure_ascii=False)
         sizes[deck] = os.path.getsize(p)
 

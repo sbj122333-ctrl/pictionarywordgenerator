@@ -53,12 +53,15 @@ interface WordRecord {
   id: string;            // "g-00417" — tier initial + zero-padded ordinal
   ord: number;           // FROZEN. See invariant 1.
   text: string;
-  tier: Tier;
-  words: number;         // 1-7
+  family: "pictionary" | "charades";
+  tier: DeckId;          // the four tiers, or `hindi` / `english`
+  words: number;         // 1-7 pictionary, 1-8 charades
   category: string;
-  axes: { C: number; F: number; D: number; R: number; T: number };  // each 1-5
-  score: number;         // 20 - (C+F+D+R)
-  computedTier: Tier;    // must equal `tier` or the build fails
+  // Null on charades: the drawability rubric describes how hard a word is to
+  // DRAW, and a film title is acted. See §3.8.
+  axes: { C: number; F: number; D: number; R: number; T: number } | null;  // each 1-5
+  score: number | null;  // 20 - (C+F+D+R)
+  computedTier: DeckId;  // must equal `tier` or the build fails
   override: null;        // always null; the field exists to stay explicit about it
   meaning: string | null;  // required for god, null elsewhere
   locale: string[];      // ["global"] at V1.0
@@ -67,7 +70,7 @@ interface WordRecord {
 }
 ```
 
-### 2.2 Word record — runtime (`public/corpus/<tier>.json`)
+### 2.2 Word record — runtime (`public/corpus/<deck>.json`)
 
 Authoring fields stripped (NFR-02b). Keys are single characters because this is
 the only file whose size scales with the corpus.
@@ -75,8 +78,8 @@ the only file whose size scales with the corpus.
 ```ts
 interface RuntimeBundle {
   corpusVersion: string;
-  tier: Tier;
-  points: number;        // 1 | 2 | 3 | 4, tier-weighted scoring
+  tier: DeckId;
+  points: number;        // 1 | 2 | 3 | 4 by tier; flat 1 for both film decks
   count: number;
   maxOrd: number;
   words: Array<{
@@ -89,8 +92,16 @@ interface RuntimeBundle {
 }
 ```
 
-Bundles are fetched lazily: starting a game downloads that tier only. Current
-sizes: easy 2.6 KB, moderate 4.2 KB, hard 2.3 KB, god 7.7 KB gzipped.
+Bundles are fetched lazily: starting a game downloads that deck only. Current
+sizes, gzipped: easy 7.8 KB, moderate 15.1 KB, hard 8.1 KB, god 25.3 KB,
+hindi 4.8 KB, english 5.5 KB — 66.6 KB for all six, against a 300 KB budget.
+`mixed` has no bundle; it deals from hindi and english (§3.8).
+
+`manifest.json` is the one shipped file that is neither content-hashed nor
+short-cached, so `loadManifest()` fills in any deck it does not mention. For up
+to an hour after a corpus release (vercel.json caches `/corpus/` for 3,600s) a
+returning browser can pair new app code with the previous manifest, and an
+unrecognised deck has to read as zero rather than as `undefined.count`.
 
 ### 2.3 Device memory — the only thing persisted
 
@@ -101,8 +112,12 @@ interface DeviceMemory {
   v: 1;                          // schema version; bump only with a migration
   corpusVersion: string;         // last corpus seen; a change triggers reconcile()
   heartbeat: number;             // epoch ms, written every load — wipe detection
-  tiers: Record<Tier, TierMemory>;
-  recent: number[];              // last 50 ords drawn, any tier — recycle cooldown
+  // Keyed by DeckId. Still named `tiers`: the record is schema v1 and renaming
+  // it would orphan every stored history for the sake of a word. A deck absent
+  // from an older record parses to a fresh TierMemory, which is the whole of
+  // the migration that added the two film decks.
+  tiers: Record<DeckId, TierMemory>;
+  recent: number[];              // last 50 ords drawn, any deck — recycle cooldown
   sessions: SessionRecord[];     // last 3, for the summary screen
   settings: Settings;
 }
@@ -116,7 +131,7 @@ interface TierMemory {
 
 interface SessionRecord {
   at: number;
-  tier: Tier;
+  tier: PlayableDeck;            // `mixed` is playable, so it can be recorded
   ords: number[];
   hits: number;
   teams?: Array<{ name: string; score: number }>;
@@ -229,7 +244,7 @@ function applyCooldown(deck: number[], recent: number[]): number[] {
 
 **Rule: the same category never appears twice in a row.** That is the whole
 constraint. It holds absolutely wherever the deck allows it — verified across
-all four shipping tiers in `tests/property/corpus.test.ts`.
+all six shipping decks in `tests/property/corpus.test.ts`.
 
 There is deliberately **no fixed per-window quota**. V1.0 specified "no more
 than 3 in any 20 consecutive draws", and that was removed, because 3-in-20 is
@@ -347,10 +362,16 @@ finishing it and starting again *is* starting both film decks again.
 to *draw*; a film title is acted. So `corpus-src/charades_*.py` carry
 `(title, category)` and nothing else, tier is the file the title sits in, and the
 gates are word count (1–8), title length (≤44 chars), uniqueness within the film
-namespace and the ban list. Ordinal keys are namespaced `film:<norm>` because
+namespace and the ban list.
+
+Ordinal keys are namespaced `film:<film_norm>`. The namespace is there because
 sixteen film titles are also Pictionary words — "Gravity", "Queen", "Casino",
 "Ship of Theseus" — and they are different cards that must hold different
-ordinals.
+ordinals. `film_norm()` is `norm()` with apostrophes closed up first, so
+"Schindler's List" keys as `schindlers list` rather than `schindler s list`: an
+apostrophe sits inside a word, not between two, and a title has to be spellable
+properly on screen without moving the ordinal it already holds. `norm()` itself
+is untouched — it is the key every Pictionary ordinal was assigned against.
 
 ---
 
@@ -391,7 +412,9 @@ with no explanation will assume the guarantee is fake.
 
 ### 4.3 Memory Code (FR-11)
 
-Portable string encoding all four bitmaps plus cycle counts. Solves two
+Portable string encoding every deck's bitmap plus cycle counts. A code written
+before a deck existed simply has no entry for it, and an empty bitmap merges as
+a no-op, so old codes keep working and new ones carry more. Solves two
 problems: recovery after a WebKit eviction, and transfer between browsers on one
 device (which the PRD is explicit about — "device" really means "browser profile").
 
@@ -533,8 +556,8 @@ Therefore:
 
 - `vite-plugin-pwa` with `registerType: 'autoUpdate'`, a complete manifest, and
   maskable icons at 192/512.
-- Precache the app shell and all four corpus bundles (16.6 KB gzipped total —
-  precaching them costs nothing and guarantees offline play).
+- Precache the app shell and all six corpus bundles (66.6 KB gzipped total —
+  precaching them costs little and guarantees offline play in either game).
 - Capture `beforeinstallprompt`; show the install card **after the first
   completed session**, framed as "keep your word history" — because that is
   literally its function, not a growth tactic. Remember dismissal.

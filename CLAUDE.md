@@ -55,9 +55,9 @@ never changes. Every device's seen-history is a bitmap indexed by ordinal.
 Renumbering silently resurrects entries people have already played, on every
 device, with no way to detect it. Retired entries keep their ordinal as a
 tombstone. Never regenerate this file from scratch. It is committed to git.
-Charades keys are namespaced `film:<norm>` and Pictionary keys are bare, because
-"Titanic" is legitimately both a Pictionary word and a film and they need
-different ordinals. Do not touch the bare-key format.
+Charades keys are namespaced `film:<film_norm>` and Pictionary keys are bare
+`norm`, because "Titanic" is legitimately both a Pictionary word and a film and
+they need different ordinals. Do not touch either key format.
 
 **2. A word burns on reveal, not on outcome.**
 The moment an entry is shown it is spent — whether the team got it, passed, or
@@ -145,9 +145,11 @@ injected `StorageAdapter` port, never directly.
 - Every exported engine function gets a unit test. Every invariant above gets a
   property test.
 - British English in UI copy ("colour", "organise"). The corpus is `global` locale.
-- Film titles are romanised and carry no punctuation inside a word: `word_count()`
+- Film titles are romanised and carry no full stops inside a word: `word_count()`
   splits on non-alphanumerics, so "Munna Bhai M.B.B.S." would signal six words
-  instead of three and the pips would lie to the people guessing.
+  instead of three and the pips would lie to the people guessing. Apostrophes are
+  written normally — `word_count()` and `film_norm()` both close them up, so
+  "Schindler's List" counts two words and keys to the ordinal it already holds.
 
 ## Do not
 
