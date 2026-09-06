@@ -258,5 +258,23 @@ plain `<a href="/hexhaven/">`, and that link is the entire integration surface.
 
 The page is a single self-contained HTML file with its own inlined engine,
 networking and styles. It shares no code with `src/` and adds no runtime
-dependency to the app bundle. Rebuild it from its own source rather than editing
-the built file in place.
+dependency to the app bundle. That file *is* the source — hand-edit it. The one
+exception is the vendored PeerJS bundle in the first `<script>`: replace it
+wholesale with a newer minified build, never patch it by hand.
+
+It is still tested. `tests/integration/hexhaven.test.ts` lifts the engine and
+session `<script>` blocks out of the page and runs them in a `node:vm` context,
+which is the only way to reach code that has no module boundary. It parses every
+block — a truncated paste of the vendored bundle fails there — and pins the
+defects found reviewing the branch. If you move or rename those two blocks,
+their marker comments are what the test looks for.
+
+Two things about that page are load-bearing and easy to undo by accident:
+
+- **The board is sent once and cached per client**, so `robber` travels on every
+  state message and is written back onto the cached copy. Anything else that
+  starts mutating `board` has to do the same, or it freezes on every screen at
+  once — the host renders through a Client too, so nobody sees the truth.
+- **`apply()` has no rollback.** It withholds the version bump on a refused
+  action and nothing else, so every action must finish validating before it
+  touches state. Two did not, and both cost a card.
