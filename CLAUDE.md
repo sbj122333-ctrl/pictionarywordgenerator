@@ -1,14 +1,16 @@
 # Drawn & Quartered
 
-Two party games that remember what they have already shown you.
+Three party games. The two word games remember what they have already shown you.
 
 **Pictionary** — four curated difficulty tiers of words and short phrases.
 **Dumb Charades** — Hindi and English film titles, plus a Mixed deck that deals
 from both.
+**Hexhaven** — a hex trading game for 3–6 players on separate devices.
 
 A word or film seen once does not come back until its deck is exhausted.
 
-Static site. No backend, no accounts, no network calls after first load.
+Static site, no backend, no accounts. The word games make no network calls after
+first load. **Hexhaven** is the one exception and is quarantined — see below.
 
 ---
 
@@ -118,6 +120,7 @@ corpus-src/          authored tuples, one file per deck              <- edit ent
 scripts/             build_corpus.py: expands, validates, assigns ordinals
 data/                words.seed.json (full records), ordinals.lock.json (COMMITTED)
 public/corpus/       stripped runtime bundles, lazy-loaded per deck
+public/hexhaven/     the third game — one self-contained file, shares no code with src/
 src/
   engine/            deck, mixed, bitmap, PRNG, storage. Zero DOM imports.
   ui/                screens and components. No game logic.
@@ -153,7 +156,9 @@ injected `StorageAdapter` port, never directly.
 
 ## Do not
 
-- Add analytics, telemetry, or any outbound request. NFR-03 is a product claim, not a default.
+- Add analytics, telemetry, or any outbound request **anywhere in `src/`**. NFR-03 is a
+  product claim, not a default. (`public/hexhaven/` is outside that line by design —
+  see "The Hexhaven boundary".)
 - Add a drawing canvas. Explicitly out of scope — see PRD §11.
 - Give `mixed` a corpus of its own. Films duplicated across decks could be served
   twice, and films unique to Mixed would be unreachable to anyone who never picks it.
@@ -221,3 +226,37 @@ Four product changes landed in Sep 2026, all requested by Sabuj:
   from both and shares their memory rather than holding a corpus. Films are flat
   at one point each — the two film decks hold every era in no order, so there is
   no difficulty gradient to weight.
+
+---
+
+## The Hexhaven boundary
+
+`public/hexhaven/` is a third game — a settlers-style hex trading game for 3–6
+players, one device each. It is **not** part of the app in any sense that
+matters to the five invariants, and it must stay that way.
+
+It breaks two claims that hold everywhere else in this repo, which is why it
+lives outside `src/` rather than inside it:
+
+- **It makes outbound requests.** WebRTC needs a signalling handshake, so the
+  page talks to the public PeerJS broker and to STUN/TURN servers. NFR-03 —
+  no analytics, no telemetry, no outbound request — still holds absolutely for
+  everything under `src/`, and that is the line to defend. Do not relax it
+  because Hexhaven exists.
+- **It cannot work offline**, so it is excluded from the service worker
+  precache (`globIgnores`) and from the navigation fallback
+  (`navigateFallbackDenylist`). Precaching it would put 55 KB in the cache to
+  serve a page that can only fail with no connection, and without the denylist
+  the fallback answers `/hexhaven/` with the word generator's shell on every
+  visit after the first.
+
+It is also not a `Game`. Every `Game` owns decks, frozen ordinals and a
+seen-bitmap; Hexhaven has no corpus and remembers nothing between sessions.
+Adding it to `GAMES` would widen every `Record<Game, …>` in the engine with
+members that can only hold dead values. The landing screen reaches it with a
+plain `<a href="/hexhaven/">`, and that link is the entire integration surface.
+
+The page is a single self-contained HTML file with its own inlined engine,
+networking and styles. It shares no code with `src/` and adds no runtime
+dependency to the app bundle. Rebuild it from its own source rather than editing
+the built file in place.

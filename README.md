@@ -7,7 +7,14 @@ single words and short phrases. A word you have seen once does not come back
 until its entire tier is exhausted, and that memory survives closing the
 browser, rebooting the phone, and content updates.
 
-Static site. No backend, no accounts, no network calls after first load.
+Static site, no backend, no accounts. The word games make no network calls after
+first load.
+
+A third game, **Hexhaven**, lives at `/hexhaven/` — a hex trading game for 3–6
+players on separate devices. One player hosts, the others join with a five-letter
+code and their browsers connect directly to each other. It is the one part of the
+site that needs a connection, so it is deliberately kept out of the offline
+precache and shares no code with the word games.
 
 ---
 

@@ -825,6 +825,13 @@ kbd {
   transform: scale(0.99);
 }
 
+/* The Hexhaven card is an <a>, not a <button>: it leaves the app. These are the
+   only declarations a link needs to sit flush with the buttons beside it. */
+.game-card--away {
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
 .game-card__name {
   font-family: var(--display);
   font-weight: 600;
@@ -833,8 +840,10 @@ kbd {
 }
 
 @media (min-width: 768px) {
+  /* Three games go 1x3 for the same reason three film decks do: never a row
+     with an orphan cell beside it. */
   .games {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--s4);
   }
 

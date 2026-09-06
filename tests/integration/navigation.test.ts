@@ -109,8 +109,19 @@ const footButton = (label: string): HTMLButtonElement | undefined =>
 describe('history', () => {
   it('lands on the game picker with an entry of its own', () => {
     expect(root.querySelector('.games')).not.toBeNull();
-    expect(root.querySelectorAll('.game-card')).toHaveLength(2);
+    expect(root.querySelectorAll('.game-card')).toHaveLength(3);
     expect(viewName()).toBe('home');
+  });
+
+  it('offers Hexhaven as a link out, not an in-app game', () => {
+    // It has no corpus and no bitmap, so it must not be reachable through the
+    // GAMES path — a regression here would mean widening Record<Game, ...>.
+    const away = root.querySelector<HTMLAnchorElement>('.game-card--away');
+    expect(away).not.toBeNull();
+    expect(away?.tagName).toBe('A');
+    expect(away?.getAttribute('href')).toBe('/hexhaven/');
+    // and it is last, so the GAMES indices used elsewhere in this file hold
+    expect([...root.querySelectorAll('.game-card')].indexOf(away!)).toBe(2);
   });
 
   it('opens a deck list per game — four tiers, three film decks', async () => {

@@ -42,6 +42,9 @@
      without a second set of values to keep in step. */
   --g-pictionary: var(--t-moderate);
   --g-charades: var(--t-hindi);
+  /* Hexhaven has no deck of its own, so it borrows the English ink: the one
+     remaining hue that reads as neither of the two above in either theme. */
+  --g-hexhaven: var(--t-english);
 
   /* semantic — separate from tier colour, never reused as accent */
   --ok: #1f8a54;

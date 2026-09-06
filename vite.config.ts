@@ -34,7 +34,14 @@ export default defineConfig({
         // All four corpus bundles are 16.6 KB gzipped in total. Precaching them
         // costs nothing and guarantees a full offline game.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,json}'],
+        // Hexhaven is the one thing here that cannot work offline — it needs a
+        // live peer connection — so precaching it would put 55 KB in the cache
+        // to serve a page that can only fail. It is fetched on demand instead.
+        globIgnores: ['hexhaven/**'],
         navigateFallback: '/index.html',
+        // ...and without this the fallback answers /hexhaven/ with the word
+        // generator's shell on every visit after the first.
+        navigateFallbackDenylist: [/^\/hexhaven\//],
       },
     }),
   ],
