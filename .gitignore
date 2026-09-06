@@ -16,3 +16,7 @@ __pycache__/
 #   data/words.seed.json      — corpus source of truth
 #   public/corpus/*.json      — generated, but committed so the app builds
 #                               without a Python toolchain in CI
+
+# The Claude desktop app drops files it delivers into the connected folder.
+# They are session artefacts, not part of the site.
+Claude outputs/

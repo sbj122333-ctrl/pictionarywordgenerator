@@ -3,391 +3,392 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<meta name="theme-color" content="#12141a">
+<meta name="theme-color" content="#3a6497">
 <meta name="description" content="Hexhaven — a settlers-style hex trading game for 3–6 players. One person hosts, everyone else joins with a code. No accounts, no server.">
 <title>Hexhaven</title>
 <style>:root{
-  --bg:#12141a; --bg2:#171a22; --panel:#1c202a; --panel2:#232833; --panel3:#2b313e;
-  --line:#333b4a; --line2:#414b5d;
-  --tx:#e9ecf2; --tx2:#a4adbe; --tx3:#6f7788;
-  --gold:#f0b429; --gold2:#d99a12;
-  --good:#3fa860; --bad:#e0544a; --sea:#152c3a; --sea2:#1d3c4e;
-  --r:12px; --shadow:0 10px 30px rgba(0,0,0,.45);
-  --lumber:#2f7050; --brick:#b25c38; --wool:#78ab48; --grain:#dcae35; --ore:#69748a; --desert:#c9b48c;
+  /* sea + shore */
+  --sea:#4a7ab0; --sea2:#3a6497; --sea3:#2d5480; --surf:#7fb2dc; --sand:#e8d6a6; --sand2:#d8c188;
+  /* panels: cream, the way a board game box is */
+  --pn:#f7f4ec; --pn2:#ece7db; --pn3:#e0d9c8; --line:#d5cdb8; --line2:#c2b89e;
+  --tx:#2e2a23; --tx2:#6b6455; --tx3:#958d7c;
+  --gold:#e0a021; --gold2:#c4870f; --good:#3f8f57; --bad:#c4483a; --info:#2f6fae;
+  /* resources */
+  --lumber:#2f7a4a; --brick:#c1613a; --wool:#8cbb4e; --grain:#e4b83c; --ore:#8d97a6;
+  --shadow:0 6px 20px rgba(30,26,18,.16); --shadow2:0 14px 40px rgba(20,18,12,.28);
   --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{height:100%}
-body{
-  margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 var(--font);
-  -webkit-font-smoothing:antialiased;overscroll-behavior:none;
-}
-button{font:inherit;color:inherit;cursor:pointer}
+body{margin:0;background:var(--sea2);color:var(--tx);font:15px/1.5 var(--font);
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
 input,select{font:inherit}
-h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.02em}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
 .hidden{display:none!important}
+.muted{color:var(--tx2)} .tiny{font-size:12.5px} .grow{flex:1;min-width:0}
+.row{display:flex;gap:10px;align-items:center} .row.wrap{flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.hr{height:1px;background:var(--line);margin:18px 0}
+.err{color:#b03a2c;font-size:13.5px;min-height:18px}
 
-/* ---------------- generic controls ---------------- */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 18px;border-radius:10px;border:1px solid var(--line2);
-  background:var(--panel2);color:var(--tx);font-weight:600;font-size:14px;
-  transition:background .14s,border-color .14s,transform .06s;white-space:nowrap;
-}
-.btn:hover:not(:disabled){background:var(--panel3);border-color:#54607a}
+/* ---------------- controls ---------------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 18px;border-radius:11px;border:1px solid var(--line2);
+  background:linear-gradient(180deg,#fff,var(--pn2));color:var(--tx);font-weight:650;font-size:14px;
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 2px 4px rgba(40,34,22,.09);
+  transition:transform .06s,box-shadow .12s,background .12s;white-space:nowrap}
+.btn:hover:not(:disabled){background:linear-gradient(180deg,#fff,#f2ecdd);box-shadow:0 4px 10px rgba(40,34,22,.14)}
 .btn:active:not(:disabled){transform:translateY(1px)}
-.btn:disabled{opacity:.38;cursor:not-allowed}
-.btn.primary{background:linear-gradient(180deg,var(--gold),var(--gold2));border-color:#a97a08;color:#22190a}
-.btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#f7c247,#e6a616)}
-.btn.ghost{background:transparent}
-.btn.sm{padding:7px 12px;font-size:13px;border-radius:8px}
-.btn.danger{border-color:#6d3230;color:#f0928a}
-.field{
-  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line2);
-  background:var(--bg2);color:var(--tx);outline:none;
-}
-.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.14)}
-label.lbl{display:block;font-size:12px;font-weight:600;color:var(--tx2);
-  text-transform:uppercase;letter-spacing:.07em;margin:0 0 7px}
+.btn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.btn.primary{background:linear-gradient(180deg,#f0b93c,var(--gold2));border-color:#a9740a;color:#2a1e04;
+  text-shadow:0 1px 0 rgba(255,255,255,.25)}
+.btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#f6c655,#d19310)}
+.btn.ghost{background:transparent;box-shadow:none;border-color:transparent;color:var(--tx2)}
+.btn.ghost:hover:not(:disabled){background:rgba(0,0,0,.05)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:9px}
+.btn.danger{color:#a83a2c;border-color:#d9a79f}
+.field{width:100%;padding:12px 14px;border-radius:11px;border:1px solid var(--line2);
+  background:#fff;color:var(--tx);outline:none}
+.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(224,160,33,.18)}
+label.lbl{display:block;font-size:11.5px;font-weight:700;color:var(--tx2);
+  text-transform:uppercase;letter-spacing:.08em;margin:0 0 7px}
 
-/* ---------------- screens ---------------- */
+/* ---------------- home / lobby ---------------- */
 .screen{min-height:100dvh;display:none}
 .screen.on{display:block}
-
-/* home + lobby */
-.center-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 18px}
-.card{
-  width:100%;max-width:460px;background:var(--panel);border:1px solid var(--line);
-  border-radius:18px;padding:30px;box-shadow:var(--shadow);
-}
-.card.wide{max-width:640px}
-.brand{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:26px;text-align:center}
-.brand h1{font-size:32px;letter-spacing:-.03em}
-.brand .sub{color:var(--tx2);font-size:14px;max-width:34ch}
-.logo{width:60px;height:60px}
-.stack{display:flex;flex-direction:column;gap:12px}
-.row{display:flex;gap:10px;align-items:center}
-.row.wrap{flex-wrap:wrap}
-.grow{flex:1;min-width:0}
-.muted{color:var(--tx2)}
-.tiny{font-size:12.5px}
-.err{color:#f2938b;font-size:13.5px;min-height:18px}
-.hr{height:1px;background:var(--line);margin:20px 0}
+.center-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 18px;
+  background:radial-gradient(ellipse at 50% 25%,var(--sea),var(--sea3) 78%)}
+.card{width:100%;max-width:470px;background:var(--pn);border:1px solid var(--line);
+  border-radius:20px;padding:30px;box-shadow:var(--shadow2)}
+.card.wide{max-width:660px}
+.brand{display:flex;flex-direction:column;align-items:center;gap:11px;margin-bottom:24px;text-align:center}
+.brand h1{font-size:33px;letter-spacing:-.035em}
+.brand .sub{color:var(--tx2);font-size:14px;max-width:36ch}
+.logo{width:62px;height:62px}
 .backlink{display:block;text-align:center;margin-top:18px;font-size:12.5px;color:var(--tx3);text-decoration:none}
 .backlink:hover{color:var(--tx2);text-decoration:underline}
-
-.code-box{
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  background:var(--bg2);border:1px dashed var(--line2);border-radius:14px;padding:16px;
-}
-.code{font-size:34px;font-weight:750;letter-spacing:.22em;color:var(--gold);
+.code-box{display:flex;align-items:center;justify-content:center;gap:12px;
+  background:#fff;border:2px dashed var(--line2);border-radius:14px;padding:16px}
+.code{font-size:34px;font-weight:800;letter-spacing:.22em;color:var(--gold2);
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .code-in{letter-spacing:.28em;text-transform:uppercase;text-align:center;
   font-size:24px;font-weight:700;font-family:ui-monospace,Menlo,monospace}
-
-.seat{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;background:var(--bg2);
+.seat{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;background:#fff;
   border:1px solid var(--line)}
-.dot{width:13px;height:13px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(255,255,255,.1) inset}
-.seat .nm{font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
-  padding:3px 7px;border-radius:6px;background:var(--panel3);color:var(--tx2)}
-.badge.you{background:rgba(240,180,41,.16);color:var(--gold)}
-.badge.off{background:rgba(224,84,74,.16);color:#f0928a}
+.dot{width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px rgba(0,0,0,.12) inset}
+.seat .nm{font-weight:650;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+  padding:3px 7px;border-radius:6px;background:var(--pn3);color:var(--tx2)}
+.badge.you{background:rgba(224,160,33,.2);color:#8a6108}
+.badge.off{background:rgba(196,72,58,.15);color:#9e3a2d}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0}
-.opt .t{font-size:14px}
-.opt .d{font-size:12px;color:var(--tx3)}
-.switch{width:44px;height:25px;border-radius:99px;background:var(--panel3);border:1px solid var(--line2);
+.opt .t{font-size:14px;font-weight:600} .opt .d{font-size:12px;color:var(--tx3)}
+.switch{width:46px;height:26px;border-radius:99px;background:var(--pn3);border:1px solid var(--line2);
   position:relative;flex:none;transition:background .16s}
-.switch::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;
-  background:var(--tx2);transition:transform .16s,background .16s}
-.switch[aria-checked="true"]{background:rgba(240,180,41,.28);border-color:var(--gold2)}
-.switch[aria-checked="true"]::after{transform:translateX(19px);background:var(--gold)}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .16s}
+.switch[aria-checked="true"]{background:var(--gold);border-color:var(--gold2)}
+.switch[aria-checked="true"]::after{transform:translateX(20px)}
+.resume-box{background:rgba(63,143,87,.12);border:1px solid rgba(63,143,87,.35);border-radius:13px;
+  padding:14px;margin-bottom:16px}
 
-/* ---------------- game shell ---------------- */
+/* ================= GAME SHELL ================= */
 #screen-game{display:none;height:100dvh;overflow:hidden}
-#screen-game.on{display:grid;grid-template-rows:auto 1fr auto}
+#screen-game.on{display:grid;grid-template-columns:58px 1fr 336px}
 
-.topbar{
-  display:flex;align-items:center;gap:12px;padding:8px 14px;background:var(--panel);
-  border-bottom:1px solid var(--line);min-height:52px;
-}
-.topbar .mark{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-.02em}
-.topbar .mark svg{width:24px;height:24px}
-.turn-pill{
-  display:flex;align-items:center;gap:9px;padding:6px 14px;border-radius:99px;
-  background:var(--bg2);border:1px solid var(--line2);font-weight:600;font-size:14px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
-.turn-pill.mine{border-color:var(--gold);background:rgba(240,180,41,.12);color:var(--gold)}
-.dice{display:flex;gap:6px}
-.die{width:30px;height:30px;border-radius:7px;background:#f4f1ea;color:#1a1a1a;display:grid;
-  place-items:center;font-weight:800;font-size:16px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
-.die.hot{background:var(--gold);}
+/* left rail */
+.rail{background:var(--pn);border-right:1px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;gap:6px;padding:10px 0;z-index:5}
+.rail button{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;color:var(--tx2);
+  transition:background .12s,color .12s}
+.rail button:hover{background:var(--pn3);color:var(--tx)}
+.rail button.on{background:var(--gold);color:#2a1e04}
+.rail svg{width:21px;height:21px}
+.rail .sp{flex:1}
 
-.main{display:grid;grid-template-columns:1fr 320px;min-height:0;overflow:hidden}
-.board-wrap{position:relative;min-height:0;background:
-  radial-gradient(ellipse at 50% 40%,var(--sea2),var(--sea) 62%,#0e1c26 100%);
-  display:flex;align-items:center;justify-content:center;padding:2px;overflow:hidden}
-#board{width:100%;height:100%;touch-action:manipulation}
+/* board stage */
+.stage{position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 42%,var(--sea) 0%,var(--sea2) 55%,var(--sea3) 100%)}
+#board{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;display:block}
+#board.grabbing{cursor:grabbing}
 
-.side{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;
+.zoomctl{position:absolute;left:12px;top:12px;display:flex;flex-direction:column;gap:5px;z-index:6}
+.zoomctl button{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.92);
+  color:var(--tx);font-weight:800;font-size:17px;display:grid;place-items:center;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.08)}
+.zoomctl button:hover{background:#fff}
+.zoomctl svg{width:16px;height:16px}
+
+/* your cards, bottom-left */
+.handbar{position:absolute;left:12px;bottom:12px;display:flex;gap:6px;align-items:flex-end;z-index:6;
+  max-width:44%;flex-wrap:wrap}
+.rcard{position:relative;width:46px;height:64px;border-radius:9px;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding-top:6px;gap:2px;color:#fff;
+  box-shadow:0 3px 8px rgba(20,16,8,.35),0 1px 0 rgba(255,255,255,.35) inset;
+  border:1.5px solid rgba(255,255,255,.5);transition:transform .18s}
+.rcard svg{width:20px;height:20px}
+.rcard .n{position:absolute;bottom:4px;font-weight:800;font-size:15px;
+  text-shadow:0 1px 2px rgba(0,0,0,.45);font-variant-numeric:tabular-nums}
+.rcard.z{opacity:.34;filter:saturate(.5)}
+.rcard.gained{animation:pop .5s ease-out}
+.rcard.spent{animation:shake .32s}
+.rcard .delta{position:absolute;top:-9px;right:-7px;background:var(--good);color:#fff;font-size:11px;
+  font-weight:800;padding:1px 6px;border-radius:99px;box-shadow:0 2px 5px rgba(0,0,0,.3)}
+.dcard{width:46px;height:64px;border-radius:9px;background:linear-gradient(160deg,#6f5bb5,#4c3d86);
+  border:1.5px solid rgba(255,255,255,.5);color:#fff;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;position:relative;box-shadow:0 3px 8px rgba(20,16,8,.35)}
+.dcard svg{width:19px;height:19px}
+.dcard .n{position:absolute;bottom:4px;font-weight:800;font-size:14px}
+@keyframes pop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-8px) scale(1.07)}100%{transform:translateY(0) scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+
+/* turn banner + actions, bottom-centre */
+.dockcol{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;z-index:7;
+  display:flex;flex-direction:column;align-items:center;gap:8px;max-width:min(660px,72%)}
+.turnbar{display:flex;align-items:center;gap:0;border-radius:12px;overflow:hidden;
+  box-shadow:var(--shadow);background:#fff;border:1px solid rgba(0,0,0,.08)}
+.turnbar .who{display:flex;align-items:center;gap:9px;padding:9px 16px;font-weight:700;font-size:14.5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.turnbar .who .pin{width:22px;height:22px;border-radius:50%;flex:none;color:#fff;display:grid;
+  place-items:center;font-size:11px;font-weight:800;box-shadow:0 0 0 2px rgba(0,0,0,.12) inset}
+.turnbar.mine{outline:2px solid var(--gold);outline-offset:-2px}
+.turnbar .timer{padding:9px 13px;border-left:1px solid var(--line);font-weight:800;
+  font-variant-numeric:tabular-nums;font-size:14px;color:var(--tx2);min-width:56px;text-align:center}
+.turnbar .timer.warn{color:var(--bad);background:rgba(196,72,58,.1)}
+.hintline{background:rgba(255,255,255,.94);border-radius:10px;padding:7px 14px;font-size:13.5px;
+  font-weight:600;color:var(--tx);box-shadow:var(--shadow);text-align:center;max-width:100%}
+.actionbar{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.abtn{position:relative;width:62px;height:62px;border-radius:13px;background:linear-gradient(180deg,#fff,var(--pn2));
+  border:1px solid var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  box-shadow:0 3px 8px rgba(30,26,18,.18);transition:transform .07s,box-shadow .12s}
+.abtn:hover:not(:disabled){box-shadow:0 6px 14px rgba(30,26,18,.24);transform:translateY(-1px)}
+.abtn:active:not(:disabled){transform:translateY(1px)}
+.abtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.abtn svg{width:25px;height:25px;color:var(--tx)}
+.abtn .lb{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--tx2)}
+.abtn .ct{position:absolute;top:3px;right:5px;font-size:10.5px;font-weight:800;color:var(--tx3)}
+.abtn.go{background:linear-gradient(180deg,#f2c04b,var(--gold2));border-color:#a9740a}
+.abtn.go svg,.abtn.go .lb{color:#2d2003}
+.abtn.on{outline:2.5px solid var(--gold);outline-offset:-2.5px}
+
+/* ---------------- right column ---------------- */
+.side{background:var(--pn);border-left:1px solid var(--line);display:flex;flex-direction:column;
   min-height:0;overflow:hidden}
-.tabs{display:flex;border-bottom:1px solid var(--line);flex:none}
-.tab{flex:1;padding:11px 6px;background:none;border:none;color:var(--tx3);font-weight:600;font-size:13px;
-  border-bottom:2px solid transparent}
-.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
-.tab-body{flex:1;min-height:0;overflow-y:auto;padding:12px}
+.mtabs{display:none}
+.lane{display:flex;align-items:center;gap:5px;padding:8px 10px;border-bottom:1px solid var(--line);
+  background:var(--pn2);flex:none;flex-wrap:wrap}
+.bchip{display:flex;align-items:center;gap:4px;padding:3px 7px 3px 4px;border-radius:8px;background:#fff;
+  border:1px solid var(--line);font-weight:800;font-size:12.5px;font-variant-numeric:tabular-nums}
+.bchip .sw{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;color:#fff}
+.bchip .sw svg{width:11px;height:11px}
+.logbox{flex:1 1 auto;min-height:0;overflow-y:auto;padding:9px 10px;display:flex;flex-direction:column;gap:4px;
+  background:#fffdf8}
+.le{font-size:12.5px;line-height:1.5;color:var(--tx2);padding:4px 8px;border-radius:7px;background:var(--pn);
+  border-left:3px solid var(--line2)}
+.le.phase{background:rgba(224,160,33,.13);border-left-color:var(--gold);color:var(--tx);font-weight:650}
+.le.roll{border-left-color:var(--info)} .le.build{border-left-color:var(--good)}
+.le.rob{border-left-color:var(--bad)} .le.trade{border-left-color:#7d5bbe} .le.dev{border-left-color:#2f9aa0}
+.le.award,.le.win{background:rgba(224,160,33,.2);border-left-color:var(--gold);color:#7a5406;font-weight:700}
+.le.bank{border-left-color:#b08a3a}
 
-.pcard{border:1px solid var(--line);border-radius:12px;padding:10px 11px;margin-bottom:8px;background:var(--bg2);
-  position:relative;overflow:hidden}
-.pcard.turn{border-color:var(--gold);box-shadow:0 0 0 1px rgba(240,180,41,.35)}
-.pcard .bar{position:absolute;left:0;top:0;bottom:0;width:4px}
-.pcard .hd{display:flex;align-items:center;gap:8px;margin-left:6px}
-.pcard .hd .nm{font-weight:650;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vp{font-weight:800;font-size:17px;color:var(--gold);font-variant-numeric:tabular-nums}
-.pstats{display:flex;gap:10px;margin:7px 0 0 6px;flex-wrap:wrap;font-size:12px;color:var(--tx2)}
-.pstat{display:flex;align-items:center;gap:4px}
-.pstat svg{flex:none}
-.awards{display:flex;gap:5px;margin-left:6px;margin-top:6px;flex-wrap:wrap}
-.award{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  padding:2.5px 6px;border-radius:5px;background:rgba(240,180,41,.14);color:var(--gold)}
+.chatwrap{flex:none;border-top:1px solid var(--line);display:flex;flex-direction:column;max-height:210px}
+.chathead{display:flex;align-items:center;justify-content:space-between;padding:7px 11px;
+  font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);
+  background:var(--pn2);cursor:pointer}
+.chathead .cv{transition:transform .18s}
+.chatwrap.closed .cv{transform:rotate(180deg)}
+.chatwrap.closed .chatlist,.chatwrap.closed .chatform{display:none}
+.chatlist{flex:1;min-height:0;overflow-y:auto;padding:7px 11px;display:flex;flex-direction:column;gap:3px;
+  background:#fffdf8}
+.cl{font-size:13px;line-height:1.45}
+.cl .who{font-weight:800}
+.cl.sys{color:var(--tx3);font-style:italic;font-size:12.5px}
+.chatform{display:flex;gap:6px;padding:7px 9px;border-top:1px solid var(--line);background:var(--pn2)}
+.chatform .field{padding:8px 11px;border-radius:9px;font-size:13.5px}
 
-.log{font-size:13px;display:flex;flex-direction:column;gap:6px}
-.log .e{padding:6px 9px;border-radius:8px;background:var(--bg2);border-left:2px solid var(--line2);color:var(--tx2)}
-.log .e.phase{background:rgba(240,180,41,.08);border-left-color:var(--gold);color:var(--tx);font-weight:600}
-.log .e.roll{border-left-color:#7aa5d6}
-.log .e.build{border-left-color:var(--good)}
-.log .e.rob{border-left-color:var(--bad)}
-.log .e.trade{border-left-color:#b48ae0}
-.log .e.dev{border-left-color:#4bb3a5}
-.log .e.award,.log .e.win{background:rgba(240,180,41,.14);border-left-color:var(--gold);color:var(--gold);font-weight:600}
+.plist{flex:none;max-height:44%;overflow-y:auto;border-top:1px solid var(--line);padding:8px;
+  display:flex;flex-direction:column;gap:6px;background:var(--pn)}
+.pc{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:11px;background:#fff;
+  border:1px solid var(--line);position:relative}
+.pc.turn{border-color:var(--gold);box-shadow:0 0 0 2px rgba(224,160,33,.3)}
+.pc.me{background:#fffbee}
+.pc.off{opacity:.62}
+.pc .av{width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;color:#fff;
+  font-weight:800;font-size:14px;box-shadow:0 0 0 2px rgba(0,0,0,.12) inset}
+.pc .mid{flex:1;min-width:0}
+.pc .nm{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc .sub{display:flex;gap:7px;font-size:11.5px;color:var(--tx2);margin-top:2px;flex-wrap:wrap}
+.pc .sub i{display:flex;align-items:center;gap:3px;font-style:normal}
+.pc .sub svg{width:11px;height:11px;opacity:.7}
+.pc .pv{font-weight:800;font-size:19px;color:var(--gold2);font-variant-numeric:tabular-nums}
+.pc .tags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap}
+.tag{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:2px 5px;
+  border-radius:5px;background:rgba(224,160,33,.18);color:#8a6108}
+.tag.red{background:rgba(196,72,58,.15);color:#9e3a2d}
+.tag.grey{background:var(--pn3);color:var(--tx2)}
 
-.chatline{font-size:13.5px;padding:5px 0;border-bottom:1px solid var(--line);color:var(--tx)}
-.chatline .who{font-weight:700}
-.chatline.sys{color:var(--tx3);font-style:italic}
-.chat-form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);flex:none}
+/* ---------------- overlays ---------------- */
+.roll-stage{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;z-index:9;pointer-events:none;background:rgba(20,32,48,.4);opacity:0;transition:opacity .18s}
+.roll-stage.on{opacity:1}
+.roll-dice{display:flex;gap:16px}
+.bigdie{width:82px;height:82px;border-radius:17px;background:#fdfbf5;display:grid;place-items:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.4),inset 0 -5px 0 rgba(0,0,0,.09)}
+.bigdie svg{width:60px;height:60px}
+.bigdie.tumble{animation:tumble .09s linear infinite}
+@keyframes tumble{0%{transform:rotate(-10deg)}50%{transform:rotate(9deg) translateY(-10px)}100%{transform:rotate(-10deg)}}
+.roll-total{font-size:38px;font-weight:800;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.6);
+  font-variant-numeric:tabular-nums}
+.roll-total.seven{color:#ffb4a8}
+.roll-note{font-size:14.5px;font-weight:650;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.75);
+  max-width:70%;text-align:center;background:rgba(0,0,0,.3);padding:6px 14px;border-radius:9px}
 
-/* ---------------- bottom bar ---------------- */
-.bottom{background:var(--panel);border-top:1px solid var(--line);padding:9px 12px;
-  display:flex;flex-direction:column;gap:9px}
-.hand{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.res{
-  display:flex;align-items:center;gap:7px;padding:7px 11px 7px 8px;border-radius:10px;
-  background:var(--panel2);border:1px solid var(--line2);font-weight:700;font-variant-numeric:tabular-nums;
-  min-width:62px;
-}
-.res .ic{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;flex:none}
-.res .ic svg{width:14px;height:14px}
-.res.z{opacity:.4}
-.res .n{font-size:15px}
-.res.dev{border-style:dashed}
-.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.cost{font-size:11px;font-weight:600;opacity:.72;font-variant-numeric:tabular-nums;letter-spacing:.02em}
-.hint{font-size:13px;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px}
+.gain-bar{position:absolute;left:50%;transform:translateX(-50%);top:14px;z-index:8;
+  display:flex;gap:9px;align-items:center;background:rgba(255,255,255,.96);border-radius:99px;
+  padding:7px 16px;box-shadow:var(--shadow2);animation:gainIn .25s ease-out;max-width:80%;flex-wrap:wrap;
+  justify-content:center}
+@keyframes gainIn{from{opacity:0;transform:translate(-50%,-10px)}to{opacity:1;transform:translate(-50%,0)}}
+.gain-bar .lbl2{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+.gain-chip{display:flex;align-items:center;gap:5px;font-weight:800;font-size:15px}
+.gain-chip .sw{width:20px;height:20px;border-radius:6px;display:grid;place-items:center;color:#fff}
+.gain-chip .sw svg{width:13px;height:13px}
+.gain-bar.none{color:var(--tx2);font-weight:650;font-size:13.5px}
 
-/* ---------------- modals ---------------- */
-.modal-bg{position:fixed;inset:0;background:rgba(6,8,12,.72);backdrop-filter:blur(3px);
-  display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
-.modal{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line2);border-radius:16px;
-  padding:22px;box-shadow:var(--shadow);max-height:88dvh;overflow-y:auto}
-.modal h2{font-size:19px;margin-bottom:6px}
+/* connection banner */
+.banner{position:absolute;left:50%;transform:translateX(-50%);top:14px;z-index:20;display:flex;
+  align-items:center;gap:10px;padding:10px 18px;border-radius:12px;font-weight:650;font-size:13.5px;
+  box-shadow:var(--shadow2);max-width:86%}
+.banner.warn{background:#fff3d6;color:#7a5406;border:1px solid #e6c56a}
+.banner.bad{background:#fde3de;color:#8f3325;border:1px solid #e3a598}
+.banner.ok{background:#dff3e4;color:#2c6b40;border:1px solid #a3d3b1}
+.spinner{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;
+  animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;z-index:80;
+  background:#3a2320;color:#ffd9d2;padding:11px 18px;border-radius:11px;font-size:14px;font-weight:650;
+  box-shadow:var(--shadow2);max-width:90vw;text-align:center}
+
+/* tooltips */
+.tip{position:fixed;z-index:200;max-width:280px;pointer-events:none;background:#2b2721;color:#e6e0d4;
+  border-radius:10px;padding:9px 12px;box-shadow:0 12px 34px rgba(0,0,0,.4);font-size:12.5px;line-height:1.5;
+  opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.on{opacity:1;transform:translateY(0)}
+.tip__t{display:block;font-weight:800;color:#fff;font-size:13px;margin-bottom:2px}
+.tip__cost{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap}
+.tip__cost i{display:flex;align-items:center;gap:3px;font-style:normal;font-weight:800;color:#fff}
+.tip__cost svg{width:13px;height:13px}
+[data-tip]{cursor:help} button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
+
+/* modals */
+.modal-bg{position:fixed;inset:0;background:rgba(24,32,44,.6);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal{width:100%;max-width:540px;background:var(--pn);border-radius:18px;padding:24px;
+  box-shadow:var(--shadow2);max-height:88dvh;overflow-y:auto}
+.modal h2{font-size:20px;margin-bottom:6px}
 .modal .sub{color:var(--tx2);font-size:13.5px;margin-bottom:16px}
 .picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.pick{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:11px;
-  border:1px solid var(--line2);background:var(--bg2);font-size:12px;font-weight:600}
-.pick .ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center}
-.pick .ic svg{width:17px;height:17px}
-.pick .n{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums}
-.pick.on{border-color:var(--gold);background:rgba(240,180,41,.12)}
-.pick:disabled{opacity:.3}
+.pick{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:12px;
+  border:1px solid var(--line2);background:#fff;font-size:12px;font-weight:650;color:var(--tx)}
+.pick .sw{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff}
+.pick .sw svg{width:17px;height:17px}
+.pick .n{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.pick.on{border-color:var(--gold);background:#fff8e6;box-shadow:0 0 0 2px rgba(224,160,33,.25)}
+.pick:disabled{opacity:.35}
 .stepper{display:flex;align-items:center;gap:4px}
-.stepper button{width:26px;height:26px;border-radius:7px;border:1px solid var(--line2);background:var(--panel2);
+.stepper button{width:26px;height:26px;border-radius:7px;border:1px solid var(--line2);background:var(--pn2);
   display:grid;place-items:center;font-weight:800;line-height:1}
-.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.offer-box{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px}
-.offer-box h3{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:9px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;z-index:80;
-  background:#3a1f1e;border:1px solid #6d3230;color:#f5b3ac;padding:11px 18px;border-radius:11px;
-  font-size:14px;font-weight:600;box-shadow:var(--shadow);max-width:90vw;text-align:center}
+.trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.offer-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px}
+.offer-box h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:9px}
+.guide-h{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin:16px 0 8px}
+.guide-h:first-child{margin-top:0}
+.guide-p{font-size:13px;color:var(--tx2);line-height:1.6;margin:0 0 10px}
+.lrow{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:9px;background:#fff;
+  border:1px solid var(--line);font-size:13px;margin-bottom:5px}
+.lrow .sw{width:24px;height:24px;border-radius:7px;flex:none;display:grid;place-items:center;color:#fff}
+.lrow .sw svg{width:14px;height:14px}
+.lrow .nm2{font-weight:650;flex:1} .lrow .mut{color:var(--tx3);font-size:12px}
+.lrow .pay{display:flex;gap:5px}
+.lrow .pay i{display:flex;align-items:center;gap:2px;font-style:normal;font-size:12px;font-weight:800}
+.lrow .pay .sw{width:17px;height:17px;border-radius:5px}
+.lrow .pay .sw svg{width:11px;height:11px}
 
-/* ---------------- board svg ---------------- */
-.hexlab{font-weight:800;font-family:var(--font);pointer-events:none;
-  text-anchor:middle;dominant-baseline:central}
-.pip{fill:#2a2018}
-.spot{cursor:pointer}
-.spot circle,.spot line{transition:opacity .15s}
-.legal-v{fill:rgba(255,255,255,.92);stroke:var(--gold);stroke-width:2.4;cursor:pointer;
-  animation:pulse 1.5s ease-in-out infinite}
-.legal-e{stroke:var(--gold);stroke-linecap:round;cursor:pointer;opacity:.85;
-  animation:pulse 1.5s ease-in-out infinite}
-.legal-h{fill:rgba(240,180,41,.28);stroke:var(--gold);stroke-width:3;cursor:pointer;
-  animation:pulse 1.5s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
-.robber{filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
-.bldg{filter:drop-shadow(0 2px 3px rgba(0,0,0,.55))}
-.road{stroke-linecap:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+/* stats bars for the end screen */
+.hist{display:flex;align-items:flex-end;gap:4px;height:92px;margin:10px 0 4px}
+.hist .b{flex:1;background:linear-gradient(180deg,var(--info),#27587f);border-radius:4px 4px 0 0;position:relative;
+  min-height:2px}
+.hist .b.hot{background:linear-gradient(180deg,#d9604c,#a83a2c)}
+.hist .b span{position:absolute;top:-15px;left:0;right:0;text-align:center;font-size:10px;font-weight:800;color:var(--tx2)}
+.histx{display:flex;gap:4px;font-size:10.5px;color:var(--tx3);font-weight:700}
+.histx span{flex:1;text-align:center}
+
+/* board bits */
+.hexlab{font-weight:800;font-family:var(--font);pointer-events:none;text-anchor:middle;dominant-baseline:central}
+.legal-v{fill:#fff;stroke:var(--gold);stroke-width:2.6;cursor:pointer;animation:pulse 1.4s ease-in-out infinite}
+.legal-e{stroke:var(--gold);stroke-linecap:round;cursor:pointer;animation:pulse 1.4s ease-in-out infinite}
+.legal-h{fill:rgba(224,160,33,.3);stroke:var(--gold);stroke-width:3;cursor:pointer;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.float-gain{animation:floatup 2s ease-out forwards}
+@keyframes floatup{0%{opacity:0;transform:translateY(8px) scale(.85)}15%{opacity:1;transform:translateY(0) scale(1)}
+  70%{opacity:1}100%{opacity:0;transform:translateY(-34px) scale(1)}}
+.hex-pay{animation:hexpay 1.6s ease-out}
+@keyframes hexpay{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
 
 /* ---------------- responsive ---------------- */
-@media (max-width:920px){
-  .main{grid-template-columns:1fr;grid-template-rows:1fr auto}
-  .side{border-left:none;border-top:1px solid var(--line);max-height:36dvh}
-  .side.collapsed{max-height:none}
-  .side.collapsed .tab-body,.side.collapsed .chat-form{display:none}
-  .topbar{padding:6px 10px;min-height:46px}
-  .topbar .mark span{display:none}
-  .res{min-width:54px;padding:6px 9px 6px 7px}
-  .btn{padding:9px 13px;font-size:13.5px}
-  .picker{grid-template-columns:repeat(5,1fr);gap:5px}
-  .pick{padding:8px 2px;font-size:10.5px}
+@media (max-width:1080px){ #screen-game.on{grid-template-columns:52px 1fr 290px} }
+@media (max-width:900px){
+  #screen-game.on{grid-template-columns:1fr;grid-template-rows:1fr auto}
+  .rail{position:absolute;left:0;top:0;bottom:auto;flex-direction:row;width:100%;height:46px;
+    padding:0 8px;border-right:none;border-bottom:1px solid var(--line);background:rgba(247,244,236,.95)}
+  .rail .sp{flex:1}
+  .stage{grid-row:1;min-height:0}
+  #board{top:46px}
+  .zoomctl{top:56px}
+
+  /* one section at a time, so the board keeps most of the screen */
+  .side{grid-row:2;border-left:none;border-top:1px solid var(--line);height:31dvh}
+  .mtabs{display:flex;flex:none;border-bottom:1px solid var(--line);background:var(--pn2)}
+  .mtabs button{flex:1;padding:9px 4px;font-size:12.5px;font-weight:700;color:var(--tx2);
+    border-bottom:2px solid transparent}
+  .mtabs button.on{color:var(--gold2);border-bottom-color:var(--gold)}
+  .side[data-m="players"] .logbox,.side[data-m="players"] .chatwrap{display:none}
+  .side[data-m="log"] .plist,.side[data-m="log"] .chatwrap,.side[data-m="log"] .lane{display:none}
+  .side[data-m="chat"] .plist,.side[data-m="chat"] .logbox,.side[data-m="chat"] .lane{display:none}
+  .plist{max-height:none;flex:1 1 auto}
+  .chatwrap{flex:1 1 auto;max-height:none}
+  .chatwrap.closed .chatlist,.chatwrap.closed .chatform{display:flex}
+  .chathead{display:none}
+
+  /* hand along the bottom, controls stacked above it — never overlapping */
+  .handbar{left:0;right:0;bottom:0;max-width:none;padding:6px 8px 8px;gap:5px;justify-content:center;
+    background:linear-gradient(0deg,rgba(18,38,58,.6),rgba(18,38,58,0))}
+  .dockcol{bottom:80px;max-width:96%}
+  .hintline{font-size:12px;padding:5px 10px;line-height:1.35}
+  .abtn{width:54px;height:54px;border-radius:11px}
+  .abtn svg{width:21px;height:21px}
+  .abtn .lb{font-size:8.5px}
+  .rcard,.dcard{width:38px;height:53px}
+  .rcard svg,.dcard svg{width:16px;height:16px}
+  .rcard .n,.dcard .n{font-size:13px}
+  .bigdie{width:64px;height:64px} .bigdie svg{width:46px;height:46px}
+  .roll-total{font-size:29px}
   .trade-grid{grid-template-columns:1fr}
-  .modal{padding:17px}
+  .modal{padding:18px}
   .card{padding:22px}
 }
 @media (max-width:520px){
-  .brand h1{font-size:26px}
-  .code{font-size:27px}
-  .hand{gap:5px}
-  .actions{gap:5px}
+  .brand h1{font-size:27px} .code{font-size:27px}
+  .turnbar .who{padding:7px 11px;font-size:13px}
+  .hintline{font-size:12.5px;padding:6px 11px}
 }
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
 ::-webkit-scrollbar-track{background:transparent}
-
-/* =========================================================================
-   v2 — readability, feedback and help
-   ========================================================================= */
-
-/* ---- tooltips ---- */
-.tip{
-  position:fixed;z-index:200;max-width:270px;pointer-events:none;
-  background:#0c0e13;border:1px solid var(--line2);border-radius:10px;
-  padding:9px 12px;box-shadow:0 12px 34px rgba(0,0,0,.6);
-  font-size:12.5px;line-height:1.5;color:var(--tx2);
-  opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;
-}
-.tip.on{opacity:1;transform:translateY(0)}
-.tip__t{display:block;font-weight:700;color:var(--tx);font-size:13px;margin-bottom:2px}
-.tip__b{display:block}
-.tip__cost{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
-.tip__cost i{display:flex;align-items:center;gap:3px;font-style:normal;font-weight:700;color:var(--tx)}
-.tip__cost svg{width:13px;height:13px}
-[data-tip]{cursor:help}
-button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
-
-/* ---- topbar dice ---- */
-.dice{display:flex;gap:6px;align-items:center;flex:none}
-.die{width:32px;height:32px;border-radius:8px;background:#f6f3ec;display:grid;place-items:center;
-  box-shadow:0 2px 0 rgba(0,0,0,.4),inset 0 -2px 0 rgba(0,0,0,.08);padding:0}
-.die svg{width:24px;height:24px}
-.die.hot{background:#ffd9a8}
-.dice .sum{font-weight:800;font-size:15px;color:var(--tx2);min-width:20px;text-align:center;
-  font-variant-numeric:tabular-nums}
-.dice .sum.seven{color:var(--bad)}
-
-/* ---- the roll animation over the board ---- */
-.roll-stage{
-  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:10px;z-index:12;pointer-events:none;background:rgba(8,12,18,.45);backdrop-filter:blur(2px);
-  opacity:0;transition:opacity .18s;
-}
-.roll-stage.on{opacity:1}
-.roll-dice{display:flex;gap:14px}
-.bigdie{width:78px;height:78px;border-radius:16px;background:#f6f3ec;display:grid;place-items:center;
-  box-shadow:0 10px 26px rgba(0,0,0,.55),inset 0 -4px 0 rgba(0,0,0,.1)}
-.bigdie svg{width:58px;height:58px}
-.bigdie.tumble{animation:tumble .09s linear infinite}
-@keyframes tumble{
-  0%{transform:rotate(-9deg) translateY(0)}
-  50%{transform:rotate(8deg) translateY(-9px)}
-  100%{transform:rotate(-9deg) translateY(0)}
-}
-.roll-total{font-size:34px;font-weight:800;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7);
-  font-variant-numeric:tabular-nums}
-.roll-total.seven{color:#ff9d92}
-.roll-note{font-size:14px;font-weight:600;color:rgba(255,255,255,.85);text-shadow:0 2px 8px rgba(0,0,0,.7);
-  max-width:80%;text-align:center}
-
-/* ---- "you collected" bar ---- */
-.gain-bar{
-  position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:11;
-  display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:92%;
-  background:rgba(12,16,22,.9);border:1px solid var(--line2);border-radius:99px;padding:8px 16px;
-  box-shadow:var(--shadow);animation:gainIn .25s ease-out;
-}
-@keyframes gainIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
-.gain-bar .lbl2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2)}
-.gain-chip{display:flex;align-items:center;gap:5px;font-weight:800;font-size:15px;color:var(--tx)}
-.gain-chip .ic{width:20px;height:20px;border-radius:5px;display:grid;place-items:center}
-.gain-chip .ic svg{width:13px;height:13px}
-.gain-bar.none{color:var(--tx3);font-weight:600;font-size:13.5px}
-
-/* ---- hand chips react when they change ---- */
-.res{position:relative;transition:transform .18s,border-color .18s}
-.res.gained{border-color:var(--good);animation:pop .45s ease-out}
-.res .delta{
-  position:absolute;top:-9px;right:-6px;background:var(--good);color:#04120a;font-size:11px;font-weight:800;
-  padding:1px 5px;border-radius:99px;animation:gainIn .3s ease-out;
-}
-.res.spent{animation:shake .3s}
-@keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.14)}100%{transform:scale(1)}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
-
-/* ---- board feedback ---- */
-.hex-pay{animation:hexpay 1.5s ease-out;transform-box:fill-box;transform-origin:center}
-@keyframes hexpay{
-  0%{opacity:0}
-  18%{opacity:1}
-  100%{opacity:0}
-}
-.float-gain{animation:floatup 1.9s ease-out forwards;transform-box:fill-box;transform-origin:center}
-@keyframes floatup{
-  0%{opacity:0;transform:translateY(6px) scale(.85)}
-  16%{opacity:1;transform:translateY(-2px) scale(1)}
-  70%{opacity:1}
-  100%{opacity:0;transform:translateY(-30px) scale(1)}
-}
-.hexicon{pointer-events:none}
-.blocked-veil{pointer-events:none}
-
-/* ---- guide tab ---- */
-.guide-h{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
-  color:var(--tx2);margin:16px 0 8px}
-.guide-h:first-child{margin-top:2px}
-.guide-p{font-size:13px;color:var(--tx2);line-height:1.6;margin:0 0 10px}
-.legend{display:flex;flex-direction:column;gap:5px}
-.legend-row{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;background:var(--bg2);
-  border:1px solid var(--line);font-size:13px}
-.legend-row .sw{width:22px;height:22px;border-radius:6px;flex:none;display:grid;place-items:center}
-.legend-row .sw svg{width:14px;height:14px;color:#fff}
-.legend-row .nm2{font-weight:600;flex:1}
-.legend-row .mut{color:var(--tx3);font-size:12px}
-.costs{display:flex;flex-direction:column;gap:5px}
-.cost-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:var(--bg2);
-  border:1px solid var(--line)}
-.cost-row .what{font-weight:650;font-size:13px;flex:1}
-.cost-row .pay{display:flex;gap:5px;align-items:center}
-.cost-row .pay i{display:flex;align-items:center;gap:2px;font-style:normal;font-size:12px;font-weight:700}
-.cost-row .pay .ic{width:17px;height:17px;border-radius:4px;display:grid;place-items:center}
-.cost-row .pay .ic svg{width:11px;height:11px;color:#fff}
-.cost-row .vpn{font-size:11px;font-weight:700;color:var(--gold);white-space:nowrap}
-.pkey{display:flex;flex-direction:column;gap:5px}
-
-/* ---- misc polish ---- */
-.turn-pill .step{font-weight:500;color:var(--tx2)}
-.hint{background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);padding:7px 12px;border-radius:9px}
-.actions .btn.sm{gap:6px}
-.actions .btn svg{width:14px;height:14px;flex:none}
-.res .ic svg{width:14px;height:14px}
-@media (max-width:920px){
-  .bigdie{width:62px;height:62px;border-radius:13px}
-  .bigdie svg{width:46px;height:46px}
-  .roll-total{font-size:28px}
-  .tip{max-width:230px;font-size:12px}
-  .gain-bar{bottom:8px;padding:6px 12px;gap:6px}
-}
 </style>
 </head>
 <body>
@@ -399,13 +400,22 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       <div class="brand">
         <svg class="logo" viewBox="0 0 100 100" aria-hidden="true">
           <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#f7c247"/><stop offset="1" stop-color="#d99a12"/></linearGradient></defs>
+            <stop offset="0" stop-color="#f3c356"/><stop offset="1" stop-color="#c4870f"/></linearGradient></defs>
           <path d="M50 4 92 28v48L50 100 8 76V28z" fill="url(#lg)"/>
-          <path d="M50 20 78 36v32L50 84 22 68V36z" fill="#12141a"/>
-          <path d="M50 33 67 43v20L50 73 33 63V43z" fill="url(#lg)" opacity=".85"/>
+          <path d="M50 20 78 36v32L50 84 22 68V36z" fill="#f7f4ec"/>
+          <path d="M50 33 67 43v20L50 73 33 63V43z" fill="url(#lg)"/>
         </svg>
         <h1>Hexhaven</h1>
         <p class="sub">A settlers-style hex trading game for 3–6 players. One person hosts, everyone else joins with a code.</p>
+      </div>
+
+      <div id="resumeBox" class="resume-box hidden">
+        <div style="font-weight:700;margin-bottom:3px">You have a game in progress</div>
+        <div id="resumeInfo" class="tiny muted" style="margin-bottom:10px"></div>
+        <div class="row">
+          <button id="btnResume" class="btn primary grow">Resume it</button>
+          <button id="btnDiscardSave" class="btn ghost sm">Discard</button>
+        </div>
       </div>
 
       <div class="stack">
@@ -479,6 +489,16 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
           <select id="optVP" class="field" style="width:96px">
             <option>8</option><option>9</option><option selected>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
           </select></div>
+        <div class="opt"><div><div class="t">Turn time limit</div><div class="d">The table plays on if somebody stalls</div></div>
+          <select id="optTurn" class="field" style="width:118px">
+            <option value="0">No limit</option><option value="60">1 minute</option>
+            <option value="120" selected>2 minutes</option><option value="180">3 minutes</option><option value="300">5 minutes</option>
+          </select></div>
+        <div class="opt"><div><div class="t">Wait for a dropped player</div><div class="d">Then play their move for them</div></div>
+          <select id="optDrop" class="field" style="width:118px">
+            <option value="15">15 seconds</option><option value="30" selected>30 seconds</option>
+            <option value="60">1 minute</option><option value="120">2 minutes</option>
+          </select></div>
         <div class="opt"><div><div class="t">Balanced board</div><div class="d">Never puts two red numbers side by side</div></div>
           <button id="optBal" class="switch" role="switch" aria-checked="true"></button></div>
         <div class="opt"><div><div class="t">Friendly robber</div><div class="d">Can't rob players still on 2 points</div></div>
@@ -490,57 +510,66 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       <div class="hr"></div>
       <button id="btnStart" class="btn primary" style="width:100%">Start game</button>
       <p id="lobbyMsg" class="tiny muted" style="text-align:center;margin-top:12px"></p>
-      <p id="lobbyErr" class="err" style="text-align:center"></p>
     </div>
   </div>
 </div>
 
 <!-- ============ GAME ============ -->
 <div id="screen-game" class="screen">
-  <div class="topbar">
-    <div class="mark">
-      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4 92 28v48L50 100 8 76V28z" fill="#f0b429"/><path d="M50 22 76 37v30L50 82 24 67V37z" fill="#12141a"/></svg>
-      <span>Hexhaven</span>
+  <nav class="rail" aria-label="Game tools">
+    <button id="rlHelp" data-tip="How to play|Rules, costs and what everything on the board means."></button>
+    <button id="rlGuide" data-tip="Reference|Terrain legend, build costs, your bank rates and the player key."></button>
+    <button id="rlSound" data-tip="Sound|Dice, building and turn cues."></button>
+    <button id="rlFull" data-tip="Fullscreen|More board, fewer distractions."></button>
+    <span class="sp"></span>
+    <button id="rlStats" data-tip="Statistics|Dice history and how the game is going."></button>
+    <button id="rlMenu" data-tip="Menu|Room code and leaving the game."></button>
+  </nav>
+
+  <div class="stage" id="stage">
+    <svg id="board" aria-label="Game board"></svg>
+
+    <div class="zoomctl">
+      <button id="zIn" data-tip="Zoom in|Or scroll on the board.">+</button>
+      <button id="zOut" data-tip="Zoom out|Or scroll on the board.">−</button>
+      <button id="zFit" data-tip="Fit board|Back to the whole island. Drag to pan.">⤢</button>
     </div>
-    <div id="turnPill" class="turn-pill grow"></div>
-    <div id="diceBox" class="dice"></div>
-    <button id="btnHelp" class="btn sm ghost" data-tip="How to play|Rules, costs and what everything on the board means.">?</button>
-    <button id="btnMenu" class="btn sm ghost" data-tip="Menu|Room code, rules, leave game.">⋯</button>
+
+    <div class="handbar" id="hand"></div>
+
+    <div class="dockcol">
+      <div id="hintLine" class="hintline" hidden></div>
+      <div class="turnbar" id="turnbar"><span class="who" id="turnWho"></span><span class="timer" id="turnTimer" hidden></span></div>
+      <div class="actionbar" id="actions"></div>
+    </div>
+
+    <div id="rollStage" class="roll-stage" hidden>
+      <div class="roll-dice"><div id="rd1" class="bigdie"></div><div id="rd2" class="bigdie"></div></div>
+      <div id="rollTotal" class="roll-total"></div>
+      <div id="rollNote" class="roll-note"></div>
+    </div>
+    <div id="gainBar" class="gain-bar" hidden></div>
+    <div id="banner" class="banner warn" hidden></div>
   </div>
 
-  <div class="main">
-    <div class="board-wrap">
-      <svg id="board" role="img" aria-label="Game board"></svg>
-      <div id="rollStage" class="roll-stage" hidden>
-        <div class="roll-dice"><div id="rd1" class="bigdie"></div><div id="rd2" class="bigdie"></div></div>
-        <div id="rollTotal" class="roll-total"></div>
-        <div id="rollNote" class="roll-note"></div>
-      </div>
-      <div id="gainBar" class="gain-bar" hidden></div>
+  <aside class="side" id="side" data-m="players">
+    <div class="mtabs" id="mtabs">
+      <button data-m="players" class="on">Players</button>
+      <button data-m="log">Log</button>
+      <button data-m="chat">Chat</button>
     </div>
-
-    <aside class="side" id="side">
-      <div class="tabs">
-        <button class="tab on" data-tab="players">Players</button>
-        <button class="tab" data-tab="log">Log</button>
-        <button class="tab" data-tab="chat">Chat</button>
-        <button class="tab" data-tab="guide">Guide</button>
-      </div>
-      <div class="tab-body" id="tabPlayers"></div>
-      <div class="tab-body hidden" id="tabLog"><div class="log" id="logList"></div></div>
-      <div class="tab-body hidden" id="tabChat"><div id="chatList"></div></div>
-      <div class="tab-body hidden" id="tabGuide"></div>
-      <form class="chat-form hidden" id="chatForm">
-        <input id="chatIn" class="field" maxlength="200" placeholder="Say something…" autocomplete="off">
+    <div class="lane" id="bankLane"></div>
+    <div class="logbox" id="logList"></div>
+    <div class="chatwrap" id="chatwrap">
+      <div class="chathead" id="chatHead"><span>Chat</span><span class="cv">▾</span></div>
+      <div class="chatlist" id="chatList"></div>
+      <form class="chatform" id="chatForm">
+        <input id="chatIn" class="field" maxlength="200" placeholder="Message the table…" autocomplete="off">
         <button class="btn sm primary" type="submit">Send</button>
       </form>
-    </aside>
-  </div>
-
-  <div class="bottom">
-    <div class="hand" id="hand"></div>
-    <div class="actions" id="actions"></div>
-  </div>
+    </div>
+    <div class="plist" id="plist"></div>
+  </aside>
 </div>
 
 <div id="modals"></div>
@@ -763,6 +792,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     p.resources[res] += avail; st.bank[res] -= avail;
     return avail;
   }
+  function sum2(a, b) { return a + b; }
   function log(st, text, kind) {
     st.log.push({ t: text, k: kind || 'info', n: st.log.length });
     if (st.log.length > 220) st.log.splice(0, st.log.length - 220);
@@ -929,7 +959,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       buildings: {}, roads: {},
       longestRoad: null, largestArmy: null, roadLengths: [],
       trade: null, pendingDiscard: {}, robberMoves: 0,
-      rollId: 0, lastProduction: null,
+      rollId: 0, lastProduction: null, rollHist: {},
       awaiting: null,            // {type:'robber'|'roadBuilding'|'steal', ...}
       hasRolled: false, playedDevThisTurn: false,
       specialQueue: null,
@@ -1190,6 +1220,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         st.hasRolled = true;
         st.rollId++;
         st.lastProduction = null;
+        st.rollHist[sum2(d1, d2)] = (st.rollHist[sum2(d1, d2)] || 0) + 1;
         var sum = d1 + d2;
         log(st, p.name + ' rolls ' + d1 + ' + ' + d2 + ' = ' + sum + '.', 'roll');
         if (sum === 7) { afterRoll7(st); }
@@ -1504,6 +1535,66 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     });
   }
 
+
+  /* ---------------- automatic play ----------------
+     What the host does on a player's behalf when their turn runs out or they
+     drop. Always the least damaging legal move: it never spends resources,
+     never builds, and never plays a card. It only unblocks the game. */
+  function autoAction(st, pi) {
+    switch (st.phase) {
+      case 'setup': {
+        if (st.setup.need === 'settlement') {
+          var spots = legalSettlementSpots(st, pi, true);
+          // the best of the free spots, so an absent player is not crippled
+          var best = null, bestScore = -1;
+          spots.forEach(function (v) {
+            var sc = 0;
+            st.board.vertices[v].hexes.forEach(function (h) {
+              var n = st.board.hexes[h].number;
+              if (n) sc += 6 - Math.abs(7 - n);
+            });
+            if (sc > bestScore) { bestScore = sc; best = v; }
+          });
+          return { type: 'setupSettlement', vertex: best || spots[0] };
+        }
+        return { type: 'setupRoad', edge: legalRoadSpots(st, pi, st.setup.lastVertex)[0] };
+      }
+      case 'roll': return { type: 'roll' };
+      case 'discard': {
+        var need = st.pendingDiscard[pi], p = st.players[pi], cards = {};
+        // shed the largest piles first, so a hand stays balanced
+        var order = RESOURCES.slice().sort(function (a, b) { return p.resources[b] - p.resources[a]; });
+        var left = need;
+        while (left > 0) {
+          for (var i = 0; i < order.length && left > 0; i++) {
+            var r = order[i];
+            if ((cards[r] || 0) < p.resources[r]) { cards[r] = (cards[r] || 0) + 1; left--; }
+          }
+        }
+        return { type: 'discard', cards: cards };
+      }
+      case 'robber': {
+        if (st.awaiting.type === 'steal') return { type: 'steal', victim: st.awaiting.targets[0] };
+        // somewhere legal that costs this player the least: prefer a hex they
+        // are not built on, and prefer the desert if it is free
+        var cands = st.board.hexOrder.filter(function (h) {
+          return h !== st.board.robber && !robberBlockedFor(st, pi, h);
+        });
+        var pick = null, pickScore = 1e9;
+        cands.forEach(function (h) {
+          var own = 0;
+          st.board.hexes[h].vertices.forEach(function (v) {
+            var b = st.buildings[v]; if (b && b.owner === pi) own++;
+          });
+          var sc = own * 10 + (st.board.hexes[h].terrain === 'desert' ? -1 : 0);
+          if (sc < pickScore) { pickScore = sc; pick = h; }
+        });
+        return { type: 'moveRobber', hex: pick || cands[0] };
+      }
+      default: return { type: 'endTurn' };
+    }
+  }
+
   /* ---------------- Per-player redacted view ---------------- */
   function viewFor(st, pi) {
     var v = JSON.parse(JSON.stringify({
@@ -1518,7 +1609,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       // and the client writes it back onto its cached copy.
       robber: st.board.robber,
       version: st.version, deckLeft: st.deck.length,
-      rollId: st.rollId, lastProduction: st.lastProduction
+      rollId: st.rollId, lastProduction: st.lastProduction, rollHist: st.rollHist
     }));
     v.you = pi;
     v.players = st.players.map(function (p, i) {
@@ -1553,6 +1644,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     vertexBlockedForBuild: vertexBlockedForBuild, canAfford: canAfford,
     handCount: handCount, totalVP: totalVP, longestRoadFor: longestRoadFor,
     actorsAwaited: actorsAwaited, tradeRate: tradeRate, stealTargets: stealTargets,
+    autoAction: autoAction,
     isBuildPhaseFor: isBuildPhaseFor, publicVP: publicVP
   };
 
@@ -1609,6 +1701,35 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
   }
   function makeToken() { return Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2); }
 
+  /* Your seat is claimed with a token. sessionStorage is per TAB, which is the
+     right grain — two tabs of one browser are two players. But a tab that is
+     CLOSED loses it, and coming back after closing the tab is exactly when you
+     most want your seat, so it is mirrored to localStorage under the room code.
+     Offering a token somebody else is already using is safe: the host mints a
+     fresh one rather than letting two seats share. */
+  function rememberToken(code, token) {
+    try { global.sessionStorage.setItem('hexhaven-token', token); } catch (e) { }
+    try { if (code) global.localStorage.setItem('hexhaven-token-' + code, token); } catch (e) { }
+  }
+  /* A token says WHICH SEAT; a client id says WHICH TAB. Both are needed:
+     two tabs of one browser share localStorage and therefore a token, so the
+     token alone cannot tell "I reloaded" from "someone opened a second tab" —
+     and liveness cannot either, because a healthy connection reads as
+     not-open for a moment while it is still being set up. */
+  function tabId() {
+    try {
+      var t = global.sessionStorage.getItem('hexhaven-tab');
+      if (!t) { t = makeToken(); global.sessionStorage.setItem('hexhaven-tab', t); }
+      return t;
+    } catch (e) { return makeToken(); }
+  }
+
+  function recallToken(code) {
+    try { var t = global.sessionStorage.getItem('hexhaven-token'); if (t) return t; } catch (e) { }
+    try { if (code) return global.localStorage.getItem('hexhaven-token-' + code); } catch (e) { }
+    return null;
+  }
+
   /* ---- Loopback channel so the host's own seat speaks the same protocol ---- */
   function loopbackPair() {
     var a = { peerLabel: 'local' }, b = { peerLabel: 'local' };
@@ -1642,13 +1763,35 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     this.maxPlayers = 6;
     this.config = {
       vpTarget: 10, balancedBoard: true, friendlyRobber: false,
-      specialBuild: true, discardLimit: 7
+      specialBuild: true, discardLimit: 7,
+      turnSeconds: 120,   // a present player's limit; 0 disables it
+      dropSeconds: 30     // how long the table waits on somebody who dropped
     };
+    this.awaitKey = null;
+    this.awaitStart = 0;
+    this.lastSave = 0;
     this.onUpdate = function () { };
     this.onStatus = function () { };
     this.localOnly = !!(opts && opts.localOnly);
     this.localSeats = (opts && opts.localSeats) || 1;
   }
+
+  /* Rebuild a host from a saved game. Seats come back by name and token, all
+     marked disconnected until their owner reconnects — including the host's
+     own, which start() then reclaims through the loopback hello. */
+  Host.prototype.loadSave = function (d) {
+    var self = this;
+    this.config = d.config;
+    this.chat = d.chat || [];
+    this.state = d.state;
+    this.preferCode = d.code && d.code !== 'LOCAL' ? d.code : null;
+    this.seats = d.seats.map(function (s) {
+      return { name: s.name, token: s.token, chan: null, connected: false, sentBoard: false };
+    });
+    this.state.players.forEach(function (p) { p.connected = false; });
+    this.resuming = true;
+    this.sys('Game resumed. Everyone can rejoin with the same code.');
+  };
 
   Host.prototype.start = function (cb) {
     var self = this;
@@ -1657,7 +1800,11 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     this.localChannel = pair[1];
     this.attach(pair[0]);
     this.localChannel.onData(function (m) { self.onLocalMessage && self.onLocalMessage(m); });
-    this.localChannel.send({ t: 'hello', name: this.name, token: makeToken() });
+    this.localChannel.send({
+      t: 'hello', name: this.name,
+      token: this.resuming && this.seats.length ? this.seats[0].token : makeToken()
+    });
+    this.startClock();
 
     if (this.localOnly) {
       // extra pass-and-play seats, all driven from this device
@@ -1677,7 +1824,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
 
     var tries = 0;
     function boot() {
-      var code = makeCode(5);
+      // a resumed game asks for its old code first, so everybody's code still works
+      var code = (tries === 0 && self.preferCode) ? self.preferCode : makeCode(5);
       var peer = new global.Peer(ID_PREFIX + code, peerOpts());
       self.peer = peer;
       var settled = false;
@@ -1724,11 +1872,86 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       var i = seatIdx();
       if (i === null) return;
       var s = self.seats[i];
+      // a late close from a channel this seat has already replaced must not
+      // knock the live one offline
+      if (s.chan && s.chan !== chan) return;
       s.connected = false; s.chan = null;
       if (self.state) { self.state.players[i].connected = false; self.sys(s.name + ' lost connection.'); }
       else { self.seats.splice(i, 1); }
       self.broadcast();
     });
+  };
+
+  /* One dropped player must never freeze the table. Every state the engine is
+     waiting on gets a deadline; when it passes, the host plays the least
+     damaging legal move on that seat's behalf (E.autoAction never spends,
+     builds or plays a card — it only unblocks). Someone who has dropped gets a
+     shorter fuse than someone who is present and thinking. */
+  Host.prototype.limitFor = function (seat) {
+    var s = this.seats[seat];
+    var secs = (s && !s.connected) ? this.config.dropSeconds : this.config.turnSeconds;
+    return secs > 0 ? secs * 1000 : 0;
+  };
+  Host.prototype.awaitedKey = function () {
+    var st = this.state;
+    return st.phase + '|' + E.actorsAwaited(st).join(',') + '|' + st.turn + '|' +
+      (st.setup ? st.setup.idx + st.setup.need : '') + '|' + (st.awaiting ? st.awaiting.type : '');
+  };
+  Host.prototype.tick = function () {
+    var self = this, st = this.state;
+    if (!st || st.phase === 'over') { this.awaitKey = null; return; }
+    var key = this.awaitedKey();
+    if (key !== this.awaitKey) { this.awaitKey = key; this.awaitStart = Date.now(); return; }
+    var elapsed = Date.now() - this.awaitStart, changed = false;
+    E.actorsAwaited(st).forEach(function (seat) {
+      var lim = self.limitFor(seat);
+      if (!lim || elapsed < lim) return;
+      var seatRec = self.seats[seat];
+      var r = E.apply(st, seat, E.autoAction(st, seat));
+      if (r.ok) {
+        changed = true;
+        self.sys((seatRec ? seatRec.name : 'A player') +
+          (seatRec && !seatRec.connected ? ' is offline' : ' ran out of time') + ' — the table played on.');
+      }
+    });
+    if (changed) { this.awaitKey = null; this.broadcast(); }
+  };
+  Host.prototype.startClock = function () {
+    var self = this;
+    this.stopClock();
+    this.clock = setInterval(function () { try { self.tick(); } catch (e) { } }, 1000);
+  };
+  Host.prototype.stopClock = function () { if (this.clock) { clearInterval(this.clock); this.clock = null; } };
+
+  /* The host's browser IS the server, so a closed tab is a lost game unless the
+     game is written down. Saved on every broadcast (throttled) and offered back
+     on the home screen; resuming re-requests the same room code, so everyone
+     rejoins with the code and token they already have. */
+  var SAVE_KEY = 'hexhaven-save';
+  Host.prototype.save = function () {
+    if (!this.state || this.localOnly) return;
+    var now = Date.now();
+    if (now - this.lastSave < 1500 && this.state.phase !== 'over') return;
+    this.lastSave = now;
+    try {
+      global.localStorage.setItem(SAVE_KEY, JSON.stringify({
+        v: 1, at: now, code: this.code, config: this.config, chat: this.chat,
+        seats: this.seats.map(function (s) { return { name: s.name, token: s.token }; }),
+        state: this.state
+      }));
+    } catch (e) { }
+  };
+  Host.clearSave = function () { try { global.localStorage.removeItem(SAVE_KEY); } catch (e) { } };
+  Host.readSave = function () {
+    try {
+      var raw = global.localStorage.getItem(SAVE_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      if (!d || d.v !== 1 || !d.state) return null;
+      if (Date.now() - d.at > 12 * 3600 * 1000) return null;   // a day-old game is not a game
+      if (d.state.phase === 'over') return null;
+      return d;
+    } catch (e) { return null; }
   };
 
   Host.prototype.sys = function (text) {
@@ -1742,9 +1965,19 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
 
     if (m.t === 'hello') {
       var name = String(m.name || 'Player').slice(0, 16).trim() || 'Player';
-      // reclaim a seat after a disconnect
+      /* Reclaim a seat. Reloading the page races your own disconnect: the new
+         hello can arrive before the host has run the old channel's close
+         handler, and a seat that still LOOKS connected would turn you away
+         from your own game. So a dead-but-not-yet-noticed channel counts as
+         reclaimable — while a channel that is genuinely still open does not,
+         because two tabs of one browser share a stored token and must not be
+         able to take each other's seat. */
       for (var i = 0; i < this.seats.length; i++) {
-        if (this.seats[i].token === m.token && !this.seats[i].connected) {
+        var st_ = this.seats[i];
+        var sameTab = !!(m.client && st_.clientId && m.client === st_.clientId);
+        if (st_.token === m.token && (!st_.connected || sameTab)) {
+          if (st_.chan && st_.chan !== chan) { try { st_.chan.close(); } catch (e) { } }
+          this.seats[i].clientId = m.client || st_.clientId;
           this.seats[i].connected = true; this.seats[i].chan = chan; this.seats[i].sentBoard = false;
           setSeat(i);
           if (this.state) this.state.players[i].connected = true;
@@ -1771,7 +2004,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         return false;
       };
       while (taken(token)) token = makeToken();
-      this.seats.push({ name: name, token: token, chan: chan, connected: true, sentBoard: false });
+      this.seats.push({ name: name, token: token, clientId: m.client, chan: chan, connected: true, sentBoard: false });
       setSeat(this.seats.length - 1);
       chan.send({ t: 'welcome', seat: this.seats.length - 1, token: token, code: this.code });
       this.sys(name + ' joined.');
@@ -1812,6 +2045,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         if (this.seats.length < 3) { chan.send({ t: 'error', msg: 'Hexhaven needs at least 3 players.' }); return; }
         this.state = E.createGame(this.seats.map(function (s) { return { name: s.name }; }), this.config);
         this.seats.forEach(function (s) { s.sentBoard = false; });
+        this.awaitKey = null; this.awaitStart = Date.now();
         this.sys('The game begins.');
         this.broadcast(); return;
 
@@ -1822,6 +2056,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         if (this.localOnly && typeof m.as === 'number') actingSeat = m.as;
         var r = E.apply(this.state, actingSeat, m.action || {});
         if (!r.ok) { chan.send({ t: 'error', msg: r.error, seat: actingSeat }); return; }
+        var k = this.awaitedKey();
+        if (k !== this.awaitKey) { this.awaitKey = k; this.awaitStart = Date.now(); }
         this.broadcast(); return;
       }
 
@@ -1836,7 +2072,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       case 'newGame':
         if (!isHostSeat) return;
         if (this.state && this.state.phase !== 'over') return;
-        this.state = null;
+        Host.clearSave();
+        this.state = null; this.awaitKey = null;
         this.seats.forEach(function (s) { s.sentBoard = false; });
         this.sys('Back to the lobby.');
         this.broadcast(); return;
@@ -1860,6 +2097,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         var act = awaited.length ? awaited[0] : this.state.turn;
         var lv = E.viewFor(this.state, act);
         lv.actingAs = act; lv.localOnly = true; lv.chat = this.chat; lv.code = this.code;
+        lv.clock = { start: this.awaitStart, turnMs: 0, dropMs: 0 };
         if (seat0.sentBoard) delete lv.board; else seat0.sentBoard = true;
         seat0.chan.send({ t: 'state', view: lv });
       }
@@ -1873,13 +2111,16 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       view.chat = self.chat;
       view.code = self.code;
       view.localOnly = self.localOnly;
+      view.clock = { start: self.awaitStart, turnMs: self.config.turnSeconds * 1000, dropMs: self.config.dropSeconds * 1000 };
       if (s.sentBoard) delete view.board; else s.sentBoard = true;
       s.chan.send({ t: 'state', view: view });
     });
+    this.save();
     this.onUpdate();
   };
 
   Host.prototype.destroy = function () {
+    this.stopClock();
     try { this.peer && this.peer.destroy(); } catch (e) { }
     this.seats.forEach(function (s) { s.chan && s.chan.close(); });
   };
@@ -1896,17 +2137,36 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     this.onBye = function () { };
   }
 
+  /* The hello is the only message whose loss is unrecoverable: without a
+     welcome the client has no seat, and nothing later will ask again — it just
+     sits in an empty lobby forever. So it is repeated until it is answered. */
   Client.prototype.useChannel = function (chan, name, token) {
     var self = this;
     this.chan = chan;
+    this.helloTries = 0;
     chan.onData(function (m) { self.receive(m); });
-    chan.onClose(function () { self.onStatus('closed'); });
-    chan.send({ t: 'hello', name: name, token: token || makeToken() });
+    chan.onClose(function () { clearTimeout(self.helloTimer); self.onStatus('closed'); });
+    var hello = { t: 'hello', name: name, token: token || makeToken(), client: tabId() };
+    function say() {
+      self.helloTries++;
+      chan.send(hello);
+      clearTimeout(self.helloTimer);
+      self.helloTimer = setTimeout(function () {
+        if (self.seat !== null && self.seat !== undefined) return;
+        if (self.helloTries < 6) say();
+        else self.onStatus('noseat');
+      }, 1200);
+    }
+    say();
   };
 
   Client.prototype.connect = function (code, name, token, cb) {
     var self = this;
     code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    this.joinCode = code;
+    this.joinName = name;
+    this.wantConnection = true;
+    if (token === undefined || token === null) token = recallToken(code);
     var peer = new global.Peer(undefined, peerOpts());
     this.peer = peer;
     var settled = false;
@@ -1921,7 +2181,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         self.useChannel(wrapConn(conn), name, token);
         self.onStatus('connected');
       });
-      conn.on('close', function () { self.onStatus('closed'); });
+      conn.on('close', function () { self.dropped(); });
     });
     peer.on('error', function (e) {
       var msg = e.type === 'peer-unavailable'
@@ -1936,10 +2196,10 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
   Client.prototype.receive = function (m) {
     if (!m || !m.t) return;
     if (m.t === 'welcome') {
+      clearTimeout(this.helloTimer);
       this.seat = m.seat; this.token = m.token; this.code = m.code;
-      // sessionStorage is per TAB: two tabs of one browser are two players, and
-      // must not hand each other's seat token to the host.
-      try { sessionStorage.setItem('hexhaven-token', m.token); } catch (e) { }
+      this.retries = 0;
+      rememberToken(m.code || this.joinCode, m.token);
       return;
     }
     if (m.t === 'lobby') { this.lobby = m; this.view = null; this.onUpdate(); return; }
@@ -1952,6 +2212,37 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     if (m.t === 'bye') { this.onBye(m.reason); return; }
   };
 
+  /* A dropped player should get themselves back without touching anything, and
+     without a fresh seat: the host holds their old one and their token claims
+     it. Backs off so a broker outage is not hammered. */
+  Client.prototype.dropped = function () {
+    var self = this;
+    if (!this.wantConnection || this.retrying) { this.onStatus('closed'); return; }
+    this.chan = null;
+    this.retries = (this.retries || 0) + 1;
+    if (this.retries > 20) { this.onStatus('gaveup'); return; }
+    this.retrying = true;
+    this.onStatus('reconnecting', this.retries);
+    var wait = Math.min(2000 + this.retries * 1000, 8000);
+    setTimeout(function () {
+      if (!self.wantConnection) return;
+      try { self.peer && self.peer.destroy(); } catch (e) { }
+      var c = new N_Client_ctor();
+      // reuse this object rather than swapping it out under the UI
+      self.retrying = false;
+      Client.prototype.connect.call(self, self.joinCode, self.joinName,
+        self.token || recallToken(self.joinCode), function (err) {
+          if (err) self.dropped(); else self.onStatus('connected');
+        });
+    }, wait);
+  };
+
+  Client.prototype.leave = function () {
+    this.wantConnection = false;
+    clearTimeout(this.helloTimer);
+    try { this.peer && this.peer.destroy(); } catch (e) { }
+  };
+
   Client.prototype.send = function (m) { this.chan && this.chan.send(m); };
   Client.prototype.act = function (action, asSeat) {
     var msg = { t: 'action', action: action };
@@ -1959,14 +2250,17 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     this.send(msg);
   };
 
+  var N_Client_ctor = Client;
+
   global.HexNet = {
     Host: Host, Client: Client, loopbackPair: loopbackPair,
-    makeCode: makeCode, makeToken: makeToken, ID_PREFIX: ID_PREFIX
+    makeCode: makeCode, makeToken: makeToken, ID_PREFIX: ID_PREFIX,
+    rememberToken: rememberToken, recallToken: recallToken
   };
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <script>/* ============================================================
-   HEXHAVEN — UI + screen orchestration
+   HEXHAVEN — UI
    ============================================================ */
 (function () {
   'use strict';
@@ -1978,14 +2272,26 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
     });
   }
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
 
   /* ---------------- vocabulary ---------------- */
   var R5 = ['lumber', 'brick', 'wool', 'grain', 'ore'];
-  var RES_COLOR = { lumber: '#2f7050', brick: '#b25c38', wool: '#78ab48', grain: '#dcae35', ore: '#69748a' };
+  var RES_COLOR = { lumber: '#2f7a4a', brick: '#c1613a', wool: '#8cbb4e', grain: '#e4b83c', ore: '#8d97a6' };
   var RES_NAME = { lumber: 'Lumber', brick: 'Brick', wool: 'Wool', grain: 'Grain', ore: 'Ore' };
-  var TERRAIN_FILL = { forest: '#2f7050', hills: '#b25c38', pasture: '#78ab48', fields: '#dcae35', mountains: '#69748a', desert: '#c9b48c' };
   var TERRAIN_NAME = { forest: 'Forest', hills: 'Hills', pasture: 'Pasture', fields: 'Fields', mountains: 'Mountains', desert: 'Desert' };
   var TERRAIN_RES = { forest: 'lumber', hills: 'brick', pasture: 'wool', fields: 'grain', mountains: 'ore', desert: null };
+  var LAND = {
+    forest: { base: '#4f9c5f', edge: '#3d7d4b' },
+    fields: { base: '#ecc65c', edge: '#d3a938' },
+    pasture: { base: '#a6cf63', edge: '#8bb44a' },
+    hills: { base: '#cf7a4e', edge: '#b0603a' },
+    mountains: { base: '#b6bcc6', edge: '#97a0ad' },
+    desert: { base: '#ead9b3', edge: '#d3bf93' }
+  };
+  var COST = {
+    road: { lumber: 1, brick: 1 }, settlement: { lumber: 1, brick: 1, wool: 1, grain: 1 },
+    city: { ore: 3, grain: 2 }, dev: { ore: 1, wool: 1, grain: 1 }
+  };
 
   var ICON = {
     lumber: '<path d="M8 1l4.2 5.4H10L14 11H2l4-4.6H3.8z"/><rect x="7" y="10.6" width="2" height="4.4" rx=".6"/>',
@@ -1998,27 +2304,61 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     cards: '<rect x="1.5" y="3" width="13" height="10" rx="2"/>',
     dev: '<path d="M8 .8l7.2 7.2L8 15.2.8 8z"/>',
     knight: '<path d="M8 1l6 2.4v4.9c0 3.3-2.4 5.7-6 6.7-3.6-1-6-3.4-6-6.7V3.4z"/>',
-    road: '<rect x="1" y="6.2" width="14" height="3.6" rx="1.8"/>',
-    house: '<path d="M2 14V7l6-5 6 5v7z"/>',
-    city: '<path d="M1 14V6l4-3.5L9 6v1h6v7z"/>',
+    road: '<rect x="2" y="6.6" width="12" height="2.8" rx="1.4" transform="rotate(-20 8 8)"/>',
+    house: '<path d="M2.2 14V6.6L8 1.8l5.8 4.8V14z"/>',
+    city: '<path d="M1 14V6.4l3.7-3 3.6 3V8H15v6z"/>',
     port: '<circle cx="8" cy="2.6" r="1.9"/><rect x="7" y="4.6" width="2" height="9.4" rx="1"/><rect x="4" y="6.4" width="8" height="1.8" rx=".9"/><path d="M1.6 8.6a6.4 6.4 0 0012.8 0h-2a4.4 4.4 0 01-8.8 0z"/>',
     star: '<path d="M8 1l2 4.6 5 .5-3.8 3.3 1.2 4.9L8 11.7 3.6 14.3l1.2-4.9L1 6.1l5-.5z"/>',
-    dice: '<rect x="1.5" y="1.5" width="13" height="13" rx="3"/>'
+    dice: '<rect x="1.5" y="1.5" width="13" height="13" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="5.2" cy="5.2" r="1.3"/><circle cx="10.8" cy="10.8" r="1.3"/><circle cx="10.8" cy="5.2" r="1.3"/><circle cx="5.2" cy="10.8" r="1.3"/>',
+    trade: '<path d="M2 5h9V2.4L15 6l-4 3.6V7H2z"/><path d="M14 11H5v2.6L1 10l4-3.6V9h9z"/>',
+    end: '<path d="M3 2l9 6-9 6z"/><rect x="12.4" y="2" width="2.2" height="12" rx="1"/>',
+    book: '<path d="M2 2.6h4.4c1 0 1.6.5 1.6 1.3V14c0-.7-.6-1.2-1.6-1.2H2zM14 2.6H9.6c-1 0-1.6.5-1.6 1.3V14c0-.7.6-1.2 1.6-1.2H14z"/>',
+    info: '<circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="7.1" y="6.8" width="1.8" height="5.4" rx=".9"/><circle cx="8" cy="4.4" r="1.1"/>',
+    sound: '<path d="M2 6h2.8L8 3v10L4.8 10H2z"/><path d="M10.4 5.6a3.4 3.4 0 010 4.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12.6 3.4a6.6 6.6 0 010 9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>',
+    mute: '<path d="M2 6h2.8L8 3v10L4.8 10H2z"/><path d="M10.6 6.2l4 3.6M14.6 6.2l-4 3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>',
+    full: '<path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>',
+    chart: '<rect x="1.8" y="8" width="3.2" height="6.2" rx="1"/><rect x="6.4" y="4" width="3.2" height="10.2" rx="1"/><rect x="11" y="6.4" width="3.2" height="7.8" rx="1"/>',
+    menu: '<circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/>'
   };
-  function icon(res) { return '<svg viewBox="0 0 16 16" fill="currentColor">' + (ICON[res] || '') + '</svg>'; }
-  function glyph(k, sz) {
-    return '<svg viewBox="0 0 16 16" fill="currentColor" width="' + (sz || 12) + '" height="' + (sz || 12) +
-      '" style="vertical-align:-1px">' + GLYPH[k] + '</svg>';
+  function icon(k) { return '<svg viewBox="0 0 16 16" fill="currentColor">' + (ICON[k] || GLYPH[k] || '') + '</svg>'; }
+  function sw(res, size) {
+    return '<span class="sw" style="background:' + RES_COLOR[res] + (size ? ';width:' + size + 'px;height:' + size + 'px' : '') + '">' + icon(res) + '</span>';
   }
-  function resChip(res, size) {
-    return '<span class="ic" style="background:' + RES_COLOR[res] + ';color:#fff;width:' + (size || 20) +
-      'px;height:' + (size || 20) + 'px">' + icon(res) + '</span>';
-  }
-  /** Odds of each dice total, out of 36. */
   function ways(n) { return n < 2 || n > 12 ? 0 : 6 - Math.abs(7 - n); }
-  function pips(n) { return ways(n); }
 
-  /** A die face drawn with real pips — a "5" you can count beats a numeral. */
+  /* what grows on each land, drawn in a 0-100 box */
+  var MOTIF = {
+    forest: '<rect x="44" y="66" width="12" height="28" rx="3" fill="#7a5330"/>' +
+      '<path d="M50 4 74 40H62L84 72H16L38 40H26Z" fill="#23673d"/>' +
+      '<path d="M50 4 62 22 50 30 38 22Z" fill="#2f7d4b"/>',
+    fields: '<rect x="45" y="44" width="10" height="52" rx="4" fill="#b9862a"/>' +
+      '<path d="M50 2c11 11 11 24 0 35-11-11-11-24 0-35z" fill="#c99a2c"/>' +
+      '<path d="M18 20c15 3 21 14 19 29-15-3-21-14-19-29z" fill="#c99a2c"/>' +
+      '<path d="M82 20c2 15-4 26-19 29-2-15 4-26 19-29z" fill="#c99a2c"/>',
+    pasture: '<rect x="32" y="72" width="8" height="20" rx="3" fill="#4e463b"/>' +
+      '<rect x="58" y="74" width="8" height="20" rx="3" fill="#4e463b"/>' +
+      '<circle cx="40" cy="52" r="26" fill="#fff"/><circle cx="62" cy="44" r="21" fill="#fff"/>' +
+      '<circle cx="64" cy="64" r="20" fill="#fff"/><circle cx="40" cy="70" r="19" fill="#fff"/>' +
+      '<ellipse cx="82" cy="44" rx="14" ry="12" fill="#4e463b"/><circle cx="88" cy="40" r="2.6" fill="#fff"/>',
+    hills: '<rect x="4" y="16" width="42" height="19" rx="4" fill="#a44d2c"/>' +
+      '<rect x="52" y="16" width="44" height="19" rx="4" fill="#a44d2c"/>' +
+      '<rect x="4" y="41" width="28" height="19" rx="4" fill="#a44d2c"/>' +
+      '<rect x="38" y="41" width="44" height="19" rx="4" fill="#a44d2c"/>' +
+      '<rect x="4" y="66" width="44" height="19" rx="4" fill="#a44d2c"/>' +
+      '<rect x="54" y="66" width="42" height="19" rx="4" fill="#a44d2c"/>',
+    mountains: '<path d="M4 92 36 24l24 34 14-22 22 56z" fill="#7d8794"/>' +
+      '<path d="M36 24 60 58 44 92H16z" fill="#98a1ad"/>' +
+      '<path d="M36 24 47 40 30 46z" fill="#e8ecf1"/>',
+    desert: '<rect x="43" y="14" width="14" height="80" rx="7" fill="#8fa259"/>' +
+      '<rect x="20" y="42" width="12" height="34" rx="6" fill="#8fa259"/>' +
+      '<rect x="20" y="52" width="28" height="12" rx="6" fill="#8fa259"/>' +
+      '<rect x="68" y="30" width="12" height="46" rx="6" fill="#8fa259"/>' +
+      '<rect x="52" y="42" width="28" height="12" rx="6" fill="#8fa259"/>'
+  };
+  /* placed clear of the number token in the middle */
+  var SLOTS = [[-.46, -.36], [.46, -.36], [-.56, .12], [.56, .12], [0, -.66], [-.3, .54], [.3, .54], [0, .68]];
+  function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+
   function dieFace(n) {
     var P = {
       1: [[50, 50]], 2: [[29, 29], [71, 71]], 3: [[29, 29], [50, 50], [71, 71]],
@@ -2027,29 +2367,22 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       6: [[29, 26], [71, 26], [29, 50], [71, 50], [29, 74], [71, 74]]
     }[n] || [];
     return '<svg viewBox="0 0 100 100" aria-label="' + n + '">' +
-      P.map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9.5" fill="#22242c"/>'; }).join('') +
-      '</svg>';
+      P.map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9.5" fill="#2e2a23"/>'; }).join('') + '</svg>';
   }
-
-  var COST_TEXT = {
-    road: { lumber: 1, brick: 1 }, settlement: { lumber: 1, brick: 1, wool: 1, grain: 1 },
-    city: { ore: 3, grain: 2 }, dev: { ore: 1, wool: 1, grain: 1 }
-  };
-  function costAttr(c) {
-    return R5.filter(function (r) { return c[r]; }).map(function (r) { return r + ':' + c[r]; }).join(',');
+  function shade(hex, pct) {
+    var n = parseInt(hex.slice(1), 16), r = (n >> 16) + pct, g = ((n >> 8) & 255) + pct, b = (n & 255) + pct;
+    return '#' + [r, g, b].map(function (x) { return clamp(Math.round(x), 0, 255).toString(16).padStart(2, '0'); }).join('');
   }
 
   /* ---------------- app state ---------------- */
   var C = null, H = null;
   var ui = {
-    mode: null, tab: 'players', modal: false, lastActing: null, shownOver: false,
-    lastRollId: null, fx: [], resFx: null, prevRes: null, rolling: false
+    mode: null, modal: false, lastActing: null, shownOver: false, lastRollId: null,
+    fx: [], resFx: null, prevRes: null, sound: true, drag: null, moved: false, gainTimer: null
   };
+  var cam = { k: 1, cx: 0, cy: 0, base: null };
 
-  function show(id) {
-    $$('.screen').forEach(function (s) { s.classList.remove('on'); });
-    el(id).classList.add('on');
-  }
+  function show(id) { $$('.screen').forEach(function (s) { s.classList.remove('on'); }); el(id).classList.add('on'); }
   function toast(msg) {
     var t = document.createElement('div');
     t.className = 'toast'; t.textContent = msg;
@@ -2057,11 +2390,34 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     setTimeout(function () { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; }, 2200);
     setTimeout(function () { t.remove(); }, 2600);
   }
-  function saveName(n) { try { localStorage.setItem('hexhaven-name', n); } catch (e) { } }
-  function loadName() { try { return localStorage.getItem('hexhaven-name') || ''; } catch (e) { return ''; } }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+  /* ---------------- sound: synthesised, no assets ---------------- */
+  var actx = null;
+  function tone(freq, dur, type, vol, delay) {
+    if (!ui.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = actx.currentTime + (delay || 0);
+      var o = actx.createOscillator(), g = actx.createGain();
+      o.type = type || 'sine'; o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(vol || .07, t0 + .012);
+      g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t0); o.stop(t0 + dur + .02);
+    } catch (e) { }
+  }
+  var SFX = {
+    roll: function () { tone(180, .07, 'square', .05); tone(150, .07, 'square', .05, .09); tone(210, .1, 'square', .05, .19); },
+    gain: function () { tone(660, .1, 'triangle', .06); tone(880, .14, 'triangle', .05, .08); },
+    build: function () { tone(320, .12, 'sine', .08); tone(220, .16, 'sine', .06, .05); },
+    turn: function () { tone(520, .13, 'sine', .06); tone(780, .18, 'sine', .05, .1); },
+    bad: function () { tone(200, .18, 'sawtooth', .05); tone(140, .22, 'sawtooth', .04, .08); },
+    win: function () { [523, 659, 784, 1046].forEach(function (f, i) { tone(f, .3, 'triangle', .07, i * .12); }); }
+  };
 
   /* ============================================================
-     TOOLTIPS — data-tip="Title|Body", optional data-tip-cost="lumber:1,brick:1"
+     TOOLTIPS
      ============================================================ */
   var tipNode = null, tipFor = null;
   function initTips() {
@@ -2082,18 +2438,12 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     document.addEventListener('focusin', over, true);
     document.addEventListener('focusout', out, true);
     window.addEventListener('scroll', hideTip, true);
-    document.addEventListener('pointerdown', function (e) {
-      // on touch, a tap shows the tip briefly rather than sticking
-      var t = e.target && e.target.closest ? e.target.closest('[data-tip]') : null;
-      if (t) { tipFor = t; showTip(t); setTimeout(hideTip, 2600); } else hideTip();
-    }, true);
   }
   function showTip(node) {
-    var raw = node.getAttribute('data-tip') || '';
-    var parts = raw.split('|');
+    var parts = (node.getAttribute('data-tip') || '').split('|');
     var costs = node.getAttribute('data-tip-cost');
     var html = '<span class="tip__t">' + esc(parts[0]) + '</span>';
-    if (parts[1]) html += '<span class="tip__b">' + esc(parts.slice(1).join('|')) + '</span>';
+    if (parts[1]) html += '<span>' + esc(parts.slice(1).join('|')) + '</span>';
     if (costs) {
       html += '<span class="tip__cost">' + costs.split(',').map(function (p) {
         var kv = p.split(':');
@@ -2104,22 +2454,20 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     tipNode.hidden = false;
     var r = node.getBoundingClientRect();
     var tw = tipNode.offsetWidth, th = tipNode.offsetHeight;
-    var x = r.left + r.width / 2 - tw / 2;
-    var y = r.top - th - 10;
-    if (y < 8) y = r.bottom + 10;
-    x = Math.max(8, Math.min(x, window.innerWidth - tw - 8));
-    y = Math.max(8, Math.min(y, window.innerHeight - th - 8));
+    var x = clamp(r.left + r.width / 2 - tw / 2, 8, window.innerWidth - tw - 8);
+    var y = r.top - th - 10; if (y < 8) y = r.bottom + 10;
+    y = clamp(y, 8, window.innerHeight - th - 8);
     tipNode.style.left = x + 'px'; tipNode.style.top = y + 'px';
     tipNode.classList.add('on');
   }
-  function hideTip() {
-    if (!tipNode) return;
-    tipNode.classList.remove('on'); tipNode.hidden = true; tipFor = null;
-  }
+  function hideTip() { if (tipNode) { tipNode.classList.remove('on'); tipNode.hidden = true; tipFor = null; } }
 
-  /* ---------------- home ---------------- */
+  /* ============================================================
+     HOME / LOBBY
+     ============================================================ */
   function initHome() {
-    el('nameIn').value = loadName();
+    el('nameIn').value = store('hexhaven-name') || '';
+    ui.sound = store('hexhaven-sound') !== '0';
     var h = (location.hash || '').replace(/^#\/?(join\/)?/, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (h.length === 5) { el('homeMain').classList.add('hidden'); el('homeJoin').classList.remove('hidden'); el('codeIn').value = h; }
 
@@ -2128,12 +2476,22 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     el('btnLocal').onclick = function () { el('homeMain').classList.add('hidden'); el('homeLocal').classList.remove('hidden'); };
     el('btnLocalBack').onclick = function () { el('homeLocal').classList.add('hidden'); el('homeMain').classList.remove('hidden'); };
     el('codeIn').addEventListener('input', function () { this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
-
     el('btnHost').onclick = function () { startHost(false); };
     el('btnLocalGo').onclick = function () { startHost(true, +el('localCount').value); };
     el('btnJoin').onclick = doJoin;
     el('codeIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') doJoin(); });
     el('nameIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') el('btnHost').click(); });
+
+    // a game this browser wrote down before the tab closed
+    var save = N.Host.readSave && N.Host.readSave();
+    if (save) {
+      el('resumeBox').classList.remove('hidden');
+      var mins = Math.round((Date.now() - save.at) / 60000);
+      el('resumeInfo').textContent = save.seats.map(function (s) { return s.name; }).join(', ') +
+        ' · room ' + save.code + ' · ' + (mins < 1 ? 'just now' : mins + ' min ago');
+      el('btnResume').onclick = function () { startHost(false, 1, save); };
+      el('btnDiscardSave').onclick = function () { N.Host.clearSave(); el('resumeBox').classList.add('hidden'); };
+    }
   }
   function myName() { return (el('nameIn').value || '').trim().slice(0, 16) || 'Player'; }
   function busy(on, msg) {
@@ -2141,12 +2499,14 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     el('homeStatus').textContent = msg || '';
   }
 
-  function startHost(localOnly, count) {
-    var name = myName(); saveName(name);
+  function startHost(localOnly, count, save) {
+    var name = save ? ((save.seats[0] && save.seats[0].name) || myName()) : myName();
+    store('hexhaven-name', name);
     el('homeErr').textContent = '';
-    busy(true, localOnly ? 'Setting up…' : 'Opening a room…');
+    busy(true, save ? 'Reopening your room…' : localOnly ? 'Setting up…' : 'Opening a room…');
     H = new N.Host(name, { localOnly: localOnly, localSeats: localOnly ? count : 1 });
-    H.onStatus = function (s) { if (s === 'reconnecting') toast('Reconnecting…'); };
+    if (save) H.loadSave(save);
+    H.onStatus = function (s) { if (s === 'reconnecting') banner('warn', 'Reconnecting to the room service…', true); };
     C = new N.Client();
     wireClient();
     H.onLocalMessage = function (m) { C.receive(m); };
@@ -2154,8 +2514,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     H.start(function (err, code) {
       busy(false, '');
       if (err) { el('homeErr').textContent = friendlyPeerError(err); H = null; C = null; return; }
-      if (localOnly) { H.handle(H.seats[0].chan, { t: 'start' }, function () { }, function () { return 0; }); }
-      show('screen-lobby');
+      if (localOnly) H.handle(H.seats[0].chan, { t: 'start' }, function () { }, function () { return 0; });
+      show(H.state ? 'screen-game' : 'screen-lobby');
     });
   }
   function friendlyPeerError(e) {
@@ -2164,15 +2524,14 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     return 'Could not open a room (' + t + '). Try again in a moment.';
   }
   function doJoin() {
-    var name = myName(); saveName(name);
+    var name = myName(); store('hexhaven-name', name);
     var code = (el('codeIn').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (code.length !== 5) { el('homeErr').textContent = 'Room codes are 5 characters.'; return; }
     el('homeErr').textContent = '';
     busy(true, 'Connecting…');
     C = new N.Client();
     wireClient();
-    var tok = null; try { tok = sessionStorage.getItem('hexhaven-token'); } catch (e) { }
-    C.connect(code, name, tok, function (err) {
+    C.connect(code, name, undefined, function (err) {
       busy(false, '');
       if (err) { el('homeErr').textContent = err.message; C = null; return; }
       show('screen-lobby');
@@ -2180,20 +2539,32 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
   }
   function wireClient() {
     C.onUpdate = function () { render(); };
-    C.onError = function (msg) { toast(msg); };
-    C.onBye = function (reason) { toast(reason || 'Disconnected.'); setTimeout(goHome, 1400); };
-    C.onStatus = function (s) { if (s === 'closed') toast('Lost connection to the host.'); };
+    C.onError = function (msg) { toast(msg); SFX.bad(); };
+    C.onBye = function (reason) { toast(reason || 'Disconnected.'); setTimeout(goHome, 1600); };
+    C.onStatus = function (s, n) {
+      if (s === 'reconnecting') banner('warn', 'Connection lost — getting you back in' + (n > 1 ? ' (try ' + n + ')' : '') + '…', true);
+      else if (s === 'connected') { banner('ok', 'Back in the game.'); setTimeout(clearBanner, 2200); }
+      else if (s === 'gaveup') banner('bad', 'Could not reconnect. The host may have closed the game.');
+      else if (s === 'noseat') { toast('The host did not answer. Try the code again.'); goHome(); }
+      else if (s === 'closed') banner('bad', 'Disconnected from the host.');
+    };
   }
   function goHome() {
     if (H) { H.destroy(); H = null; }
-    if (C && C.peer) { try { C.peer.destroy(); } catch (e) { } }
-    C = null; ui.mode = null; ui.lastRollId = null; ui.fx = []; ui.prevRes = null;
-    closeModal(); hideTip();
+    if (C && C.leave) C.leave();
+    C = null; ui.mode = null; ui.lastRollId = null; ui.fx = []; ui.prevRes = null; cam.base = null;
+    closeModal(); hideTip(); clearBanner();
     location.hash = '';
     show('screen-home');
   }
+  function banner(kind, text, spin) {
+    var b = el('banner');
+    b.className = 'banner ' + kind;
+    b.innerHTML = (spin ? '<span class="spinner"></span>' : '') + esc(text);
+    b.hidden = false;
+  }
+  function clearBanner() { el('banner').hidden = true; }
 
-  /* ---------------- lobby ---------------- */
   function initLobby() {
     el('btnLeave').onclick = goHome;
     el('btnCopy').onclick = function () {
@@ -2207,6 +2578,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       C.send({
         t: 'config', config: {
           vpTarget: +el('optVP').value,
+          turnSeconds: +el('optTurn').value,
+          dropSeconds: +el('optDrop').value,
           balancedBoard: el('optBal').getAttribute('aria-checked') === 'true',
           friendlyRobber: el('optFriendly').getAttribute('aria-checked') === 'true',
           specialBuild: el('optSB').getAttribute('aria-checked') === 'true'
@@ -2218,7 +2591,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         this.setAttribute('aria-checked', this.getAttribute('aria-checked') === 'true' ? 'false' : 'true'); cfg();
       };
     });
-    el('optVP').onchange = cfg;
+    ['optVP', 'optTurn', 'optDrop'].forEach(function (id) { el(id).onchange = cfg; });
   }
 
   function renderLobby() {
@@ -2232,8 +2605,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         (p.idx === C.seat ? '<span class="badge you">you</span>' : '') +
         (p.idx === 0 ? '<span class="badge">host</span>' : '') +
         (!p.connected ? '<span class="badge off">offline</span>' : '') +
-        (isHost && p.idx !== 0 ? '<button class="btn sm danger" data-kick="' + p.idx + '">Remove</button>' : '') +
-        '</div>';
+        (isHost && p.idx !== 0 ? '<button class="btn sm danger" data-kick="' + p.idx + '">Remove</button>' : '') + '</div>';
     }).join('');
     $$('#lobbySeats [data-kick]').forEach(function (b) {
       b.onclick = function () { C.send({ t: 'kick', seat: +b.dataset.kick }); };
@@ -2241,6 +2613,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     el('lobbyOpts').classList.toggle('hidden', !isHost);
     if (isHost) {
       el('optVP').value = L.config.vpTarget;
+      el('optTurn').value = L.config.turnSeconds;
+      el('optDrop').value = L.config.dropSeconds;
       el('optBal').setAttribute('aria-checked', String(!!L.config.balancedBoard));
       el('optFriendly').setAttribute('aria-checked', String(!!L.config.friendlyRobber));
       el('optSB').setAttribute('aria-checked', String(!!L.config.specialBuild));
@@ -2264,7 +2638,13 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     vs.forEach(function (v) { var p = vpx(v); x += p.x; y += p.y; });
     return { x: x / 6, y: y / 6 };
   }
-
+  function ringPts(b, hid, f) {
+    var c = hexCenter(b, hid);
+    return b.hexes[hid].vertices.map(function (k) {
+      var p = vpx(k);
+      return (c.x + (p.x - c.x) * f).toFixed(1) + ',' + (c.y + (p.y - c.y) * f).toFixed(1);
+    }).join(' ');
+  }
   function currentMode() {
     var v = C.view, me = v.you;
     if (v.phase === 'setup' && v.setup && v.setup.order[v.setup.idx] === me)
@@ -2285,182 +2665,270 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     if (mode === 'robber') return { hexes: v.board.hexOrder.filter(function (h) { return h !== v.board.robber; }) };
     return {};
   }
+  function tipAttr(t, b) { return ' data-tip="' + esc(t + (b ? '|' + b : '')) + '"'; }
 
-  /** SVG-safe attribute for a tooltip. */
-  function tipAttr(title, body) {
-    return ' data-tip="' + esc(title + (body ? '|' + body : '')) + '"';
-  }
-
-  function renderBoard() {
-    var v = C.view, b = v.board;
-    if (!b) return;
-    var svg = el('board');
-    var mode = currentMode();
-    var T = legalTargets(mode);
-    var vertSet = {}, edgeSet = {}, hexSet = {};
-    (T.verts || []).forEach(function (x) { vertSet[x] = 1; });
-    (T.edges || []).forEach(function (x) { edgeSet[x] = 1; });
-    (T.hexes || []).forEach(function (x) { hexSet[x] = 1; });
-
+  /* ---- camera ---- */
+  function computeBase(b) {
     var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
     Object.keys(b.vertices).forEach(function (k) {
       var p = vpx(k);
       if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
       if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
     });
-    var pad = S * 0.9;
-    svg.setAttribute('viewBox', (minX - pad) + ' ' + (minY - pad) + ' ' + (maxX - minX + pad * 2) + ' ' + (maxY - minY + pad * 2));
-    var cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    // the action dock overlays the bottom of the stage, so the island is given
+    // more clearance below than above and sits above the controls, not behind them
+    // the dock overlays the bottom of the stage, and takes two stacked rows on a
+    // phone, so the island is given clearance rather than sliding underneath it
+    var phone = window.matchMedia('(max-width:900px)').matches;
+    var pad = S * 1.3, padBottom = phone ? S * 5.2 : S * 3.1;
+    cam.base = { x: minX - pad, y: minY - pad, w: maxX - minX + pad * 2, h: maxY - minY + pad + padBottom };
+    cam.cx = (minX + maxX) / 2; cam.cy = (minY + maxY) / 2 + (padBottom - pad) / 2;
+  }
+  function applyCam() {
+    if (!cam.base) return;
+    var w = cam.base.w / cam.k, h = cam.base.h / cam.k;
+    cam.cx = clamp(cam.cx, cam.base.x, cam.base.x + cam.base.w);
+    cam.cy = clamp(cam.cy, cam.base.y, cam.base.y + cam.base.h);
+    el('board').setAttribute('viewBox', (cam.cx - w / 2) + ' ' + (cam.cy - h / 2) + ' ' + w + ' ' + h);
+  }
+  function fitCam() { if (C && C.view && C.view.board) { computeBase(C.view.board); cam.k = 1; applyCam(); } }
+  function zoomBy(f, ax, ay) {
+    if (!cam.base) return;
+    var k2 = clamp(cam.k * f, .65, 4.5);
+    if (ax !== undefined) { cam.cx = ax - (ax - cam.cx) * (cam.k / k2); cam.cy = ay - (ay - cam.cy) * (cam.k / k2); }
+    cam.k = k2; applyCam();
+  }
+  function toBoard(cx, cy) {
+    var svg = el('board'), m = svg.getScreenCTM();
+    if (!m) return { x: cam.cx, y: cam.cy };
+    var p = svg.createSVGPoint(); p.x = cx; p.y = cy;
+    var q = p.matrixTransform(m.inverse());
+    return { x: q.x, y: q.y };
+  }
+  function initCamera() {
+    var svg = el('board'), pts = {};
+    function spread() {
+      var k = Object.keys(pts); if (k.length < 2) return 0;
+      return Math.hypot(pts[k[0]].x - pts[k[1]].x, pts[k[0]].y - pts[k[1]].y);
+    }
+    svg.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var b = toBoard(e.clientX, e.clientY);
+      zoomBy(e.deltaY < 0 ? 1.16 : 1 / 1.16, b.x, b.y);
+    }, { passive: false });
+    svg.addEventListener('pointerdown', function (e) {
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      // Remember what was actually under the finger. Capturing the pointer (below,
+      // once a drag really starts) retargets the later `click` to the <svg> itself,
+      // and then the hit test finds no hex, no corner and no road slot.
+      ui.downTarget = e.target;
+      if (Object.keys(pts).length === 1 && cam.base) {
+        ui.drag = { sx: e.clientX, sy: e.clientY, cx: cam.cx, cy: cam.cy, scale: (cam.base.w / cam.k) / Math.max(1, svg.clientWidth) };
+        ui.moved = false;
+      }
+    });
+    svg.addEventListener('pointermove', function (e) {
+      if (!pts[e.pointerId]) return;
+      if (Object.keys(pts).length >= 2) {
+        var before = spread();
+        pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        var after = spread();
+        if (before > 0) zoomBy(after / before, cam.cx, cam.cy);
+        ui.moved = true;
+        return;
+      }
+      pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+      if (!ui.drag) return;
+      var dx = e.clientX - ui.drag.sx, dy = e.clientY - ui.drag.sy;
+      if (Math.abs(dx) + Math.abs(dy) > 6 && !ui.moved) {
+        ui.moved = true; svg.classList.add('grabbing');
+        try { svg.setPointerCapture(e.pointerId); } catch (x) { }   // only now, for the pan
+      }
+      if (!ui.moved) return;
+      cam.cx = ui.drag.cx - dx * ui.drag.scale;
+      cam.cy = ui.drag.cy - dy * ui.drag.scale;
+      applyCam();
+    });
+    function endPt(e) {
+      delete pts[e.pointerId];
+      if (!Object.keys(pts).length) { ui.drag = null; svg.classList.remove('grabbing'); }
+    }
+    svg.addEventListener('pointerup', endPt);
+    svg.addEventListener('pointercancel', endPt);
+    el('zIn').onclick = function () { zoomBy(1.3); };
+    el('zOut').onclick = function () { zoomBy(1 / 1.3); };
+    el('zFit').onclick = fitCam;
+  }
 
-    var out = [];
-    out.push('<defs>' +
-      '<radialGradient id="hexsh" cx="50%" cy="32%" r="78%">' +
-      '<stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></radialGradient>' +
-      '<filter id="soft" x="-40%" y="-40%" width="180%" height="180%">' +
-      '<feDropShadow dx="0" dy="2" stdDeviation="2.4" flood-opacity=".5"/></filter></defs>');
+  function renderBoard() {
+    var v = C.view, b = v.board;
+    if (!b) return;
+    var svg = el('board');
+    if (!cam.base) computeBase(b);
+    var mode = currentMode(), T = legalTargets(mode);
+    var vertSet = {}, edgeSet = {}, hexSet = {};
+    (T.verts || []).forEach(function (x) { vertSet[x] = 1; });
+    (T.edges || []).forEach(function (x) { edgeSet[x] = 1; });
+    (T.hexes || []).forEach(function (x) { hexSet[x] = 1; });
+    var cx = cam.base.x + cam.base.w / 2, cy = cam.base.y + cam.base.h / 2;
+    var o = [];
 
-    /* ---- harbours ---- */
+    o.push('<defs>' +
+      '<radialGradient id="sh" cx="50%" cy="30%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".2"/>' +
+      '<stop offset="1" stop-color="#000" stop-opacity=".13"/></radialGradient>' +
+      '<filter id="dr" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".35"/></filter>' +
+      '<filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="' + (S * .13) + '"/></filter></defs>');
+
+    /* shore: surf glow, wet sand, dry sand — this is what makes it an island */
+    var surf = [], wet = [], dry = [];
+    b.hexOrder.forEach(function (h) {
+      surf.push('<polygon points="' + ringPts(b, h, 1.46) + '"/>');
+      wet.push('<polygon points="' + ringPts(b, h, 1.2) + '"/>');
+      dry.push('<polygon points="' + ringPts(b, h, 1.1) + '"/>');
+    });
+    o.push('<g fill="#93c5e8" opacity=".55" filter="url(#soft)">' + surf.join('') + '</g>');
+    o.push('<g fill="#d8c188">' + wet.join('') + '</g>');
+    o.push('<g fill="#eddfb8">' + dry.join('') + '</g>');
+
+    /* harbours: a moored boat with two piers */
     b.harbors.forEach(function (h) {
       var p1 = vpx(h.vertices[0]), p2 = vpx(h.vertices[1]);
       var mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
       var dx = mx - cx, dy = my - cy, len = Math.hypot(dx, dy) || 1;
-      var ox = mx + dx / len * S * 0.64, oy = my + dy / len * S * 0.64;
+      var ox = mx + dx / len * S * .8, oy = my + dy / len * S * .8;
       var tip = h.type === 'any'
-        ? tipAttr('Harbour · any 3:1', 'Build a settlement or city on either marked corner and you may trade any 3 identical resources to the bank for 1 of your choice.')
-        : tipAttr('Harbour · ' + RES_NAME[h.type] + ' 2:1', 'Build on either marked corner and you may trade just 2 ' + RES_NAME[h.type].toLowerCase() + ' to the bank for any 1 resource.');
-      out.push('<line x1="' + p1.x + '" y1="' + p1.y + '" x2="' + ox + '" y2="' + oy + '" stroke="#6b5a3e" stroke-width="' + (S * .055) + '" opacity=".85"/>');
-      out.push('<line x1="' + p2.x + '" y1="' + p2.y + '" x2="' + ox + '" y2="' + oy + '" stroke="#6b5a3e" stroke-width="' + (S * .055) + '" opacity=".85"/>');
-      out.push('<g class="spot"' + tip + '>');
-      out.push('<circle cx="' + ox + '" cy="' + oy + '" r="' + (S * .32) + '" fill="#efe6d2" stroke="#6b5a3e" stroke-width="' + (S * .045) + '" filter="url(#soft)"/>');
+        ? tipAttr('Harbour · any 3:1', 'Build on either marked corner and the bank takes any 3 identical resources for 1 of your choice.')
+        : tipAttr('Harbour · ' + RES_NAME[h.type] + ' 2:1', 'Build on either marked corner and 2 ' + RES_NAME[h.type].toLowerCase() + ' buys any 1 resource.');
+      [p1, p2].forEach(function (p) {
+        o.push('<line x1="' + p.x + '" y1="' + p.y + '" x2="' + ox + '" y2="' + oy + '" stroke="#c19a5e" stroke-width="' + (S * .08) + '" stroke-linecap="round"/>');
+        o.push('<line x1="' + p.x + '" y1="' + p.y + '" x2="' + ox + '" y2="' + oy + '" stroke="#96703c" stroke-width="' + (S * .026) + '" stroke-dasharray="' + (S * .07) + ' ' + (S * .06) + '"/>');
+      });
+      o.push('<g class="spot"' + tip + ' transform="translate(' + ox + ',' + oy + ')">');
+      o.push('<path d="M' + (-S * .3) + ' ' + (S * .17) + ' h' + (S * .6) + ' l' + (-S * .09) + ' ' + (S * .16) + ' h' + (-S * .42) + ' z" fill="#8a5f34"/>');
+      o.push('<rect x="' + (-S * .022) + '" y="' + (-S * .44) + '" width="' + (S * .044) + '" height="' + (S * .6) + '" rx="' + (S * .02) + '" fill="#8a5f34"/>');
+      o.push('<path d="M' + (-S * .29) + ' ' + (-S * .42) + ' h' + (S * .58) + ' v' + (S * .5) + ' h' + (-S * .58) + ' z" fill="#fdfaf0" stroke="#c9b68d" stroke-width="' + (S * .022) + '"/>');
       if (h.type === 'any') {
-        out.push('<text class="hexlab" x="' + ox + '" y="' + oy + '" font-size="' + (S * .25) + '" fill="#2a2018">3:1</text>');
+        o.push('<text class="hexlab" x="0" y="' + (-S * .16) + '" font-size="' + (S * .27) + '" fill="#2e2a23">3:1</text>');
       } else {
-        out.push('<rect x="' + (ox - S * .15) + '" y="' + (oy - S * .21) + '" width="' + (S * .3) + '" height="' + (S * .3) +
-          '" rx="' + (S * .07) + '" fill="' + RES_COLOR[h.type] + '"/>');
-        out.push('<g transform="translate(' + (ox - S * .105) + ',' + (oy - S * .165) + ') scale(' + (S * .0131) + ')" fill="#fff">' + ICON[h.type] + '</g>');
-        out.push('<text class="hexlab" x="' + ox + '" y="' + (oy + S * .19) + '" font-size="' + (S * .18) + '" fill="#2a2018">2:1</text>');
+        o.push('<rect x="' + (-S * .13) + '" y="' + (-S * .36) + '" width="' + (S * .26) + '" height="' + (S * .26) + '" rx="' + (S * .06) + '" fill="' + RES_COLOR[h.type] + '"/>');
+        o.push('<g transform="translate(' + (-S * .09) + ',' + (-S * .32) + ') scale(' + (S * .0113) + ')" fill="#fff">' + ICON[h.type] + '</g>');
+        o.push('<text class="hexlab" x="0" y="' + (-S * .02) + '" font-size="' + (S * .2) + '" fill="#2e2a23">2:1</text>');
       }
-      out.push('</g>');
+      o.push('</g>');
     });
 
-    /* ---- hexes: terrain + what it PRODUCES, spelled out ---- */
+    /* the land */
     b.hexOrder.forEach(function (hid) {
-      var h = b.hexes[hid];
-      var c = hexCenter(b, hid);
-      var res = TERRAIN_RES[h.terrain];
-      var pts = h.vertices.map(function (k) { var p = vpx(k); return p.x.toFixed(2) + ',' + p.y.toFixed(2); }).join(' ');
-      var isRobbed = hid === b.robber;
+      var h = b.hexes[hid], c = hexCenter(b, hid), res = TERRAIN_RES[h.terrain];
+      var L = LAND[h.terrain], pts = ringPts(b, hid, 1), robbed = hid === b.robber;
       var tip = res
         ? tipAttr(TERRAIN_NAME[h.terrain] + ' · produces ' + RES_NAME[res],
-          'Rolls on ' + h.number + ' (' + ways(h.number) + ' of 36 rolls). Pays 1 ' + RES_NAME[res].toLowerCase() +
-          ' to each neighbouring settlement and 2 to each city.' + (isRobbed ? ' Blocked by the robber right now — it pays nothing.' : ''))
+          'Rolls on ' + h.number + ' (' + ways(h.number) + ' of 36). Pays 1 ' + RES_NAME[res].toLowerCase() +
+          ' to each neighbouring settlement, 2 to each city.' + (robbed ? ' Blocked by the robber — it pays nothing.' : ''))
         : tipAttr('Desert · produces nothing', 'No number, no resource. The robber starts here.');
-
-      out.push('<g class="spot"' + tip + '>');
-      out.push('<polygon points="' + pts + '" fill="' + TERRAIN_FILL[h.terrain] + '" stroke="rgba(0,0,0,.4)" stroke-width="' + (S * .035) + '"/>');
-      out.push('<polygon points="' + pts + '" fill="url(#hexsh)"/>');
-
-      if (res) {
-        // resource badge — so the tile says what it is instead of relying on hue
-        var bx = c.x, by = c.y - S * .46, bs = S * .5;
-        out.push('<rect x="' + (bx - bs / 2) + '" y="' + (by - bs / 2) + '" width="' + bs + '" height="' + bs +
-          '" rx="' + (bs * .27) + '" fill="rgba(12,16,22,.62)" stroke="rgba(255,255,255,.42)" stroke-width="' + (S * .016) + '"/>');
-        out.push('<g transform="translate(' + (bx - bs * .34) + ',' + (by - bs * .34) + ') scale(' + (bs * .0425) + ')" fill="#fff" opacity="1">' + ICON[res] + '</g>');
-        out.push('<text class="hexlab" x="' + c.x + '" y="' + (c.y + S * .62) + '" font-size="' + (S * .175) +
-          '" fill="rgba(255,255,255,.93)" letter-spacing="' + (S * .016) +
-          '" style="paint-order:stroke" stroke="rgba(0,0,0,.45)" stroke-width="' + (S * .022) + '">' + RES_NAME[res].toUpperCase() + '</text>');
-      } else {
-        out.push('<text class="hexlab" x="' + c.x + '" y="' + (c.y + S * .48) + '" font-size="' + (S * .17) +
-          '" fill="rgba(50,38,20,.78)" letter-spacing="' + (S * .016) + '">DESERT</text>');
+      o.push('<g class="spot"' + tip + '>');
+      o.push('<polygon points="' + pts + '" fill="' + L.base + '" stroke="' + L.edge + '" stroke-width="' + (S * .03) + '"/>');
+      var seed = hash(hid), n = 3 + (seed % 2), sz = S * .34;
+      for (var i = 0; i < n; i++) {
+        // >>> not >>: hash() returns a full uint32, and a signed shift turns
+        // anything past 2^31 negative, which indexes off the end of SLOTS
+        var sl = SLOTS[(seed >>> (i * 3)) % SLOTS.length];
+        var jx = (((seed >>> (i * 5)) % 9) - 4) * S * .012;
+        var scale = sz * (.85 + (((seed >>> (i * 7)) % 5) * .07)) / 100;
+        o.push('<g transform="translate(' + (c.x + sl[0] * S + jx) + ',' + (c.y + sl[1] * S) +
+          ') scale(' + scale + ') translate(-50,-50)">' + MOTIF[h.terrain] + '</g>');
       }
-
+      o.push('<polygon points="' + pts + '" fill="url(#sh)" pointer-events="none"/>');
       if (h.number) {
-        var red = (h.number === 6 || h.number === 8);
-        var ty = c.y + S * .13;
-        out.push('<circle cx="' + c.x + '" cy="' + ty + '" r="' + (S * .29) + '" fill="#f2ead6" stroke="rgba(0,0,0,.32)" stroke-width="' + (S * .026) + '" filter="url(#soft)"/>');
-        out.push('<text class="hexlab" x="' + c.x + '" y="' + (ty - S * .035) + '" font-size="' + (S * .3) + '" fill="' + (red ? '#b3261e' : '#2a2018') + '">' + h.number + '</text>');
-        var n = pips(h.number), w = S * .044;
-        for (var i = 0; i < n; i++) {
-          out.push('<circle cx="' + (c.x + (i - (n - 1) / 2) * w * 2.4) + '" cy="' + (ty + S * .175) + '" r="' + w + '" fill="' + (red ? '#b3261e' : '#2a2018') + '"/>');
+        var red = h.number === 6 || h.number === 8, r = S * .27;
+        o.push('<rect x="' + (c.x - r) + '" y="' + (c.y - r) + '" width="' + (r * 2) + '" height="' + (r * 2) +
+          '" rx="' + (r * .34) + '" fill="#fdfaf1" stroke="rgba(0,0,0,.22)" stroke-width="' + (S * .022) + '" filter="url(#dr)" class="token"/>');
+        o.push('<text class="hexlab" x="' + c.x + '" y="' + (c.y - S * .04) + '" font-size="' + (S * .3) +
+          '" fill="' + (red ? '#c03a29' : '#2f6b3f') + '">' + h.number + '</text>');
+        var d = ways(h.number), w = S * .04;
+        for (var j = 0; j < d; j++) {
+          o.push('<circle cx="' + (c.x + (j - (d - 1) / 2) * w * 2.3) + '" cy="' + (c.y + S * .155) + '" r="' + w +
+            '" fill="' + (red ? '#c03a29' : '#2f6b3f') + '"/>');
         }
       }
-      if (isRobbed) out.push('<polygon class="blocked-veil" points="' + pts + '" fill="rgba(6,8,12,.52)"/>');
-      out.push('</g>');
+      if (robbed) o.push('<polygon class="blocked-veil" points="' + pts + '" fill="rgba(20,26,34,.4)" pointer-events="none"/>');
+      o.push('</g>');
     });
 
-    /* ---- roads ---- */
+    /* every free corner, so the shape of the map is readable at a glance */
+    Object.keys(b.vertices).forEach(function (k) {
+      if (v.buildings[k]) return;
+      var p = vpx(k);
+      o.push('<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (S * .08) + '" fill="#f6efdc" stroke="#bfb391" stroke-width="' + (S * .015) + '" opacity=".8" pointer-events="none"/>');
+    });
+
     Object.keys(v.roads).forEach(function (ek) {
       var ed = b.edges[ek]; if (!ed) return;
-      var owner = v.roads[ek], p1 = vpx(ed.v[0]), p2 = vpx(ed.v[1]), t = 0.15;
+      var owner = v.roads[ek], p1 = vpx(ed.v[0]), p2 = vpx(ed.v[1]), t = .17;
       var ax = p1.x + (p2.x - p1.x) * t, ay = p1.y + (p2.y - p1.y) * t;
-      var bx2 = p2.x - (p2.x - p1.x) * t, by2 = p2.y - (p2.y - p1.y) * t;
-      out.push('<g class="spot"' + tipAttr(v.players[owner].name + "'s road", 'Roads link your settlements. Five in an unbroken line takes Longest Road and 2 points.') + '>');
-      out.push('<line class="road" x1="' + ax + '" y1="' + ay + '" x2="' + bx2 + '" y2="' + by2 + '" stroke="rgba(0,0,0,.55)" stroke-width="' + (S * .2) + '"/>');
-      out.push('<line class="road" x1="' + ax + '" y1="' + ay + '" x2="' + bx2 + '" y2="' + by2 + '" stroke="' + E.COLORS[owner] + '" stroke-width="' + (S * .135) + '"/>');
-      out.push('</g>');
+      var bx = p2.x - (p2.x - p1.x) * t, by = p2.y - (p2.y - p1.y) * t;
+      o.push('<g class="spot"' + tipAttr(v.players[owner].name + "'s road", 'Five in an unbroken line takes Longest Road and 2 points.') + '>');
+      o.push('<line class="road" x1="' + ax + '" y1="' + ay + '" x2="' + bx + '" y2="' + by + '" stroke="rgba(0,0,0,.4)" stroke-width="' + (S * .2) + '" stroke-linecap="round"/>');
+      o.push('<line class="road" x1="' + ax + '" y1="' + ay + '" x2="' + bx + '" y2="' + by + '" stroke="' + E.COLORS[owner] + '" stroke-width="' + (S * .14) + '" stroke-linecap="round"/>');
+      o.push('</g>');
     });
 
-    /* ---- legal road slots ---- */
     Object.keys(edgeSet).forEach(function (ek) {
       var ed = b.edges[ek]; if (!ed) return;
       var p1 = vpx(ed.v[0]), p2 = vpx(ed.v[1]);
-      out.push('<line class="legal-e" data-e="' + ek + '" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '" stroke-width="' + (S * .16) + '"/>');
-      out.push('<line data-e="' + ek + '" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '" stroke="transparent" stroke-width="' + (S * .44) + '" style="cursor:pointer"/>');
+      o.push('<line class="legal-e" data-e="' + ek + '" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '" stroke-width="' + (S * .15) + '"/>');
+      o.push('<line data-e="' + ek + '" x1="' + p1.x + '" y1="' + p1.y + '" x2="' + p2.x + '" y2="' + p2.y + '" stroke="transparent" stroke-width="' + (S * .42) + '" style="cursor:pointer"/>');
     });
 
-    /* ---- robber ---- */
     var rc = hexCenter(b, b.robber);
-    out.push('<g class="robber spot" transform="translate(' + (rc.x + S * .46) + ',' + (rc.y - S * .34) + ')"' +
-      tipAttr('The robber', 'This hex produces nothing while the robber sits on it. Roll a 7 or play a Knight to move him.') + '>' +
-      '<ellipse cx="0" cy="' + (S * .21) + '" rx="' + (S * .17) + '" ry="' + (S * .06) + '" fill="rgba(0,0,0,.45)"/>' +
-      '<path d="M0 ' + (-S * .32) + ' c ' + (S * .14) + ' 0 ' + (S * .17) + ' ' + (S * .14) + ' ' + (S * .11) + ' ' + (S * .26) +
-      ' l ' + (S * .04) + ' ' + (S * .18) + ' h ' + (-S * .3) + ' l ' + (S * .04) + ' ' + (-S * .18) +
-      ' c ' + (-S * .06) + ' ' + (-S * .12) + ' ' + (-S * .03) + ' ' + (-S * .26) + ' ' + (S * .11) + ' ' + (-S * .26) + ' z"' +
-      ' fill="#1b1d24" stroke="#f2ead6" stroke-width="' + (S * .028) + '"/></g>');
+    o.push('<g class="spot" transform="translate(' + (rc.x + S * .44) + ',' + (rc.y - S * .3) + ')"' +
+      tipAttr('The robber', 'This hex produces nothing while he sits on it. Roll a 7 or play a Knight to move him.') + '>' +
+      '<ellipse cx="0" cy="' + (S * .22) + '" rx="' + (S * .17) + '" ry="' + (S * .055) + '" fill="rgba(0,0,0,.32)"/>' +
+      '<path d="M0 ' + (-S * .32) + ' c ' + (S * .15) + ' 0 ' + (S * .17) + ' ' + (S * .15) + ' ' + (S * .1) + ' ' + (S * .27) +
+      ' l ' + (S * .05) + ' ' + (S * .17) + ' h ' + (-S * .3) + ' l ' + (S * .05) + ' ' + (-S * .17) +
+      ' c ' + (-S * .07) + ' ' + (-S * .12) + ' ' + (-S * .05) + ' ' + (-S * .27) + ' ' + (S * .1) + ' ' + (-S * .27) + ' z"' +
+      ' fill="#3b3a44" stroke="#fdfaf1" stroke-width="' + (S * .03) + '"/></g>');
+    o[o.length - 1] = o[o.length - 1].replace('<g class="spot"', '<g class="spot robber"');
 
-    /* ---- buildings: shape AND seat number, never colour alone ---- */
     Object.keys(v.buildings).forEach(function (vk) {
-      var bl = v.buildings[vk], p = vpx(vk), col = E.COLORS[bl.owner];
-      var isCity = bl.type === 'city';
-      var u = S * (isCity ? .22 : .19), X = p.x, Y = p.y, d;
-      if (!isCity) {
-        d = 'M' + (X - u) + ' ' + (Y + u) + ' V' + (Y - u * .2) + ' L' + X + ' ' + (Y - u * 1.3) +
-          ' L' + (X + u) + ' ' + (Y - u * .2) + ' V' + (Y + u) + ' Z';
-      } else {
-        d = 'M' + (X - u * 1.55) + ' ' + (Y + u) + ' V' + (Y - u * .25) + ' L' + (X - u * .65) + ' ' + (Y - u * 1.35) +
-          ' L' + (X + u * .25) + ' ' + (Y - u * .25) + ' V' + (Y - u * .8) + ' H' + (X + u * 1.55) + ' V' + (Y + u) + ' Z';
-      }
-      var owner = v.players[bl.owner];
-      out.push('<g class="spot"' + tipAttr(owner.name + "'s " + (isCity ? 'city' : 'settlement'),
-        (isCity ? 'Worth 2 points and collects 2 resources from every neighbouring hex.' : 'Worth 1 point and collects 1 resource from every neighbouring hex.')) + '>');
-      out.push('<path class="bldg" d="' + d + '" fill="' + col + '" stroke="rgba(0,0,0,.65)" stroke-width="' + (S * .034) + '" stroke-linejoin="round"/>');
-      out.push('<text class="hexlab" x="' + (X + (isCity ? u * .1 : 0)) + '" y="' + (Y + u * .28) + '" font-size="' + (u * .95) +
-        '" fill="#fff" opacity=".95" style="paint-order:stroke" stroke="rgba(0,0,0,.45)" stroke-width="' + (u * .12) + '">' + (bl.owner + 1) + '</text>');
-      out.push('</g>');
+      var bl = v.buildings[vk], p = vpx(vk), col = E.COLORS[bl.owner], city = bl.type === 'city';
+      var u = S * (city ? .23 : .2), X = p.x, Y = p.y, d;
+      if (!city) d = 'M' + (X - u) + ' ' + (Y + u * .9) + ' V' + (Y - u * .18) + ' L' + X + ' ' + (Y - u * 1.25) +
+        ' L' + (X + u) + ' ' + (Y - u * .18) + ' V' + (Y + u * .9) + ' Z';
+      else d = 'M' + (X - u * 1.5) + ' ' + (Y + u * .9) + ' V' + (Y - u * .2) + ' L' + (X - u * .62) + ' ' + (Y - u * 1.3) +
+        ' L' + (X + u * .24) + ' ' + (Y - u * .2) + ' V' + (Y - u * .78) + ' H' + (X + u * 1.5) + ' V' + (Y + u * .9) + ' Z';
+      var own = v.players[bl.owner];
+      o.push('<g class="spot"' + tipAttr(own.name + "'s " + (city ? 'city' : 'settlement'),
+        city ? 'Worth 2 points and collects 2 from every neighbouring hex.' : 'Worth 1 point and collects 1 from every neighbouring hex.') + '>');
+      o.push('<path class="bldg ' + (city ? 'city' : 'town') + '" d="' + d + '" fill="' + col + '" stroke="rgba(0,0,0,.55)" stroke-width="' + (S * .032) + '" stroke-linejoin="round" filter="url(#dr)"/>');
+      o.push('<text class="hexlab" x="' + (X + (city ? u * .1 : 0)) + '" y="' + (Y + u * .22) + '" font-size="' + (u * .88) +
+        '" fill="#fff" style="paint-order:stroke" stroke="rgba(0,0,0,.4)" stroke-width="' + (u * .1) + '">' + (bl.owner + 1) + '</text>');
+      o.push('</g>');
     });
 
-    /* ---- legal build spots ---- */
     Object.keys(vertSet).forEach(function (vk) {
       var p = vpx(vk);
-      out.push('<circle class="legal-v" data-v="' + vk + '" cx="' + p.x + '" cy="' + p.y + '" r="' + (S * .17) + '"/>');
-      out.push('<circle data-v="' + vk + '" cx="' + p.x + '" cy="' + p.y + '" r="' + (S * .34) + '" fill="transparent" style="cursor:pointer"/>');
+      o.push('<circle class="legal-v" data-v="' + vk + '" cx="' + p.x + '" cy="' + p.y + '" r="' + (S * .16) + '"/>');
+      o.push('<circle data-v="' + vk + '" cx="' + p.x + '" cy="' + p.y + '" r="' + (S * .32) + '" fill="transparent" style="cursor:pointer"/>');
     });
     Object.keys(hexSet).forEach(function (hid) {
-      var pts = b.hexes[hid].vertices.map(function (k) { var p = vpx(k); return p.x.toFixed(2) + ',' + p.y.toFixed(2); }).join(' ');
-      out.push('<polygon class="legal-h" data-h="' + hid + '" points="' + pts + '"/>');
+      o.push('<polygon class="legal-h" data-h="' + hid + '" points="' + ringPts(b, hid, 1) + '"/>');
     });
 
-    /* ---- transient effects (kept across re-renders while alive) ---- */
     var now = Date.now();
     ui.fx = ui.fx.filter(function (f) { return f.until > now; });
-    ui.fx.forEach(function (f) { out.push(f.html); });
+    ui.fx.forEach(function (f) { o.push(f.html); });
 
-    svg.innerHTML = out.join('');
+    svg.innerHTML = o.join('');
+    applyCam();
     svg.onclick = onBoardClick;
   }
 
   function onBoardClick(e) {
-    var t = e.target.closest('[data-v],[data-e],[data-h]');
+    if (ui.moved) { ui.moved = false; return; }      // that was a pan, not a tap
+    var src = ui.downTarget || e.target;
+    var t = src.closest ? src.closest('[data-v],[data-e],[data-h]') : null;
+    if (!t && e.target.closest) t = e.target.closest('[data-v],[data-e],[data-h]');
     if (!t) return;
     var mode = currentMode();
     if (t.dataset.v !== undefined) {
@@ -2468,39 +2936,35 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       if (mode === 'setupS') act({ type: 'setupSettlement', vertex: vk });
       else if (mode === 'settlement') { act({ type: 'buildSettlement', vertex: vk }); ui.mode = null; }
       else if (mode === 'city') { act({ type: 'buildCity', vertex: vk }); ui.mode = null; }
+      SFX.build();
     } else if (t.dataset.e !== undefined) {
       var ek = t.dataset.e;
       if (mode === 'setupR') act({ type: 'setupRoad', edge: ek });
       else if (mode === 'rb') act({ type: 'buildRoad', edge: ek });
       else if (mode === 'road') { act({ type: 'buildRoad', edge: ek }); ui.mode = null; }
+      SFX.build();
     } else if (t.dataset.h !== undefined) {
       if (mode === 'robber') act({ type: 'moveRobber', hex: t.dataset.h });
     }
-    hideTip();
-    render();
+    hideTip(); render();
   }
-  function act(action) {
-    if (!C) return;
-    C.act(action, (C.view && C.view.localOnly) ? C.view.actingAs : undefined);
-  }
+  function act(a) { if (C) C.act(a, (C.view && C.view.localOnly) ? C.view.actingAs : undefined); }
 
   /* ============================================================
-     DICE + PRODUCTION FEEDBACK
+     DICE + PRODUCTION
      ============================================================ */
   function maybePlayRoll() {
     var v = C.view;
     if (!v || v.rollId === undefined) return;
-    if (ui.lastRollId === null) { ui.lastRollId = v.rollId; return; }   // first view — don't replay history
+    if (ui.lastRollId === null) { ui.lastRollId = v.rollId; return; }
     if (v.rollId === ui.lastRollId || !v.dice) return;
     ui.lastRollId = v.rollId;
     playRoll(v.dice, v.lastProduction, v.you);
   }
-
   function playRoll(dice, prod, me) {
     var stage = el('rollStage'), d1 = el('rd1'), d2 = el('rd2');
-    var total = el('rollTotal'), note = el('rollNote');
-    var sum = dice[0] + dice[1];
-    ui.rolling = true;
+    var total = el('rollTotal'), note = el('rollNote'), sum = dice[0] + dice[1];
+    SFX.roll();
     stage.hidden = false;
     requestAnimationFrame(function () { stage.classList.add('on'); });
     d1.classList.add('tumble'); d2.classList.add('tumble');
@@ -2510,7 +2974,6 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       d1.innerHTML = dieFace(1 + Math.floor(Math.random() * 6));
       d2.innerHTML = dieFace(1 + Math.floor(Math.random() * 6));
     }, 80);
-
     setTimeout(function () {
       clearInterval(iv);
       d1.classList.remove('tumble'); d2.classList.remove('tumble');
@@ -2519,18 +2982,17 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
       note.textContent = sum === 7
         ? 'Seven — nobody produces. Anyone over the card limit discards, then the robber moves.'
         : describeProduction(prod, me);
-      if (sum !== 7) showProduction(prod, me);
+      if (sum !== 7) showProduction(prod, me); else SFX.bad();
       setTimeout(function () {
         stage.classList.remove('on');
-        setTimeout(function () { stage.hidden = true; ui.rolling = false; }, 200);
+        setTimeout(function () { stage.hidden = true; }, 200);
       }, 1250);
     }, 720);
   }
-
   function describeProduction(prod, me) {
     if (!prod || !prod.hexes.length) {
       return (prod && prod.blocked && prod.blocked.length)
-        ? 'The robber blocked the only hex that would have paid out.'
+        ? 'The robber blocked the only hex that would have paid.'
         : 'No settlements on that number — nobody collects.';
     }
     var mine = prod.gains[me];
@@ -2538,49 +3000,41 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     return 'You collect ' + R5.filter(function (r) { return mine[r]; })
       .map(function (r) { return mine[r] + ' ' + RES_NAME[r].toLowerCase(); }).join(' and ') + '.';
   }
-
-  /** Float a "+N resource" off every hex that just paid, in the owner's colour. */
   function showProduction(prod, me) {
     var v = C.view, b = v.board;
     if (!prod) return;
-    var until = Date.now() + 2100;
-
+    var until = Date.now() + 2200;
     prod.hexes.forEach(function (hid) {
       var h = b.hexes[hid], c = hexCenter(b, hid), res = TERRAIN_RES[h.terrain];
       ui.fx.push({
-        until: until,
-        html: '<polygon class="hex-pay" points="' +
-          h.vertices.map(function (k) { var p = vpx(k); return p.x.toFixed(2) + ',' + p.y.toFixed(2); }).join(' ') +
-          '" fill="none" stroke="#fff" stroke-width="' + (S * .07) + '" pointer-events="none"/>'
+        until: until, html: '<polygon class="hex-pay" points="' + ringPts(b, hid, 1) +
+          '" fill="none" stroke="#fff" stroke-width="' + (S * .075) + '" pointer-events="none"/>'
       });
-      // one badge per owner who collected from this hex
-      var perOwner = {};
+      var per = {};
       h.vertices.forEach(function (vk) {
         var bl = v.buildings[vk];
-        if (bl) perOwner[bl.owner] = (perOwner[bl.owner] || 0) + (bl.type === 'city' ? 2 : 1);
+        if (bl) per[bl.owner] = (per[bl.owner] || 0) + (bl.type === 'city' ? 2 : 1);
       });
-      Object.keys(perOwner).forEach(function (own, i) {
-        var n = perOwner[own], ox = c.x + (i - (Object.keys(perOwner).length - 1) / 2) * S * .5;
+      var keys = Object.keys(per);
+      keys.forEach(function (own, i) {
+        var ox = c.x + (i - (keys.length - 1) / 2) * S * .52;
         ui.fx.push({
           until: until,
           html: '<g class="float-gain" transform="translate(' + ox + ',' + (c.y - S * .05) + ')" pointer-events="none">' +
-            '<rect x="' + (-S * .27) + '" y="' + (-S * .19) + '" width="' + (S * .54) + '" height="' + (S * .38) +
-            '" rx="' + (S * .12) + '" fill="' + E.COLORS[own] + '" stroke="rgba(0,0,0,.5)" stroke-width="' + (S * .02) + '"/>' +
-            '<g transform="translate(' + (-S * .21) + ',' + (-S * .11) + ') scale(' + (S * .0138) + ')" fill="#fff">' + ICON[res] + '</g>' +
-            '<text class="hexlab" x="' + (S * .1) + '" y="0" font-size="' + (S * .21) + '" fill="#fff">+' + n + '</text></g>'
+            '<rect x="' + (-S * .28) + '" y="' + (-S * .2) + '" width="' + (S * .56) + '" height="' + (S * .4) +
+            '" rx="' + (S * .13) + '" fill="' + E.COLORS[own] + '" stroke="#fff" stroke-width="' + (S * .022) + '"/>' +
+            '<g transform="translate(' + (-S * .22) + ',' + (-S * .115) + ') scale(' + (S * .0145) + ')" fill="#fff">' + ICON[res] + '</g>' +
+            '<text class="hexlab" x="' + (S * .11) + '" y="0" font-size="' + (S * .22) + '" fill="#fff">+' + per[own] + '</text></g>'
         });
       });
     });
     renderBoard();
-
-    var mine = prod.gains[me];
-    var bar = el('gainBar');
+    var mine = prod.gains[me], bar = el('gainBar');
     if (mine && Object.keys(mine).length) {
+      SFX.gain();
       bar.className = 'gain-bar';
       bar.innerHTML = '<span class="lbl2">You collected</span>' + R5.filter(function (r) { return mine[r]; })
-        .map(function (r) {
-          return '<span class="gain-chip">' + resChip(r) + '+' + mine[r] + '</span>';
-        }).join('');
+        .map(function (r) { return '<span class="gain-chip">' + sw(r) + '+' + mine[r] + '</span>'; }).join('');
     } else {
       bar.className = 'gain-bar none';
       bar.innerHTML = prod.hexes.length ? 'Nothing for you on that roll.' : 'Nobody collected on that roll.';
@@ -2588,266 +3042,217 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     bar.hidden = false;
     clearTimeout(ui.gainTimer);
     ui.gainTimer = setTimeout(function () { bar.hidden = true; }, 3400);
-    setTimeout(renderBoard, 2200);
+    setTimeout(renderBoard, 2300);
   }
 
   /* ============================================================
-     SIDEBAR
+     RIGHT COLUMN
      ============================================================ */
   function renderSide() {
     var v = C.view;
-    el('tabPlayers').innerHTML = v.players.map(function (p) {
-      var isTurn = v.turn === p.idx && v.phase !== 'setup';
-      var awaited = v.awaited.indexOf(p.idx) >= 0;
-      var awards = '';
-      if (v.longestRoad === p.idx) awards += '<span class="award" data-tip="Longest Road|An unbroken run of ' + p.roadLength + ' roads. Worth 2 points until somebody builds a longer one.">Longest road ' + p.roadLength + '</span>';
-      if (v.largestArmy === p.idx) awards += '<span class="award" data-tip="Largest Army|' + p.knights + ' knights played. Worth 2 points until somebody plays more.">Largest army ' + p.knights + '</span>';
-      if (v.pendingDiscard && v.pendingDiscard[p.idx]) awards += '<span class="award" style="background:rgba(224,84,74,.16);color:#f0928a" data-tip="Discarding|A 7 was rolled and they are over the card limit.">discarding ' + v.pendingDiscard[p.idx] + '</span>';
-      var ports = Object.keys(p.ports || {});
-      return '<div class="pcard' + (isTurn || awaited ? ' turn' : '') + '">' +
-        '<span class="bar" style="background:' + p.color + '"></span>' +
-        '<div class="hd"><span class="dot" style="background:' + p.color + '" data-tip="Player ' + (p.idx + 1) + '|Their pieces are marked ' + (p.idx + 1) + ' on the board."></span>' +
-        '<span class="nm">' + esc(p.name) + (p.idx === v.you && !v.localOnly ? ' <span class="badge you">you</span>' : '') + '</span>' +
-        (!p.connected ? '<span class="badge off" data-tip="Disconnected|They can rejoin with the same code and get this seat back.">off</span>' : '') +
-        '<span class="vp" data-tip="Victory points|Visible points only — development-card points stay hidden until somebody wins.">' + p.vp + '</span></div>' +
-        '<div class="pstats">' +
-        '<span class="pstat" data-tip="Resource cards|How many they hold. Over ' + v.options.discardLimit + ' and a 7 makes them discard half.">' + glyph('cards') + ' ' + p.cards + '</span>' +
-        '<span class="pstat" data-tip="Development cards|Held in hand, face down.">' + glyph('dev') + ' ' + p.devCount + '</span>' +
-        '<span class="pstat" data-tip="Knights played|Three takes Largest Army.">' + glyph('knight') + ' ' + p.knights + '</span>' +
-        '<span class="pstat" data-tip="Roads built|Of 15.">' + glyph('road') + ' ' + (15 - p.stock.road) + '</span>' +
-        (ports.length ? '<span class="pstat" data-tip="Harbours|Better bank rates.">' + glyph('port') + ' ' +
-          ports.map(function (x) { return x === 'any' ? '3:1' : RES_NAME[x] + ' 2:1'; }).join(', ') + '</span>' : '') +
-        '</div>' + (awards ? '<div class="awards">' + awards + '</div>' : '') +
-        '</div>';
-    }).join('') +
-      '<div class="pcard"><div class="hd"><span class="nm muted tiny">Bank</span></div><div class="pstats">' +
+    el('bankLane').innerHTML =
+      '<span class="bchip" data-tip="The bank|If it cannot pay everyone owed on a roll, nobody gets that resource."><span class="sw" style="background:#8a7a52">' + icon('cards') + '</span>Bank</span>' +
       R5.map(function (r) {
-        return '<span class="pstat" style="color:' + RES_COLOR[r] + '" data-tip="' + RES_NAME[r] + ' in the bank|If the bank cannot pay everyone owed on a roll, nobody gets that resource.">' +
-          RES_NAME[r] + ' ' + v.bank[r] + '</span>';
+        return '<span class="bchip" data-tip="' + RES_NAME[r] + ' left in the bank|' + v.bank[r] + ' of ' + (v.players.length >= 5 ? 24 : 19) + '.">' + sw(r, 17) + v.bank[r] + '</span>';
       }).join('') +
-      '<span class="pstat" data-tip="Development deck|When it runs out, no more can be bought.">Dev cards left ' + v.deckLeft + '</span></div></div>';
+      '<span class="bchip" data-tip="Development deck|When it empties, no more can be bought."><span class="sw" style="background:#5b4a97">' + icon('dev') + '</span>' + v.deckLeft + '</span>';
 
-    el('logList').innerHTML = v.log.slice().reverse().slice(0, 70)
-      .map(function (l) { return '<div class="e ' + l.k + '">' + esc(l.t) + '</div>'; }).join('');
-    el('chatList').innerHTML = (v.chat || []).slice().reverse().map(function (m) {
-      return m.sys ? '<div class="chatline sys">' + esc(m.text) + '</div>'
-        : '<div class="chatline"><span class="who" style="color:' + E.COLORS[m.color] + '">' + esc(m.from) + '</span> ' + esc(m.text) + '</div>';
+    el('logList').innerHTML = v.log.slice(-60).map(function (l) {
+      return '<div class="le ' + l.k + '">' + esc(l.t) + '</div>';
     }).join('');
+    var lb = el('logList'); lb.scrollTop = lb.scrollHeight;
 
-    if (ui.tab === 'guide') renderGuide();
-  }
+    el('chatList').innerHTML = (v.chat || []).slice(-40).map(function (m) {
+      return m.sys ? '<div class="cl sys">' + esc(m.text) + '</div>'
+        : '<div class="cl"><span class="who" style="color:' + E.COLORS[m.color] + '">' + esc(m.from) + '</span> ' + esc(m.text) + '</div>';
+    }).join('');
+    var cl = el('chatList'); cl.scrollTop = cl.scrollHeight;
 
-  function renderGuide() {
-    var v = C.view;
-    function costRow(what, cost, note) {
-      return '<div class="cost-row"><span class="what">' + what + '</span><span class="pay">' +
-        R5.filter(function (r) { return cost[r]; }).map(function (r) {
-          return '<i>' + resChip(r, 17) + cost[r] + '</i>';
-        }).join('') + '</span>' + (note ? '<span class="vpn">' + note + '</span>' : '') + '</div>';
-    }
-    el('tabGuide').innerHTML =
-      '<div class="guide-h">What each tile makes</div>' +
-      '<div class="legend">' + Object.keys(TERRAIN_FILL).map(function (t) {
-        var r = TERRAIN_RES[t];
-        return '<div class="legend-row"><span class="sw" style="background:' + TERRAIN_FILL[t] + '">' +
-          (r ? icon(r) : '') + '</span><span class="nm2">' + TERRAIN_NAME[t] + '</span>' +
-          '<span class="mut">' + (r ? RES_NAME[r] : 'nothing') + '</span></div>';
-      }).join('') + '</div>' +
-
-      '<div class="guide-h">What things cost</div>' +
-      '<div class="costs">' +
-      costRow('Road', COST_TEXT.road, '') +
-      costRow('Settlement', COST_TEXT.settlement, '1 point') +
-      costRow('City', COST_TEXT.city, '2 points') +
-      costRow('Development card', COST_TEXT.dev, '') +
-      '</div>' +
-
-      '<div class="guide-h">Your bank rate</div>' +
-      '<div class="legend">' + R5.map(function (r) {
-        return '<div class="legend-row"><span class="sw" style="background:' + RES_COLOR[r] + '">' + icon(r) + '</span>' +
-          '<span class="nm2">' + RES_NAME[r] + '</span><span class="mut">' + v.rates[r] + ' → 1</span></div>';
-      }).join('') + '</div>' +
-      '<p class="guide-p">Harbours improve these. Build on a corner marked 3:1 or 2:1 to unlock it.</p>' +
-
-      '<div class="guide-h">Who is who</div>' +
-      '<div class="pkey">' + v.players.map(function (p) {
-        return '<div class="legend-row"><span class="sw" style="background:' + p.color +
-          ';color:#fff;font-weight:800;font-size:12px">' + (p.idx + 1) + '</span>' +
-          '<span class="nm2">' + esc(p.name) + '</span><span class="mut">' + p.vp + ' pts</span></div>';
-      }).join('') + '</div>' +
-      '<p class="guide-p">Every piece on the board carries its owner\'s number, so you never have to go by colour alone.</p>' +
-
-      '<div class="guide-h">The two bonus cards</div>' +
-      '<p class="guide-p"><b>Longest Road</b> — 2 points for the first unbroken run of 5 roads. An opponent building on a junction breaks your run.<br>' +
-      '<b>Largest Army</b> — 2 points for the first player to play 3 knights. Both can be taken off you by someone who beats your number.</p>' +
-      '<div class="guide-h">On a seven</div>' +
-      '<p class="guide-p">Nobody produces. Everyone holding more than ' + v.options.discardLimit +
-      ' cards discards half, then the roller moves the robber onto a hex — shutting it down — and steals one card from somebody built on it.</p>' +
-      '<p class="guide-p muted tiny">First to ' + v.options.vpTarget + ' points wins.</p>';
-  }
-
-  function renderTop() {
-    var v = C.view, me = v.you, mine = v.awaited.indexOf(me) >= 0;
-    var pill = el('turnPill'), text, step = '';
-    if (v.phase === 'over') text = '🏆 ' + v.players[v.winner].name + ' wins!';
-    else if (v.phase === 'setup') {
-      text = v.players[v.setup.order[v.setup.idx]].name;
-      step = ' — place ' + (v.setup.need === 'settlement' ? 'a settlement' : 'a road') +
-        ' (' + (v.setup.idx + 1) + ' of ' + v.setup.order.length + ')';
-    } else if (v.phase === 'discard') {
-      text = 'Discarding'; step = ' — ' + Object.keys(v.pendingDiscard).map(function (i) { return v.players[i].name; }).join(', ');
-    } else if (v.phase === 'specialBuild') {
-      text = v.players[v.specialQueue.queue[v.specialQueue.i]].name; step = ' — special build';
-    } else if (v.phase === 'robber') {
-      text = v.players[v.awaiting.player].name;
-      step = ' — ' + (v.awaiting.type === 'steal' ? 'choosing whom to rob' : 'moving the robber');
-    } else {
-      text = v.players[v.turn].name + "'s turn";
-      step = v.phase === 'roll' ? ' — to roll' : ' — building';
-    }
-    pill.innerHTML = (v.localOnly ? '' : (mine ? '▶ ' : '')) + esc(text) + '<span class="step">' + esc(step) + '</span>';
-    pill.classList.toggle('mine', mine && v.phase !== 'over');
-    pill.setAttribute('data-tip', 'Turn order|' + v.players.map(function (p, i) { return (i + 1) + '. ' + p.name; }).join('  ·  '));
-
-    var sum = v.dice ? v.dice[0] + v.dice[1] : null;
-    el('diceBox').innerHTML = v.dice
-      ? '<span class="die' + (sum === 7 ? ' hot' : '') + '" data-tip="Last roll|' + v.dice[0] + ' and ' + v.dice[1] +
-      ' — that is ' + sum + ', which comes up ' + ways(sum) + ' times in 36.">' + dieFace(v.dice[0]) + '</span>' +
-      '<span class="die' + (sum === 7 ? ' hot' : '') + '">' + dieFace(v.dice[1]) + '</span>' +
-      '<span class="sum' + (sum === 7 ? ' seven' : '') + '">' + sum + '</span>'
-      : '<span class="tiny muted" data-tip="Dice|Nobody has rolled yet this turn.">—</span>';
+    el('plist').innerHTML = v.players.map(function (p) {
+      var turn = (v.turn === p.idx && v.phase !== 'setup') || v.awaited.indexOf(p.idx) >= 0;
+      var tags = '';
+      if (v.longestRoad === p.idx) tags += '<span class="tag" data-tip="Longest Road|' + p.roadLength + ' unbroken roads. 2 points until beaten.">Road ' + p.roadLength + '</span>';
+      if (v.largestArmy === p.idx) tags += '<span class="tag" data-tip="Largest Army|' + p.knights + ' knights. 2 points until beaten.">Army ' + p.knights + '</span>';
+      if (v.pendingDiscard && v.pendingDiscard[p.idx]) tags += '<span class="tag red">discarding ' + v.pendingDiscard[p.idx] + '</span>';
+      if (!p.connected) tags += '<span class="tag red" data-tip="Offline|They can rejoin with the same code and get this seat back. If they are gone too long the table plays their move.">offline</span>';
+      var ports = Object.keys(p.ports || {});
+      if (ports.length) tags += '<span class="tag grey" data-tip="Harbours|' + ports.map(function (x) { return x === 'any' ? 'any 3:1' : RES_NAME[x] + ' 2:1'; }).join(', ') + '">' + ports.length + ' harbour' + (ports.length > 1 ? 's' : '') + '</span>';
+      return '<div class="pc' + (turn ? ' turn' : '') + (p.idx === v.you && !v.localOnly ? ' me' : '') + (p.connected ? '' : ' off') + '">' +
+        '<span class="av" style="background:' + p.color + '">' + (p.idx + 1) + '</span>' +
+        '<span class="mid"><span class="nm">' + esc(p.name) + (p.idx === v.you && !v.localOnly ? ' (you)' : '') + '</span>' +
+        '<span class="sub">' +
+        '<i data-tip="Resource cards|Over ' + v.options.discardLimit + ' and a 7 costs them half.">' + icon('cards') + p.cards + '</i>' +
+        '<i data-tip="Development cards held">' + icon('dev') + p.devCount + '</i>' +
+        '<i data-tip="Knights played|Three takes Largest Army.">' + icon('knight') + p.knights + '</i>' +
+        '<i data-tip="Roads built|Of 15.">' + icon('road') + (15 - p.stock.road) + '</i></span>' +
+        (tags ? '<span class="tags">' + tags + '</span>' : '') + '</span>' +
+        '<span class="pv" data-tip="Victory points|Visible points only — development-card points stay hidden until somebody wins.">' + p.vp + '</span></div>';
+    }).join('');
   }
 
   /* ============================================================
-     BOTTOM BAR
+     DOCK
      ============================================================ */
-  function btn(label, o) {
-    return '<button class="btn sm' + (o.primary ? ' primary' : '') + '" data-a="' + o.a + '"' +
-      (o.disabled ? ' disabled' : '') +
-      (o.tip ? ' data-tip="' + esc(o.tip) + '"' : '') +
-      (o.cost ? ' data-tip-cost="' + costAttr(o.cost) + '"' : '') + '>' + label + '</button>';
+  function renderTurn() {
+    var v = C.view, me = v.you, mine = v.awaited.indexOf(me) >= 0;
+    var who = null, step = '';
+    if (v.phase === 'over') { who = v.players[v.winner]; step = 'wins the game'; }
+    else if (v.phase === 'setup') { who = v.players[v.setup.order[v.setup.idx]]; step = 'places ' + (v.setup.need === 'settlement' ? 'a settlement' : 'a road'); }
+    else if (v.phase === 'discard') { step = 'Discarding: ' + Object.keys(v.pendingDiscard).map(function (i) { return v.players[i].name; }).join(', '); }
+    else if (v.phase === 'specialBuild') { who = v.players[v.specialQueue.queue[v.specialQueue.i]]; step = 'special build'; }
+    else if (v.phase === 'robber') { who = v.players[v.awaiting.player]; step = v.awaiting.type === 'steal' ? 'is choosing whom to rob' : 'is moving the robber'; }
+    else { who = v.players[v.turn]; step = v.phase === 'roll' ? 'to roll' : 'is building'; }
+    el('turnWho').innerHTML = who
+      ? '<span class="pin" style="background:' + who.color + '">' + (who.idx + 1) + '</span>' +
+      '<span>' + esc(who.name) + (mine && !v.localOnly ? ' — your turn' : '') + '</span>' +
+      '<span class="muted" style="font-weight:600">· ' + esc(step) + '</span>'
+      : '<span>' + esc(step) + '</span>';
+    el('turnbar').classList.toggle('mine', mine && v.phase !== 'over');
+    updateTimer();
+  }
+  function updateTimer() {
+    var t = el('turnTimer'), v = C && C.view;
+    if (!v || !v.clock || v.phase === 'over' || v.localOnly) { t.hidden = true; return; }
+    var seat = v.awaited[0];
+    if (seat === undefined || !v.players[seat]) { t.hidden = true; return; }
+    var lim = v.players[seat].connected ? v.clock.turnMs : v.clock.dropMs;
+    if (!lim) { t.hidden = true; return; }
+    var left = Math.max(0, v.clock.start + lim - Date.now());
+    t.hidden = false;
+    t.classList.toggle('warn', left < 15000);
+    var s = Math.ceil(left / 1000);
+    t.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    t.setAttribute('data-tip', 'Time left|' + (v.players[seat].connected
+      ? 'When it runs out the table plays a safe move and carries on.'
+      : 'They are offline. When it runs out the table plays for them so the game continues.'));
   }
 
-  function renderBottom() {
+  function abtn(id, g, label, o) {
+    o = o || {};
+    return '<button class="abtn' + (o.go ? ' go' : '') + (o.on ? ' on' : '') + '" data-a="' + id + '"' +
+      (o.disabled ? ' disabled' : '') + (o.tip ? ' data-tip="' + esc(o.tip) + '"' : '') +
+      (o.cost ? ' data-tip-cost="' + R5.filter(function (r) { return o.cost[r]; }).map(function (r) { return r + ':' + o.cost[r]; }).join(',') + '"' : '') +
+      '>' + (o.count !== undefined ? '<span class="ct">' + o.count + '</span>' : '') +
+      icon(g) + '<span class="lb">' + label + '</span></button>';
+  }
+
+  function renderDock() {
     var v = C.view, me = v.you, p = v.players[me];
     var res = p.resources || {}, dev = p.dev || {}, locked = p.devLocked || {};
-
-    /* hand, with a badge on anything that just went up */
     var fx = (ui.resFx && ui.resFx.seat === me && ui.resFx.until > Date.now()) ? ui.resFx.d : null;
+
     el('hand').innerHTML = R5.map(function (r) {
       var up = fx && fx[r] > 0, down = fx && fx[r] < 0;
-      return '<div class="res' + (res[r] ? '' : ' z') + (up ? ' gained' : '') + (down ? ' spent' : '') +
-        '" data-tip="' + RES_NAME[r] + '|You hold ' + (res[r] || 0) + '. The bank takes ' + v.rates[r] +
-        ' of these for 1 of anything.">' + resChip(r) + '<span class="n">' + (res[r] || 0) + '</span>' +
+      return '<div class="rcard' + (res[r] ? '' : ' z') + (up ? ' gained' : '') + (down ? ' spent' : '') +
+        '" style="background:linear-gradient(165deg,' + RES_COLOR[r] + ',' + shade(RES_COLOR[r], -22) + ')"' +
+        ' data-tip="' + RES_NAME[r] + '|You hold ' + (res[r] || 0) + '. The bank takes ' + v.rates[r] + ' of these for any 1 resource.">' +
+        icon(r) + '<span class="n">' + (res[r] || 0) + '</span>' +
         (up ? '<span class="delta">+' + fx[r] + '</span>' : '') + '</div>';
     }).join('') +
-      (p.vpCards ? '<div class="res dev" data-tip="Victory point cards|Worth 1 point each, kept secret until somebody wins."><span class="ic" style="background:var(--gold);color:#22190a">' + glyph('star', 14) + '</span><span class="n">' + p.vpCards + '</span></div>' : '') +
+      (p.vpCards ? '<div class="dcard" style="background:linear-gradient(160deg,#e0a021,#a97a08)" data-tip="Victory point cards|1 point each, secret until somebody wins.">' + icon('star') + '<span class="n">' + p.vpCards + '</span></div>' : '') +
       ['knight', 'road', 'plenty', 'monopoly'].filter(function (k) { return dev[k]; }).map(function (k) {
-        var meta = {
+        var m = {
           knight: ['knight', 'Knight', 'Move the robber and steal a card. Three played takes Largest Army.'],
-          road: ['road', 'Road Building', 'Place two roads for free.'],
-          plenty: ['star', 'Year of Plenty', 'Take any two resources from the bank.'],
-          monopoly: ['dev', 'Monopoly', 'Name a resource; every other player hands you all of theirs.']
+          road: ['road', 'Road Building', 'Two free roads.'],
+          plenty: ['star', 'Year of Plenty', 'Any two resources from the bank.'],
+          monopoly: ['dev', 'Monopoly', 'Every other player hands you all of one resource.']
         }[k];
-        return '<div class="res dev" data-tip="' + meta[1] + '|' + meta[2] +
-          (locked[k] ? ' Bought this turn, so playable from your next turn.' : '') + '">' +
-          '<span class="ic" style="background:var(--panel3)">' + glyph(meta[0], 14) + '</span>' +
-          '<span class="n">' + dev[k] + '</span></div>';
+        return '<div class="dcard" data-tip="' + m[1] + '|' + m[2] + (locked[k] ? ' Bought this turn — playable from your next.' : '') + '">' +
+          icon(m[0]) + '<span class="n">' + dev[k] + '</span></div>';
       }).join('');
 
-    var A = [], hint = '';
-    var mode = currentMode();
-    var myTurn = v.turn === me;
-    var awaited = v.awaited.indexOf(me) >= 0;
+    var A = [], hint = '', mode = currentMode();
+    var myTurn = v.turn === me, awaited = v.awaited.indexOf(me) >= 0;
     var canBuild = (v.phase === 'main' && myTurn && !v.awaiting) ||
       (v.phase === 'specialBuild' && v.specialQueue.queue[v.specialQueue.i] === me);
     var afford = function (c) { return E.canAfford({ resources: res }, c); };
     function why(c, stock, what) {
       if (stock <= 0) return 'You have used all your ' + what + '.';
       if (!afford(c)) return 'You cannot afford it yet.';
-      return 'Click, then pick a highlighted spot on the board.';
+      return 'Click, then pick a highlighted spot.';
     }
 
     if (v.phase === 'over') {
       var wp = v.players[v.winner];
-      hint = '🏆 ' + wp.name + ' wins with ' + (wp.totalVP !== undefined ? wp.totalVP : wp.vp) + ' points.';
-      if (C.seat === 0) A.push(btn('Back to lobby', { a: 'newgame', primary: true }));
-      A.push(btn('Leave', { a: 'leave' }));
-    } else if (mode === 'setupS') hint = 'Tap a highlighted corner. Pick a spot touching numbers you want — the dots on each token show how often it rolls.';
-    else if (mode === 'setupR') hint = 'Now tap a road slot next to the settlement you just placed.';
-    else if (mode === 'robber') hint = 'Tap any hex to move the robber there. It stops producing, and you steal a card from someone built on it.';
+      hint = wp.name + ' wins with ' + (wp.totalVP !== undefined ? wp.totalVP : wp.vp) + ' points.';
+      A.push(abtn('stats', 'chart', 'Stats', { tip: 'Statistics|How the dice fell and how everyone finished.' }));
+      if (C.seat === 0) A.push(abtn('newgame', 'end', 'Lobby', { go: true, tip: 'Back to the lobby|Set up another game with the same players.' }));
+      A.push(abtn('leave', 'menu', 'Leave', {}));
+    } else if (mode === 'setupS') hint = 'Tap a highlighted corner. The dots under each number show how often it rolls.';
+    else if (mode === 'setupR') hint = 'Now tap a road slot beside the settlement you just placed.';
+    else if (mode === 'robber') hint = 'Tap a hex to move the robber there and steal from someone built on it.';
     else if (mode === 'steal') hint = 'Choose a player to rob.';
     else if (mode === 'rb') hint = 'Road Building — place ' + v.awaiting.left + ' free road' + (v.awaiting.left > 1 ? 's' : '') + '.';
     else if (v.phase === 'discard' && v.pendingDiscard[me]) hint = 'You must discard ' + v.pendingDiscard[me] + ' cards.';
     else if (v.phase === 'roll' && myTurn) {
-      A.push(btn(glyph('dice', 14) + ' Roll dice', { a: 'roll', primary: true, tip: 'Roll|Every hex showing your total pays out — 1 to each settlement, 2 to each city.' }));
+      A.push(abtn('roll', 'dice', 'Roll', { go: true, tip: 'Roll the dice (R)|Every hex showing your total pays out — 1 per settlement, 2 per city.' }));
       if ((dev.knight - (locked.knight || 0)) > 0 && !v.playedDevThisTurn)
-        A.push(btn('Play knight', { a: 'knight', tip: 'Knight|Play it before rolling to move the robber off one of your hexes.' }));
+        A.push(abtn('knight', 'knight', 'Knight', { tip: 'Play a Knight|Before rolling, to move the robber off one of your hexes.' }));
       hint = 'Your turn — roll to start.';
     } else if (canBuild) {
-      A.push(btn('Road', {
-        a: 'm-road', cost: COST_TEXT.road, disabled: !afford(COST_TEXT.road) || p.stock.road <= 0,
-        tip: 'Build a road|' + why(COST_TEXT.road, p.stock.road, 'roads') + ' ' + p.stock.road + ' left.'
+      A.push(abtn('m-road', 'road', 'Road', {
+        count: p.stock.road, cost: COST.road, on: mode === 'road',
+        disabled: !afford(COST.road) || p.stock.road <= 0, tip: 'Build a road (1)|' + why(COST.road, p.stock.road, 'roads')
       }));
-      A.push(btn('Settlement', {
-        a: 'm-settlement', cost: COST_TEXT.settlement, disabled: !afford(COST_TEXT.settlement) || p.stock.settlement <= 0,
-        tip: 'Build a settlement|Worth 1 point. Needs your own road leading to it and must sit two corners clear of any other building. ' + why(COST_TEXT.settlement, p.stock.settlement, 'settlements')
+      A.push(abtn('m-settlement', 'house', 'Town', {
+        count: p.stock.settlement, cost: COST.settlement, on: mode === 'settlement',
+        disabled: !afford(COST.settlement) || p.stock.settlement <= 0,
+        tip: 'Build a settlement (2)|1 point. Needs your own road leading to it, and two corners clear of any other building. ' + why(COST.settlement, p.stock.settlement, 'settlements')
       }));
-      A.push(btn('City', {
-        a: 'm-city', cost: COST_TEXT.city, disabled: !afford(COST_TEXT.city) || p.stock.city <= 0,
-        tip: 'Upgrade to a city|Worth 2 points and doubles what that spot collects. Upgrades one of your own settlements. ' + why(COST_TEXT.city, p.stock.city, 'cities')
+      A.push(abtn('m-city', 'city', 'City', {
+        count: p.stock.city, cost: COST.city, on: mode === 'city',
+        disabled: !afford(COST.city) || p.stock.city <= 0,
+        tip: 'Upgrade to a city (3)|2 points, and doubles what that spot collects. ' + why(COST.city, p.stock.city, 'cities')
       }));
-      A.push(btn('Dev card', {
-        a: 'buydev', cost: COST_TEXT.dev, disabled: !afford(COST_TEXT.dev) || !v.deckLeft,
-        tip: 'Buy a development card|Knight, Road Building, Year of Plenty, Monopoly, or a hidden victory point. ' + v.deckLeft + ' left in the deck.'
+      A.push(abtn('buydev', 'dev', 'Card', {
+        count: v.deckLeft, cost: COST.dev, disabled: !afford(COST.dev) || !v.deckLeft,
+        tip: 'Buy a development card (D)|Knight, Road Building, Year of Plenty, Monopoly, or a hidden victory point.'
       }));
       if (v.phase === 'main') {
-        A.push(btn('Trade', { a: 'trade', tip: 'Trade|Swap with the bank at your harbour rate, or put an offer to the other players.' }));
+        A.push(abtn('trade', 'trade', 'Trade', { tip: 'Trade (T)|With the bank at your harbour rate, or offer a swap to the table.' }));
         var playable = ['knight', 'road', 'plenty', 'monopoly'].filter(function (k) { return (dev[k] - (locked[k] || 0)) > 0; });
         if (playable.length && !v.playedDevThisTurn)
-          A.push(btn('Play card', { a: 'playdev', tip: 'Play a development card|One per turn. Cards bought this turn wait until your next.' }));
-        A.push(btn('End turn', { a: 'end', primary: true, tip: 'End turn|Passes play to the next player.' }));
-      } else {
-        A.push(btn('Done', { a: 'end', primary: true, tip: 'Done|Ends your special build window.' }));
-      }
-      if (mode) A.push(btn('Cancel', { a: 'cancel', tip: 'Cancel|Stop placing and keep your resources.' }));
-      if (!hint) hint = mode ? 'Pick a highlighted spot on the board.' : 'Build, trade, or end your turn.';
+          A.push(abtn('playdev', 'star', 'Play', { tip: 'Play a development card|One per turn.' }));
+        A.push(abtn('end', 'end', 'End turn', { go: true, tip: 'End turn (E)|Passes play to the next player.' }));
+      } else A.push(abtn('end', 'end', 'Done', { go: true, tip: 'Done|Ends your special build window.' }));
+      if (mode) A.push(abtn('cancel', 'menu', 'Cancel', { tip: 'Cancel (Esc)|Stop placing; nothing is spent.' }));
+      if (!hint) hint = mode ? 'Pick a highlighted spot on the board.' : '';
     } else if (!awaited) {
       hint = 'Waiting for ' + v.awaited.map(function (i) { return v.players[i].name; }).join(', ') + '…';
     }
 
-    var tr = v.trade, trHtml = '';
+    var tr = v.trade;
     if (tr) {
       var from = v.players[tr.from];
       var give = R5.filter(function (r) { return tr.give[r]; }).map(function (r) { return tr.give[r] + '×' + RES_NAME[r]; }).join(' + ');
       var want = R5.filter(function (r) { return tr.want[r]; }).map(function (r) { return tr.want[r] + '×' + RES_NAME[r]; }).join(' + ');
-      trHtml = '<div class="hint" style="width:100%;flex-wrap:wrap">⇄ <b style="color:' + from.color + '">' + esc(from.name) + '</b> gives ' + esc(give) + ' for ' + esc(want) + '.';
+      hint = from.name + ' offers ' + give + ' for ' + want + '.';
       if (tr.from === me) {
         var yes = Object.keys(tr.responses).filter(function (i) { return tr.responses[i] === 'yes'; });
-        trHtml += yes.length
-          ? ' ' + yes.map(function (i) { return '<button class="btn sm primary" data-a="tconfirm:' + i + '">Trade with ' + esc(v.players[i].name) + '</button>'; }).join(' ')
-          : ' <span class="muted tiny">Waiting for replies…</span>';
-        trHtml += ' <button class="btn sm" data-a="tcancel">Withdraw</button>';
+        yes.forEach(function (i) { A.unshift(abtn('tconfirm:' + i, 'trade', v.players[i].name, { go: true, tip: 'Trade|Complete it with ' + v.players[i].name + '.' })); });
+        A.push(abtn('tcancel', 'menu', 'Withdraw', {}));
+        if (!yes.length) hint += ' Waiting for replies…';
       } else if (!tr.responses[me]) {
-        trHtml += ' <button class="btn sm primary" data-a="taccept">Accept</button> <button class="btn sm" data-a="tdecline">Decline</button>';
-      } else {
-        trHtml += ' <span class="muted tiny">You ' + (tr.responses[me] === 'yes' ? 'accepted' : 'declined') + '.</span>';
-      }
-      trHtml += '</div>';
+        A.unshift(abtn('tdecline', 'menu', 'Decline', {}));
+        A.unshift(abtn('taccept', 'trade', 'Accept', { go: true }));
+      } else hint += ' You ' + (tr.responses[me] === 'yes' ? 'accepted' : 'declined') + '.';
     }
 
-    el('actions').innerHTML = (hint ? '<span class="hint">' + esc(hint) + '</span>' : '') + A.join('') + trHtml;
+    el('hintLine').hidden = !hint;
+    el('hintLine').textContent = hint;
+    el('actions').innerHTML = A.join('');
     $$('#actions [data-a]').forEach(function (b) { b.onclick = function () { hideTip(); onAction(b.dataset.a); }; });
   }
 
   function onAction(a) {
     if (a === 'roll') return act({ type: 'roll' });
     if (a === 'knight') return act({ type: 'playDev', card: 'knight' });
-    if (a === 'buydev') return act({ type: 'buyDev' });
-    if (a === 'end') { ui.mode = null; return act({ type: 'endTurn' }); }
+    if (a === 'buydev') { SFX.build(); return act({ type: 'buyDev' }); }
+    if (a === 'end') { ui.mode = null; SFX.turn(); return act({ type: 'endTurn' }); }
     if (a === 'cancel') { ui.mode = null; return render(); }
     if (a === 'leave') return goHome();
     if (a === 'newgame') return C.send({ t: 'newGame' });
+    if (a === 'stats') return openStats();
     if (a.indexOf('m-') === 0) { ui.mode = (ui.mode === a.slice(2)) ? null : a.slice(2); return render(); }
     if (a === 'trade') return openTrade();
     if (a === 'playdev') return openPlayDev();
@@ -2869,22 +3274,20 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
 
   function counterUI(prefix, avail) {
     return '<div class="picker">' + R5.map(function (r) {
-      return '<div class="pick"><span class="ic" style="background:' + RES_COLOR[r] + ';color:#fff;width:26px;height:26px;border-radius:7px;display:grid;place-items:center">' + icon(r) + '</span>' +
-        RES_NAME[r] + '<span class="n" id="' + prefix + '-' + r + '">0</span>' +
+      return '<div class="pick">' + sw(r, 28) + RES_NAME[r] +
+        '<span class="n" id="' + prefix + '-' + r + '">0</span>' +
         '<div class="stepper"><button data-step="' + prefix + ':' + r + ':-1" aria-label="less">−</button>' +
         '<button data-step="' + prefix + ':' + r + ':1" aria-label="more">+</button></div>' +
         (avail ? '<span class="tiny muted">have ' + (avail[r] || 0) + '</span>' : '') + '</div>';
     }).join('') + '</div>';
   }
-  function readCounter(prefix) {
-    var o = {}; R5.forEach(function (r) { o[r] = +el(prefix + '-' + r).textContent; }); return o;
-  }
+  function readCounter(p) { var o = {}; R5.forEach(function (r) { o[r] = +el(p + '-' + r).textContent; }); return o; }
   function wireSteppers(limits) {
     $$('[data-step]').forEach(function (b) {
       b.onclick = function () {
-        var p = b.dataset.step.split(':'), node = el(p[0] + '-' + p[1]);
-        var max = limits && limits[p[0]] ? (limits[p[0]][p[1]] === undefined ? 99 : limits[p[0]][p[1]]) : 99;
-        node.textContent = Math.max(0, Math.min(max, +node.textContent + (+p[2])));
+        var q = b.dataset.step.split(':'), node = el(q[0] + '-' + q[1]);
+        var max = limits && limits[q[0]] ? (limits[q[0]][q[1]] === undefined ? 99 : limits[q[0]][q[1]]) : 99;
+        node.textContent = clamp(+node.textContent + (+q[2]), 0, max);
         if (window.__onStep) window.__onStep();
       };
     });
@@ -2892,13 +3295,10 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
 
   function openDiscard() {
     var v = C.view, p = v.players[v.you], need = v.pendingDiscard[v.you];
-    openModal(
-      '<h2>Discard ' + need + ' card' + (need > 1 ? 's' : '') + '</h2>' +
-      '<p class="sub">A 7 was rolled and you are holding more than ' + v.options.discardLimit +
-      ' cards, so you lose half of them. Keep what your next build needs.</p>' +
+    openModal('<h2>Discard ' + need + ' card' + (need > 1 ? 's' : '') + '</h2>' +
+      '<p class="sub">A 7 was rolled and you hold more than ' + v.options.discardLimit + ' cards, so half are lost. Keep what your next build needs.</p>' +
       counterUI('dc', p.resources) +
-      '<div class="row" style="margin-top:18px;justify-content:space-between">' +
-      '<span class="tiny muted">Selected <b id="dcTotal">0</b> of ' + need + '</span>' +
+      '<div class="row" style="margin-top:18px;justify-content:space-between"><span class="tiny muted">Selected <b id="dcTotal">0</b> of ' + need + '</span>' +
       '<button class="btn primary" id="dcGo" disabled>Discard</button></div>',
       function () {
         wireSteppers({ dc: p.resources });
@@ -2909,10 +3309,9 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         el('dcGo').onclick = function () { act({ type: 'discard', cards: readCounter('dc') }); window.__onStep = null; closeModal(); };
       });
   }
-
   function openSteal() {
     var v = C.view, t = v.awaiting.targets;
-    openModal('<h2>Choose someone to rob</h2><p class="sub">You take one card at random from whoever you pick. You will not see what it is until it lands.</p>' +
+    openModal('<h2>Choose someone to rob</h2><p class="sub">You take one card at random from whoever you pick.</p>' +
       '<div class="stack">' + t.map(function (i) {
         var p = v.players[i];
         return '<button class="btn" data-steal="' + i + '"><span class="dot" style="background:' + p.color + '"></span>' +
@@ -2924,16 +3323,15 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
         });
       });
   }
-
   function openPlayDev() {
     var v = C.view, p = v.players[v.you], dev = p.dev, lk = p.devLocked;
     var items = [
       ['knight', 'Knight', 'Move the robber and steal a card. Three knights takes Largest Army and 2 points.'],
-      ['road', 'Road Building', 'Place two roads for free, straight away.'],
+      ['road', 'Road Building', 'Place two roads for free, right now.'],
       ['plenty', 'Year of Plenty', 'Take any two resources from the bank.'],
       ['monopoly', 'Monopoly', 'Name a resource; every other player hands you all of theirs.']
     ].filter(function (x) { return dev[x[0]] > 0; });
-    openModal('<h2>Play a development card</h2><p class="sub">One card per turn. A card bought this turn is locked until your next.</p>' +
+    openModal('<h2>Play a development card</h2><p class="sub">One per turn. A card bought this turn is locked until your next.</p>' +
       '<div class="stack">' + items.map(function (x) {
         var usable = dev[x[0]] - (lk[x[0]] || 0);
         return '<button class="btn" style="justify-content:flex-start;text-align:left;height:auto;padding:12px 15px" data-dev="' + x[0] + '"' + (usable <= 0 ? ' disabled' : '') + '>' +
@@ -2955,7 +3353,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
   }
   function openPickOne(title, sub, cb) {
     openModal('<h2>' + title + '</h2><p class="sub">' + sub + '</p><div class="picker">' +
-      R5.map(function (r) { return '<button class="pick" data-p1="' + r + '">' + resChip(r, 26) + RES_NAME[r] + '</button>'; }).join('') + '</div>' +
+      R5.map(function (r) { return '<button class="pick" data-p1="' + r + '">' + sw(r, 28) + RES_NAME[r] + '</button>'; }).join('') + '</div>' +
       '<div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn ghost" id="p1X">Cancel</button></div>',
       function () {
         el('p1X').onclick = closeModal;
@@ -2964,9 +3362,9 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
   }
   function openPickTwo() {
     var picks = [];
-    openModal('<h2>Year of Plenty</h2><p class="sub">Take any two resources from the bank — the same one twice is allowed.</p>' +
+    openModal('<h2>Year of Plenty</h2><p class="sub">Take any two from the bank — the same one twice is allowed.</p>' +
       '<div class="picker">' + R5.map(function (r) {
-        return '<button class="pick" data-p2="' + r + '">' + resChip(r, 26) + RES_NAME[r] + '<span class="n" id="p2-' + r + '">0</span></button>';
+        return '<button class="pick" data-p2="' + r + '">' + sw(r, 28) + RES_NAME[r] + '<span class="n" id="p2-' + r + '">0</span></button>';
       }).join('') + '</div>' +
       '<div class="row" style="margin-top:16px;justify-content:space-between"><span class="tiny muted" id="p2c">Pick 2</span>' +
       '<span class="row"><button class="btn ghost" id="p2X">Cancel</button><button class="btn primary" id="p2Go" disabled>Take</button></span></div>',
@@ -2976,83 +3374,122 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
           R5.forEach(function (r) { el('p2-' + r).textContent = picks.filter(function (x) { return x === r; }).length; });
           el('p2c').textContent = picks.length + ' of 2'; el('p2Go').disabled = picks.length !== 2;
         }
-        $$('[data-p2]').forEach(function (b) {
-          b.onclick = function () { if (picks.length < 2) picks.push(b.dataset.p2); else picks = [b.dataset.p2]; up(); };
-        });
+        $$('[data-p2]').forEach(function (b) { b.onclick = function () { if (picks.length < 2) picks.push(b.dataset.p2); else picks = [b.dataset.p2]; up(); }; });
         el('p2Go').onclick = function () { act({ type: 'playDev', card: 'plenty', picks: picks }); closeModal(); };
       });
   }
-
   function openTrade() {
     var v = C.view, p = v.players[v.you], res = p.resources;
     var bankOpts = R5.map(function (r) {
-      return '<option value="' + r + '"' + (res[r] < v.rates[r] ? ' disabled' : '') + '>' +
-        v.rates[r] + ' × ' + RES_NAME[r] + (res[r] < v.rates[r] ? ' (you have ' + (res[r] || 0) + ')' : '') + '</option>';
+      return '<option value="' + r + '"' + (res[r] < v.rates[r] ? ' disabled' : '') + '>' + v.rates[r] + ' × ' + RES_NAME[r] +
+        (res[r] < v.rates[r] ? ' (you have ' + (res[r] || 0) + ')' : '') + '</option>';
     }).join('');
     var wantOpts = R5.map(function (r) { return '<option value="' + r + '"' + (v.bank[r] < 1 ? ' disabled' : '') + '>' + RES_NAME[r] + '</option>'; }).join('');
-    openModal(
-      '<h2>Trade</h2><p class="sub">Your bank rates: ' +
-      R5.map(function (r) { return RES_NAME[r] + ' ' + v.rates[r] + ':1'; }).join(', ') +
-      '. Building on a harbour improves them.</p>' +
+    openModal('<h2>Trade</h2><p class="sub">Your bank rates: ' + R5.map(function (r) { return RES_NAME[r] + ' ' + v.rates[r] + ':1'; }).join(', ') + '. Harbours improve them.</p>' +
       '<div class="offer-box"><h3>With the bank</h3><div class="row wrap">' +
       '<select class="field grow" id="bkGive">' + bankOpts + '</select><span class="muted">→</span>' +
-      '<select class="field grow" id="bkWant">' + wantOpts + '</select>' +
-      '<button class="btn primary" id="bkGo">Trade</button></div></div>' +
-      '<div class="hr"></div>' +
-      '<h3 style="font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--tx2);margin-bottom:10px">With other players</h3>' +
-      '<div class="trade-grid">' +
-      '<div class="offer-box"><h3>You give</h3>' + counterUI('tg', res) + '</div>' +
+      '<select class="field grow" id="bkWant">' + wantOpts + '</select><button class="btn primary" id="bkGo">Trade</button></div></div>' +
+      '<div class="hr"></div><h3 style="font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);margin-bottom:10px">With other players</h3>' +
+      '<div class="trade-grid"><div class="offer-box"><h3>You give</h3>' + counterUI('tg', res) + '</div>' +
       '<div class="offer-box"><h3>You want</h3>' + counterUI('tw', null) + '</div></div>' +
       '<div class="row" style="margin-top:18px;justify-content:flex-end;gap:9px">' +
-      '<button class="btn ghost" id="trX">Close</button>' +
-      '<button class="btn primary" id="trGo">Put offer on the table</button></div>',
+      '<button class="btn ghost" id="trX">Close</button><button class="btn primary" id="trGo">Put offer on the table</button></div>',
       function () {
         wireSteppers({ tg: res, tw: null });
         el('trX').onclick = closeModal;
         el('bkGo').onclick = function () { act({ type: 'bankTrade', give: el('bkGive').value, want: el('bkWant').value }); closeModal(); };
         el('trGo').onclick = function () {
           var g = readCounter('tg'), w = readCounter('tw');
-          var gt = R5.reduce(function (a, r) { return a + g[r]; }, 0), wt = R5.reduce(function (a, r) { return a + w[r]; }, 0);
-          if (!gt || !wt) { toast('Offer something and ask for something.'); return; }
+          if (!R5.reduce(function (a, r) { return a + g[r]; }, 0) || !R5.reduce(function (a, r) { return a + w[r]; }, 0)) { toast('Offer something and ask for something.'); return; }
           act({ type: 'proposeTrade', give: g, want: w }); closeModal();
         };
       });
   }
 
-  function openGameOver() {
+  function openGuide() {
     var v = C.view;
-    var rows = v.players.map(function (p) { return { p: p, t: (p.totalVP !== undefined ? p.totalVP : p.vp) }; })
-      .sort(function (a, b) { return b.t - a.t; });
-    openModal('<h2>🏆 ' + esc(v.players[v.winner].name) + ' wins</h2><p class="sub">Final standings, hidden cards included</p>' +
-      '<div class="stack">' + rows.map(function (r) {
-        return '<div class="seat"><span class="dot" style="background:' + r.p.color + '"></span>' +
-          '<span class="nm">' + esc(r.p.name) + '</span><span class="vp">' + r.t + '</span></div>';
-      }).join('') + '</div>' +
-      '<div class="row" style="margin-top:18px;justify-content:flex-end;gap:9px">' +
-      (C.seat === 0 ? '<button class="btn primary" id="goAgain">Back to lobby</button>' : '') +
-      '<button class="btn ghost" id="goX">Look at the board</button></div>',
-      function () {
-        el('goX').onclick = closeModal;
-        if (el('goAgain')) el('goAgain').onclick = function () { C.send({ t: 'newGame' }); closeModal(); };
-      });
+    function costRow(what, cost, note) {
+      return '<div class="lrow"><span class="nm2">' + what + '</span><span class="pay">' +
+        R5.filter(function (r) { return cost[r]; }).map(function (r) { return '<i>' + sw(r, 17) + cost[r] + '</i>'; }).join('') +
+        '</span>' + (note ? '<span class="mut" style="color:var(--gold2);font-weight:800">' + note + '</span>' : '') + '</div>';
+    }
+    openModal('<h2>Reference</h2><p class="sub">Everything a physical set puts on the table.</p>' +
+      '<div class="guide-h">What each tile makes</div>' +
+      Object.keys(LAND).map(function (t) {
+        var r = TERRAIN_RES[t];
+        return '<div class="lrow"><span class="sw" style="background:' + LAND[t].base + ';color:#fff">' + (r ? icon(r) : '') + '</span>' +
+          '<span class="nm2">' + TERRAIN_NAME[t] + '</span><span class="mut">' + (r ? RES_NAME[r] : 'nothing') + '</span></div>';
+      }).join('') +
+      '<div class="guide-h">What things cost</div>' +
+      costRow('Road', COST.road, '') + costRow('Settlement', COST.settlement, '1 pt') +
+      costRow('City', COST.city, '2 pts') + costRow('Development card', COST.dev, '') +
+      '<div class="guide-h">Your bank rate</div>' +
+      R5.map(function (r) {
+        return '<div class="lrow">' + sw(r, 24) + '<span class="nm2">' + RES_NAME[r] + '</span><span class="mut">' + v.rates[r] + ' → 1</span></div>';
+      }).join('') +
+      '<p class="guide-p">Build on a corner marked 3:1 or 2:1 to improve these.</p>' +
+      '<div class="guide-h">Who is who</div>' +
+      v.players.map(function (p) {
+        return '<div class="lrow"><span class="sw" style="background:' + p.color + ';font-weight:800;font-size:12px">' + (p.idx + 1) + '</span>' +
+          '<span class="nm2">' + esc(p.name) + '</span><span class="mut">' + p.vp + ' pts</span></div>';
+      }).join('') +
+      '<p class="guide-p">Every piece on the board carries its owner\'s number, so you never go by colour alone.</p>' +
+      '<div class="guide-h">The bonus cards</div>' +
+      '<p class="guide-p"><b>Longest Road</b> — 2 points for the first unbroken run of 5. An opponent building on a junction breaks it.<br>' +
+      '<b>Largest Army</b> — 2 points for the first to play 3 knights. Either can be taken by someone who beats your number.</p>' +
+      '<div class="row" style="justify-content:flex-end"><button class="btn primary" id="gX">Close</button></div>',
+      function () { el('gX').onclick = closeModal; });
   }
 
   function openRules() {
-    var t = C.view ? C.view.options.vpTarget : 10, dl = C.view ? C.view.options.discardLimit : 7;
+    var t = C && C.view ? C.view.options.vpTarget : 10, dl = C && C.view ? C.view.options.discardLimit : 7;
     openModal('<h2>How to play</h2><div class="sub" style="line-height:1.65">' +
-      '<p><b>Goal.</b> First to ' + t + ' victory points. Settlements 1, cities 2, Longest Road and Largest Army 2 each, and some development cards are worth 1.</p>' +
-      '<p><b>Setup.</b> Everyone places two settlements and two roads, down the seating order and back up. Your second settlement pays out immediately.</p>' +
+      '<p><b>Goal.</b> First to ' + t + ' victory points. Settlements 1, cities 2, Longest Road and Largest Army 2 each, and some development cards 1.</p>' +
+      '<p><b>Setup.</b> Everyone places two settlements and two roads, down the seating order and back up. Your second settlement pays out at once.</p>' +
       '<p><b>Each turn.</b> Roll two dice. Every hex showing that total pays its resource — 1 to each settlement on it, 2 to each city. Then build, buy or trade, and end your turn.</p>' +
-      '<p><b>Reading the board.</b> Each hex shows the resource it makes and the number that triggers it. The dots under the number are how many ways there are to roll it — five dots on 6 and 8, one on 2 and 12.</p>' +
+      '<p><b>Reading the board.</b> Each hex shows what it grows and the number that triggers it. The dots under the number are how many ways there are to roll it: five on 6 and 8, one on 2 and 12.</p>' +
       '<p><b>Placement.</b> Settlements need a road of yours leading to them and must sit at least two corners from any other building. Cities upgrade your own settlements.</p>' +
-      '<p><b>Rolling a 7.</b> Nobody produces. Anyone holding more than ' + dl + ' cards discards half. The roller moves the robber onto a hex, shutting it down, and steals a card from someone built there.</p>' +
-      '<p><b>Trading.</b> 4:1 with the bank, better at a harbour (3:1 generic, 2:1 for its resource). You can also offer a swap to the other players on your own turn.</p>' +
-      '<p><b>Bonus cards.</b> Longest Road for the first unbroken run of 5; Largest Army for the first 3 knights. Either can be taken by someone who beats it.</p>' +
+      '<p><b>Rolling a 7.</b> Nobody produces. Anyone over ' + dl + ' cards discards half. The roller moves the robber onto a hex, shutting it down, and steals a card from someone built there.</p>' +
+      '<p><b>Trading.</b> 4:1 with the bank, better at a harbour. You can also offer a swap to the table on your own turn.</p>' +
+      '<p><b>If someone drops.</b> Everyone is told, and they keep their seat — they rejoin with the same code and carry on. If they are gone too long the table plays a safe move for them so the game never stalls.</p>' +
+      '<p><b>Keys.</b> R roll · E end turn · 1 road · 2 settlement · 3 city · D card · T trade · Esc cancel · +/−/0 zoom.</p>' +
       '</div><div class="row" style="justify-content:flex-end"><button class="btn primary" id="rX">Got it</button></div>',
       function () { el('rX').onclick = closeModal; });
   }
 
-  /* pass-the-device cover for one-screen play */
+  function openStats() {
+    var v = C.view, h = v.rollHist || {}, max = 1, total = 0, n;
+    for (n = 2; n <= 12; n++) { max = Math.max(max, h[n] || 0); total += (h[n] || 0); }
+    var bars = '', xs = '';
+    for (n = 2; n <= 12; n++) {
+      var c = h[n] || 0;
+      bars += '<div class="b' + (n === 7 ? ' hot' : '') + '" style="height:' + Math.max(2, (c / max) * 100) + '%"' +
+        ' data-tip="' + n + ' rolled ' + c + ' time' + (c === 1 ? '' : 's') + '|Expected about ' +
+        (total ? (total * ways(n) / 36).toFixed(1) : 0) + ' in ' + total + ' rolls."><span>' + (c || '') + '</span></div>';
+      xs += '<span>' + n + '</span>';
+    }
+    var rows = v.players.map(function (p) { return { p: p, t: (p.totalVP !== undefined ? p.totalVP : p.vp) }; })
+      .sort(function (a, b) { return b.t - a.t; });
+    openModal((v.phase === 'over'
+      ? '<h2>' + esc(v.players[v.winner].name) + ' wins</h2><p class="sub">Final standings, hidden cards included</p>'
+      : '<h2>Statistics</h2><p class="sub">How it is going</p>') +
+      rows.map(function (r) {
+        return '<div class="lrow"><span class="sw" style="background:' + r.p.color + ';font-weight:800;font-size:12px">' + (r.p.idx + 1) + '</span>' +
+          '<span class="nm2">' + esc(r.p.name) + '</span>' +
+          '<span class="mut">' + (15 - r.p.stock.road) + ' roads · ' + r.p.knights + ' knights</span>' +
+          '<span style="font-weight:800;color:var(--gold2);font-size:17px;margin-left:8px">' + r.t + '</span></div>';
+      }).join('') +
+      '<div class="guide-h">Dice, ' + total + ' roll' + (total === 1 ? '' : 's') + '</div>' +
+      '<div class="hist">' + bars + '</div><div class="histx">' + xs + '</div>' +
+      '<div class="row" style="margin-top:16px;justify-content:flex-end;gap:9px">' +
+      (v.phase === 'over' && C.seat === 0 ? '<button class="btn primary" id="stAgain">Back to lobby</button>' : '') +
+      '<button class="btn ghost" id="stX">Close</button></div>',
+      function () {
+        el('stX').onclick = closeModal;
+        if (el('stAgain')) el('stAgain').onclick = function () { C.send({ t: 'newGame' }); closeModal(); };
+      });
+  }
+
   function maybeCurtain() {
     var v = C.view;
     if (!v.localOnly || v.phase === 'over') return false;
@@ -3061,9 +3498,8 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     if (ui.lastActing === acting) return false;
     var p = v.players[acting];
     el('modals').innerHTML = '<div class="modal-bg"><div class="modal" style="text-align:center;max-width:400px">' +
-      '<div class="dot" style="width:44px;height:44px;background:' + p.color + ';margin:0 auto 14px"></div>' +
-      '<h2>Pass the device to ' + esc(p.name) + '</h2>' +
-      '<p class="sub">Their cards stay hidden until they tap.</p>' +
+      '<div style="width:52px;height:52px;border-radius:14px;background:' + p.color + ';color:#fff;font-weight:800;font-size:20px;display:grid;place-items:center;margin:0 auto 14px">' + (acting + 1) + '</div>' +
+      '<h2>Pass the device to ' + esc(p.name) + '</h2><p class="sub">Their cards stay hidden until they tap.</p>' +
       '<button class="btn primary" id="curtainGo" style="width:100%">I\'m ' + esc(p.name) + ' — continue</button></div></div>';
     el('curtainGo').onclick = function () { ui.lastActing = acting; closeModal(); render(); };
     return true;
@@ -3085,7 +3521,7 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     }
     ui.prevRes = { seat: me, res: JSON.parse(JSON.stringify(res)) };
   }
-
+  var lastPhase = null, lastTurn = null;
   function render() {
     if (!C) return;
     if (C.lobby) { show('screen-lobby'); renderLobby(); return; }
@@ -3094,60 +3530,102 @@ button[data-tip],a[data-tip],.spot[data-tip]{cursor:pointer}
     show('screen-game');
     if (maybeCurtain()) return;
     trackHandDelta();
-    renderTop(); renderBoard(); renderSide(); renderBottom();
+    renderTurn(); renderBoard(); renderSide(); renderDock();
     maybePlayRoll();
+
+    // a disconnection is news for the whole table, not a small badge
+    var off = v.players.filter(function (p) { return !p.connected; });
+    if (off.length && v.phase !== 'over') {
+      banner('warn', off.map(function (p) { return p.name; }).join(' and ') +
+        (off.length > 1 ? ' have' : ' has') + ' lost connection — they can rejoin with the same code.');
+    } else if (el('banner').classList.contains('warn')) clearBanner();
+
+    if (v.phase === 'over' && lastPhase !== 'over') SFX.win();
+    else if (v.turn !== lastTurn && v.awaited.indexOf(v.you) >= 0 && !v.localOnly) SFX.turn();
+    lastPhase = v.phase; lastTurn = v.turn;
 
     var me = v.you;
     if (!ui.modal) {
       if (v.phase === 'discard' && v.pendingDiscard[me]) openDiscard();
       else if (v.phase === 'robber' && v.awaiting && v.awaiting.type === 'steal' && v.awaiting.player === me) openSteal();
-      else if (v.phase === 'over' && !ui.shownOver) { ui.shownOver = true; openGameOver(); }
+      else if (v.phase === 'over' && !ui.shownOver) { ui.shownOver = true; openStats(); }
     }
     if (v.phase !== 'over') ui.shownOver = false;
   }
 
   /* ---------------- wiring ---------------- */
-  function isPhone() { return window.matchMedia('(max-width:920px)').matches; }
   function initGame() {
-    if (isPhone()) el('side').classList.add('collapsed');
-    $$('.tab').forEach(function (t) {
-      t.onclick = function () {
-        if (isPhone()) {
-          var wasOn = t.classList.contains('on') && !el('side').classList.contains('collapsed');
-          el('side').classList.toggle('collapsed', wasOn);
-        }
-        $$('.tab').forEach(function (x) { x.classList.remove('on'); });
-        t.classList.add('on');
-        ui.tab = t.dataset.tab;
-        ['players', 'log', 'chat', 'guide'].forEach(function (k) {
-          el('tab' + k[0].toUpperCase() + k.slice(1)).classList.toggle('hidden', k !== ui.tab);
+    var railIcons = { rlHelp: 'info', rlGuide: 'book', rlSound: ui.sound ? 'sound' : 'mute', rlFull: 'full', rlStats: 'chart', rlMenu: 'menu' };
+    Object.keys(railIcons).forEach(function (id) { el(id).innerHTML = icon(railIcons[id]); });
+    el('rlSound').classList.toggle('on', ui.sound);
+    el('rlHelp').onclick = openRules;
+    el('rlGuide').onclick = function () { if (C && C.view) openGuide(); };
+    el('rlStats').onclick = function () { if (C && C.view) openStats(); };
+    el('rlSound').onclick = function () {
+      ui.sound = !ui.sound; store('hexhaven-sound', ui.sound ? '1' : '0');
+      el('rlSound').innerHTML = icon(ui.sound ? 'sound' : 'mute');
+      el('rlSound').classList.toggle('on', ui.sound);
+      if (ui.sound) SFX.turn();
+    };
+    el('rlFull').onclick = function () {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    };
+    el('rlMenu').onclick = function () {
+      openModal('<h2>Menu</h2><div class="stack">' +
+        (C && C.code && C.code !== 'LOCAL' ? '<div><label class="lbl">Room code</label><div class="code-box"><span class="code" style="font-size:27px">' + C.code + '</span></div></div>' : '') +
+        '<button class="btn" id="mRules">How to play</button><button class="btn" id="mGuide">Reference</button>' +
+        '<button class="btn danger" id="mLeave">Leave game</button><button class="btn ghost" id="mX">Close</button></div>',
+        function () {
+          el('mX').onclick = closeModal; el('mLeave').onclick = goHome;
+          el('mRules').onclick = openRules; el('mGuide').onclick = openGuide;
         });
-        el('chatForm').classList.toggle('hidden', ui.tab !== 'chat');
-        if (ui.tab === 'guide' && C && C.view) renderGuide();
+    };
+
+    el('chatHead').onclick = function () { el('chatwrap').classList.toggle('closed'); };
+    $$('#mtabs button').forEach(function (b) {
+      b.onclick = function () {
+        $$('#mtabs button').forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        el('side').setAttribute('data-m', b.dataset.m);
       };
     });
     el('chatForm').onsubmit = function (e) {
       e.preventDefault();
       var t = el('chatIn').value.trim();
-      if (t) { C.send({ t: 'chat', text: t }); el('chatIn').value = ''; }
+      if (t && C) { C.send({ t: 'chat', text: t }); el('chatIn').value = ''; }
     };
-    el('btnHelp').onclick = openRules;
-    el('btnMenu').onclick = function () {
-      openModal('<h2>Menu</h2><div class="stack">' +
-        (C.code && C.code !== 'LOCAL' ? '<div class="code-box"><span class="code" style="font-size:26px">' + C.code + '</span></div>' : '') +
-        '<button class="btn" id="mRules">How to play</button>' +
-        '<button class="btn danger" id="mLeave">Leave game</button>' +
-        '<button class="btn ghost" id="mX">Close</button></div>',
-        function () {
-          el('mX').onclick = closeModal;
-          el('mLeave').onclick = goHome;
-          el('mRules').onclick = openRules;
-        });
-    };
+
+    document.addEventListener('keydown', function (e) {
+      if (ui.modal) { if (e.key === 'Escape') closeModal(); return; }
+      if (!C || !C.view) return;
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+      var k = e.key.toLowerCase();
+      var has = function (a) { return !!document.querySelector('[data-a="' + a + '"]:not(:disabled)'); };
+      if (k === 'r' && has('roll')) onAction('roll');
+      else if (k === 'e' && has('end')) onAction('end');
+      else if (k === '1' && has('m-road')) onAction('m-road');
+      else if (k === '2' && has('m-settlement')) onAction('m-settlement');
+      else if (k === '3' && has('m-city')) onAction('m-city');
+      else if (k === 'd' && has('buydev')) onAction('buydev');
+      else if (k === 't' && has('trade')) onAction('trade');
+      else if (k === 'escape' && ui.mode) { ui.mode = null; render(); }
+      else if (k === '+' || k === '=') zoomBy(1.3);
+      else if (k === '-') zoomBy(1 / 1.3);
+      else if (k === '0') fitCam();
+      else return;
+      e.preventDefault();
+    });
+
+    setInterval(function () { if (C && C.view && !C.lobby) updateTimer(); }, 500);
+    window.addEventListener('resize', function () {
+      if (!cam.base) return;
+      var k = cam.k; fitCam(); cam.k = k; applyCam();   // clearance depends on width
+    });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initTips(); initHome(); initLobby(); initGame();
+    initTips(); initHome(); initLobby(); initGame(); initCamera();
     window.addEventListener('beforeunload', function (e) {
       if (H && H.state && H.state.phase !== 'over') { e.preventDefault(); e.returnValue = ''; }
     });
