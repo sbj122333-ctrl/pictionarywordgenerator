@@ -40,7 +40,7 @@ from collections import Counter, defaultdict
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "corpus-src"))
 
-CORPUS_VERSION = "2026.09.3"
+CORPUS_VERSION = "2026.09.4"
 # The version every device compares against. Bumping it triggers reconcile() on
 # next load: the seen-bitmap is kept, the unseen set is recomputed, and the new
 # words appear without resurrecting a single word anyone has already played.
@@ -61,8 +61,18 @@ CORPUS_VERSION = "2026.09.3"
 #    (score, domain), not score alone.
 SPECIALIST = {"biases", "philosophy", "science", "biology",
               "economics", "internet", "maths", "literature"}
-TIER_ORDER = ["easy", "moderate", "hard", "god"]
-TIER_POINTS = {"easy": 1, "moderate": 2, "hard": 3, "god": 4}
+# 3. (Sep 2026) Cryptic played too easy and God Mode too hard, with nothing between.
+#    Cryptic words are everyday abstractions a room reaches on the first decent
+#    drawing (R is 4-5 on 94% of them); God Mode words are specialist terms of art
+#    most of a room has never met (R is 1-3 on 77%). The gap is NAMED REFERENCES
+#    most people have heard of but must work to reach: myths, eponyms, famous
+#    effects, history, stories. Like the Hard/God split, it is register - a domain
+#    rule - not a score band, because the score cannot tell these apart either.
+BRIDGE = {"myths", "eponyms", "effects", "history", "culture"}
+# Tiers whose words are named references and ship with a printed meaning.
+MEANING_TIERS = {"expert", "god"}
+TIER_ORDER = ["easy", "moderate", "hard", "expert", "god"]
+TIER_POINTS = {"easy": 1, "moderate": 2, "hard": 3, "expert": 4, "god": 5}
 MAX_WORDS = 7   # idioms legitimately run long: "let the cat out of the bag" is 7 and is a great card.
                 # The UI shows pips for 1-4 words and a numeric badge for 5+ (see DESIGN_SPEC).
 
@@ -96,7 +106,9 @@ def assign_tier(score, category):
         return "easy"
     if score <= 7:
         return "moderate"
-    return "god" if category in SPECIALIST else "hard"
+    if category in SPECIALIST:
+        return "god"
+    return "expert" if category in BRIDGE else "hard"
 
 BANNED = {
     # Minimal illustrative list. Expand before production; see docs/TECHNICAL_SPEC.md.
@@ -165,11 +177,12 @@ def stem_key(text):
 
 
 def load_tiers():
-    import tier_easy, tier_moderate, tier_hard, tier_god
+    import tier_easy, tier_moderate, tier_hard, tier_expert, tier_god
     return {
         "easy": tier_easy.WORDS,
         "moderate": tier_moderate.WORDS,
         "hard": tier_hard.WORDS,
+        "expert": tier_expert.WORDS,
         "god": tier_god.WORDS,
     }
 
@@ -220,7 +233,7 @@ def build():
     for tier in TIER_ORDER:
         rows = tiers[tier]
         for row in rows:
-            if tier == "god":
+            if tier in MEANING_TIERS:
                 text, cat, C, F, D, R, T, meaning = row
             else:
                 text, cat, C, F, D, R, T = row
@@ -261,11 +274,11 @@ def build():
             # points penalty. A god word whose meaning is missing is a dead round, so
             # the build refuses to ship one. 120 chars is what fits on a phone at the
             # meaning's type size without pushing the outcome buttons off-screen.
-            if tier == "god":
+            if tier in MEANING_TIERS:
                 if not meaning or len(meaning.strip()) < 8:
-                    errors.append(f"[god] '{text}': missing or too-short meaning")
+                    errors.append(f"[{tier}] '{text}': missing or too-short meaning")
                 elif len(meaning) > 120:
-                    errors.append(f"[god] '{text}': meaning is {len(meaning)} chars, max 120")
+                    errors.append(f"[{tier}] '{text}': meaning is {len(meaning)} chars, max 120")
 
             # --- gate: word count 1-7 (FR-09) ---
             wc = word_count(text)
@@ -377,7 +390,7 @@ def report(records, errors, warnings):
 
     # V1.0 launch targets from the PRD. The seed is deliberately short of these -
     # it exists to prove the schema and let the engine be built against real data.
-    LAUNCH_TARGET = {"easy": 1500, "moderate": 1500, "hard": 1200, "god": 600}
+    LAUNCH_TARGET = {"easy": 1500, "moderate": 1500, "hard": 1200, "expert": 400, "god": 600}
 
     by_tier = Counter(r["tier"] for r in records)
     pictionary = [r for r in records if r["family"] == "pictionary"]
@@ -387,7 +400,7 @@ def report(records, errors, warnings):
     print(f"  {'tier':<10}{'words':>7}{'sessions':>11}{'10-ses bar':>13}"
           f"{'V1.0 target':>14}{'progress':>11}{'cats':>7}")
     for tier in TIER_ORDER:
-        n, per = by_tier[tier], (15 if tier == "god" else 50)
+        n, per = by_tier[tier], (15 if tier in MEANING_TIERS else 50)
         cats = len({r["category"] for r in records if r["tier"] == tier})
         bar = "met" if n / per >= 10 else f"{n/per/10:.0%}"
         tgt = LAUNCH_TARGET[tier]
@@ -412,7 +425,8 @@ def report(records, errors, warnings):
 
     print(f"\n  multi-word entries: {sum(1 for r in records if r['words'] > 1)} "
           f"({sum(1 for r in records if r['words'] > 1)/len(records)*100:.0f}%)")
-    print(f"  god-mode meanings:  {sum(1 for r in records if r['meaning'])}/{by_tier['god']}")
+    for mt in ("expert", "god"):
+        print(f"  {mt} meanings: {sum(1 for r in records if r['tier'] == mt and r['meaning'])}/{by_tier[mt]}")
     print(f"  ordinal range:      0 - {max(r['ord'] for r in records)}")
 
     if warnings:

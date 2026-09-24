@@ -20,7 +20,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const DECKS = ['easy', 'moderate', 'hard', 'god', 'hindi', 'english'];
+const DECKS = ['easy', 'moderate', 'hard', 'expert', 'god', 'hindi', 'english'];
 const DIR = join('public', 'corpus');
 
 const tiers = {};

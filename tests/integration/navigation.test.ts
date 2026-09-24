@@ -124,9 +124,9 @@ describe('history', () => {
     expect([...root.querySelectorAll('.game-card')].indexOf(away!)).toBe(2);
   });
 
-  it('opens a deck list per game — four tiers, three film decks', async () => {
+  it('opens a deck list per game — five tiers, three film decks', async () => {
     openGame(0);
-    expect(root.querySelectorAll('.tier-card')).toHaveLength(4);
+    expect(root.querySelectorAll('.tier-card')).toHaveLength(5);
     expect(viewName()).toBe('decks');
 
     await popped(() => footButton('All games')?.click());

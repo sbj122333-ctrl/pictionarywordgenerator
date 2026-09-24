@@ -662,10 +662,17 @@ kbd {
     font-size: 0.8125rem;
   }
 
-  /* Four tiers means 2x2. Never a 3-wide row with an orphan cell. */
+  /* Two columns, never three. Five tiers would leave God Mode as an orphan
+     cell, so the fifth card spans the full row: the final tier gets the wide
+     card. Scoped to a fifth-and-last child so the three film decks keep their
+     existing layout. */
   .tiers {
     grid-template-columns: 1fr 1fr;
     gap: var(--s4);
+  }
+
+  .tiers > :nth-child(5):last-child {
+    grid-column: 1 / -1;
   }
 
   .screen__foot {

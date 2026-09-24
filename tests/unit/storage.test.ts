@@ -143,6 +143,7 @@ describe('parseDeviceMemory', () => {
     expect(Object.keys(parsed!.tiers).sort()).toEqual([
       'easy',
       'english',
+      'expert',
       'god',
       'hard',
       'hindi',

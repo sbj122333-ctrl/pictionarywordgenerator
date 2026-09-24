@@ -22,6 +22,7 @@ const MAX_WORDS: Readonly<Record<DeckId, number>> = {
   easy: 7,
   moderate: 7,
   hard: 7,
+  expert: 7,
   god: 7,
   hindi: 8,
   english: 8,
@@ -172,9 +173,11 @@ describe('word counts', () => {
   });
 });
 
-describe('god tier meanings', () => {
-  it('carries a meaning on every word, 8 to 120 characters', () => {
-    for (const word of bundle('god').words) {
+const MEANING_DECKS: readonly DeckId[] = ['expert', 'god'];
+
+describe('enigma and god tier meanings', () => {
+  it.each(MEANING_DECKS)('%s: carries a meaning on every word, 8 to 120 characters', (deck) => {
+    for (const word of bundle(deck).words) {
       expect(word.m, `${word.t} has no meaning`).toBeTruthy();
       expect(word.m?.length ?? 0, `${word.t}: "${word.m}"`).toBeGreaterThanOrEqual(8);
       expect(word.m?.length ?? 0, `${word.t}: "${word.m}"`).toBeLessThanOrEqual(120);
@@ -184,7 +187,7 @@ describe('god tier meanings', () => {
   it('carries no meaning anywhere else', () => {
     // A meaning under a Doodle word hands the room the answer, and a meaning
     // under a film title hands them the film.
-    for (const deck of DECKS.filter((d) => d !== 'god')) {
+    for (const deck of DECKS.filter((d) => !MEANING_DECKS.includes(d))) {
       for (const word of bundle(deck).words) {
         expect(word.m, `${deck}/${word.t} has a meaning it should not`).toBeUndefined();
       }

@@ -24,6 +24,7 @@ const DESCRIPTIONS: Readonly<Record<PlayableDeck, string>> = {
   easy: 'One object, one shape. Everybody scores.',
   moderate: 'A scene, or a thing with parts.',
   hard: 'Abstract, but everyday language.',
+  expert: 'Myths, legends and famous references.',
   god: 'Named ideas from somebody else’s field.',
   hindi: 'Bollywood — the classics through to last month.',
   english: 'Hollywood — the canon and the blockbusters.',

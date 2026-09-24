@@ -5,7 +5,7 @@
  * front of it any more. Whoever taps "Next player" is the person holding the
  * phone, so the handover happens on the resolved screen instead.
  *
- * On God Mode the word carries a one-line meaning, printed under it and always
+ * On Enigma and God Mode the word carries a one-line meaning, printed under it and always
  * visible. God Mode terms are named things from a specialist domain; a room that
  * cannot define "apoptosis" is not having a hard round, it is having a dead one.
  * The meaning is for the drawer, who has to draw the idea, not the word.

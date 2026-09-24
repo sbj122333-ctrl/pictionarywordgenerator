@@ -20,7 +20,7 @@
  *                 have broken the one guarantee this product makes.
  */
 
-export type Tier = 'easy' | 'moderate' | 'hard' | 'god';
+export type Tier = 'easy' | 'moderate' | 'hard' | 'expert' | 'god';
 export type CharadesDeck = 'hindi' | 'english';
 
 /** A deck with a bundle in public/corpus and a TierMemory in the record. */
@@ -31,7 +31,7 @@ export type PlayableDeck = DeckId | 'mixed';
 
 export type Game = 'pictionary' | 'charades';
 
-export const TIERS: readonly Tier[] = ['easy', 'moderate', 'hard', 'god'] as const;
+export const TIERS: readonly Tier[] = ['easy', 'moderate', 'hard', 'expert', 'god'] as const;
 export const CHARADES_DECKS: readonly CharadesDeck[] = ['hindi', 'english'] as const;
 
 /** Every deck that owns a corpus. Iterate this for storage, not TIERS. */
@@ -61,7 +61,8 @@ export const TIER_POINTS: Readonly<Record<Tier, number>> = {
   easy: 1,
   moderate: 2,
   hard: 3,
-  god: 4,
+  expert: 4,
+  god: 5,
 };
 
 /**
@@ -97,6 +98,7 @@ export const DECK_LABELS: Readonly<Record<PlayableDeck, DeckLabel>> = {
   easy: { name: 'Doodle', detail: 'Easy', unit: WORD },
   moderate: { name: 'Sketch', detail: 'Moderate', unit: WORD },
   hard: { name: 'Cryptic', detail: 'Hard', unit: WORD },
+  expert: { name: 'Enigma', detail: 'Very hard', unit: WORD },
   god: { name: 'God Mode', detail: 'Impossible', unit: WORD },
   hindi: { name: 'Bollywood', detail: 'Hindi films', unit: FILM },
   english: { name: 'Hollywood', detail: 'English films', unit: FILM },
@@ -107,7 +109,7 @@ export const GAME_LABELS: Readonly<Record<Game, { name: string; verb: string; bl
   pictionary: {
     name: 'Pictionary',
     verb: 'Draw it',
-    blurb: 'Four tiers, from one-shape nouns up to named ideas out of somebody else’s field.',
+    blurb: 'Five tiers, from one-shape nouns up to named ideas out of somebody else’s field.',
   },
   charades: {
     name: 'Dumb Charades',

@@ -26,7 +26,7 @@ function memoryWith(counts: Record<string, number>) {
 
 describe('memory code / round trip', () => {
   it('reproduces the exact seen-set on a fresh device', async () => {
-    const source = memoryWith({ easy: 306, moderate: 372, hard: 200, god: 222 });
+    const source = memoryWith({ easy: 306, moderate: 372, hard: 200, expert: 150, god: 222 });
     const code = await exportMemoryCode(source);
     const parsed = await importMemoryCode(code);
     expect(parsed.ok).toBe(true);
@@ -40,12 +40,12 @@ describe('memory code / round trip', () => {
       );
       expect(merged.next.tiers[tier].cycles).toBe(source.tiers[tier].cycles);
     }
-    expect(merged.words).toBe(306 + 372 + 200 + 222);
-    expect(merged.tiers).toBe(4);
+    expect(merged.words).toBe(306 + 372 + 200 + 150 + 222);
+    expect(merged.tiers).toBe(5);
   });
 
   it('stays under 400 characters at seed-corpus size', async () => {
-    const source = memoryWith({ easy: 306, moderate: 372, hard: 200, god: 222 });
+    const source = memoryWith({ easy: 306, moderate: 372, hard: 200, expert: 150, god: 222 });
     const code = await exportMemoryCode(source);
     expect(code.length).toBeLessThan(400);
   });

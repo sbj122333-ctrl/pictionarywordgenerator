@@ -26,6 +26,8 @@
   --t-moderate-soft: #e4eff8;
   --t-hard: #c2521c;
   --t-hard-soft: #faebe1;
+  --t-expert: #a3284f;
+  --t-expert-soft: #f8e4ea;
   --t-god: #8e2a6b;
   --t-god-soft: #f7e6f1;
 
@@ -94,6 +96,8 @@
     --t-moderate-soft: #13273a;
     --t-hard: #e8853f;
     --t-hard-soft: #2e1e14;
+    --t-expert: #ec7c9c;
+    --t-expert-soft: #2e1720;
     --t-god: #d471ac;
     --t-god-soft: #2b1626;
     --t-hindi: #f0857a;
@@ -126,6 +130,8 @@
   --t-moderate-soft: #13273a;
   --t-hard: #e8853f;
   --t-hard-soft: #2e1e14;
+  --t-expert: #ec7c9c;
+  --t-expert-soft: #2e1720;
   --t-god: #d471ac;
   --t-god-soft: #2b1626;
   --t-hindi: #f0857a;
@@ -147,6 +153,7 @@
     --t-easy-soft: transparent;
     --t-moderate-soft: transparent;
     --t-hard-soft: transparent;
+    --t-expert-soft: transparent;
     --t-god-soft: transparent;
     --t-hindi-soft: transparent;
     --t-english-soft: transparent;

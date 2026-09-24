@@ -1,5 +1,5 @@
 {
-  "corpusVersion": "2026.09.3",
+  "corpusVersion": "2026.09.4",
   "words": [
     {
       "id": "e-00000",
@@ -81675,6 +81675,3981 @@
       ],
       "volatility": "evergreen",
       "addedIn": "2026.09.2"
+    },
+    {
+      "id": "e-04834",
+      "ord": 4834,
+      "text": "Kumbhakarna's sleep",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Sleeping for months and waking up starving.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04835",
+      "ord": 4835,
+      "text": "Abhimanyu's chakravyuh",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Knowing how to get in, but not how to get out.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04836",
+      "ord": 4836,
+      "text": "Medusa's stare",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A look so cold it turns people to stone.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04837",
+      "ord": 4837,
+      "text": "the Oracle of Delphi",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The all-knowing source everyone goes to for answers.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04838",
+      "ord": 4838,
+      "text": "Noah's flood",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A disaster so total only the prepared survive.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04839",
+      "ord": 4839,
+      "text": "Garden of Eden",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Paradise, right up until the temptation.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04840",
+      "ord": 4840,
+      "text": "Narcissus",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Fell in love with his own reflection.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04841",
+      "ord": 4841,
+      "text": "Hydra",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Cut off one head and two more grow back.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04842",
+      "ord": 4842,
+      "text": "Tower of Babel",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone suddenly speaks a different language, and nothing gets built.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04843",
+      "ord": 4843,
+      "text": "wisdom of Solomon",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Judgement so wise it settles an unsolvable dispute.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04844",
+      "ord": 4844,
+      "text": "patience of Job",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Enduring endless trouble without complaining.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04845",
+      "ord": 4845,
+      "text": "Pandora's box",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Opened out of curiosity, and every trouble in the world got out.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04846",
+      "ord": 4846,
+      "text": "Achilles' heel",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The one weak spot in something otherwise unbeatable.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04847",
+      "ord": 4847,
+      "text": "Midas touch",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everything they handle turns to gold.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04848",
+      "ord": 4848,
+      "text": "Herculean task",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A job so enormous only a demigod could finish it.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04849",
+      "ord": 4849,
+      "text": "Sisyphean task",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Push the boulder up the hill. It rolls back down. Forever.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04850",
+      "ord": 4850,
+      "text": "flying too close to the sun",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Ambition that overreaches and ends in a fall.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04851",
+      "ord": 4851,
+      "text": "Cassandra",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Right about the coming disaster, and nobody believes her.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04852",
+      "ord": 4852,
+      "text": "sword of Damocles",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Danger hanging over you by a single thread.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04853",
+      "ord": 4853,
+      "text": "Gordian knot",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "An impossible tangle, solved by simply cutting through it.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04854",
+      "ord": 4854,
+      "text": "odyssey",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A long, wandering journey full of adventures.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04855",
+      "ord": 4855,
+      "text": "nemesis",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The one rival you can never quite shake off.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04856",
+      "ord": 4856,
+      "text": "siren song",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A tempting call that lures you towards ruin.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04857",
+      "ord": 4857,
+      "text": "rising from the ashes",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Coming back stronger after being completely destroyed.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04858",
+      "ord": 4858,
+      "text": "El Dorado",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A legendary city of gold that nobody ever finds.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04859",
+      "ord": 4859,
+      "text": "Shangri-La",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A hidden paradise, far away from the rest of the world.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04860",
+      "ord": 4860,
+      "text": "Atlantis",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A great city that sank beneath the sea and was lost.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04861",
+      "ord": 4861,
+      "text": "fountain of youth",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The magic secret to never growing old.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04862",
+      "ord": 4862,
+      "text": "Bermuda Triangle",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Where ships and planes vanish without a trace.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04863",
+      "ord": 4863,
+      "text": "Area 51",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "myths",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The secret base where the aliens are supposedly kept.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04864",
+      "ord": 4864,
+      "text": "carrying the world on your shoulders",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "myths",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Bearing every burden alone, like the Titan Atlas.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04865",
+      "ord": 4865,
+      "text": "Sherlock-level deduction",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Solving it from tiny clues nobody else noticed.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04866",
+      "ord": 4866,
+      "text": "Einstein moment",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A flash of genius from someone you didn't expect.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04867",
+      "ord": 4867,
+      "text": "Chanakya's strategy",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Cold, clever statecraft that plays the long game.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04868",
+      "ord": 4868,
+      "text": "Gandhigiri",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Winning people over with polite, stubborn non-violence.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04869",
+      "ord": 4869,
+      "text": "Robin Hood",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Stealing from the rich to give to the poor.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04870",
+      "ord": 4870,
+      "text": "Newton's apple",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The falling apple that explained gravity.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04871",
+      "ord": 4871,
+      "text": "Nostradamus",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A vague prophecy that seems to fit anything, afterwards.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04872",
+      "ord": 4872,
+      "text": "Mata Hari",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The glamorous spy who seduces secrets out of people.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04873",
+      "ord": 4873,
+      "text": "Pavlov's dog",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Ring the bell and the mouth starts watering.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04874",
+      "ord": 4874,
+      "text": "Stockholm syndrome",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Coming to sympathise with the people holding you captive.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04875",
+      "ord": 4875,
+      "text": "Peter Pan syndrome",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A grown-up who refuses to grow up.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04876",
+      "ord": 4876,
+      "text": "Napoleon complex",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Small in height, big on bossing everyone around.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04877",
+      "ord": 4877,
+      "text": "Machiavellian",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 4
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Ruthless cunning used to win and keep power.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04878",
+      "ord": 4878,
+      "text": "Kafkaesque",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 4
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Nightmarishly absurd, pointless bureaucracy.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04879",
+      "ord": 4879,
+      "text": "Orwellian",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 4
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Constant surveillance and lies dressed up as truth.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04880",
+      "ord": 4880,
+      "text": "Faustian bargain",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Selling your soul for what you want right now.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04881",
+      "ord": 4881,
+      "text": "Casanova",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A charming serial seducer.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04882",
+      "ord": 4882,
+      "text": "Scrooge",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Miserly and mean with money, especially at Christmas.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04883",
+      "ord": 4883,
+      "text": "pulling a Houdini",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Escaping from an impossible situation.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04884",
+      "ord": 4884,
+      "text": "Rorschach test",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Ink blots that show what's on your mind.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04885",
+      "ord": 4885,
+      "text": "Mozart effect",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 3
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The claim that classical music makes babies smarter.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04886",
+      "ord": 4886,
+      "text": "tilting at windmills",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Fighting imaginary enemies, like Don Quixote.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04887",
+      "ord": 4887,
+      "text": "Good Samaritan",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A stranger who stops to help someone in trouble.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04888",
+      "ord": 4888,
+      "text": "Doubting Thomas",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Won't believe it until they see it for themselves.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04889",
+      "ord": 4889,
+      "text": "Judas kiss",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Betrayal disguised as affection.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04890",
+      "ord": 4890,
+      "text": "prodigal son",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Left home, wasted everything, came back and was forgiven.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04891",
+      "ord": 4891,
+      "text": "Renaissance man",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Brilliant at a bit of everything.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04892",
+      "ord": 4892,
+      "text": "Jekyll and Hyde",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Two completely different personalities in one person.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04893",
+      "ord": 4893,
+      "text": "Frankenstein's monster",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A creation that turns on the person who made it.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04894",
+      "ord": 4894,
+      "text": "Pied Piper",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Someone whose charm makes a crowd follow blindly.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04895",
+      "ord": 4895,
+      "text": "Big Brother",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "eponyms",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The all-seeing authority that is always watching you.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04896",
+      "ord": 4896,
+      "text": "Monday morning feeling",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The dread that arrives with the start of the week.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04897",
+      "ord": 4897,
+      "text": "the sugar crash",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The slump that follows the sweet high.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04898",
+      "ord": 4898,
+      "text": "beginner's panic",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Freezing up the first time it really counts.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04899",
+      "ord": 4899,
+      "text": "five-second rule",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Dropped food is still fine to eat if you're quick.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04900",
+      "ord": 4900,
+      "text": "rule of three",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Things feel complete when they come in threes.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04901",
+      "ord": 4901,
+      "text": "Friday the 13th",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The unluckiest date on the calendar.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04902",
+      "ord": 4902,
+      "text": "seven-year itch",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Restlessness that sets in after years together.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04903",
+      "ord": 4903,
+      "text": "runner's high",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The euphoric buzz that arrives in the middle of a run.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04904",
+      "ord": 4904,
+      "text": "terrible twos",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The tantrum-filled stage every toddler goes through.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04905",
+      "ord": 4905,
+      "text": "empty nest syndrome",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The quiet house after the children move out.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04906",
+      "ord": 4906,
+      "text": "middle child syndrome",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Feeling overlooked when you're neither the eldest nor the baby.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04907",
+      "ord": 4907,
+      "text": "survival of the fittest",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Only the best adapted make it through.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04908",
+      "ord": 4908,
+      "text": "fight or flight",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Stand your ground or run, decided in a heartbeat.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04909",
+      "ord": 4909,
+      "text": "photographic memory",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Remembering everything you've ever seen, exactly.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04910",
+      "ord": 4910,
+      "text": "self-fulfilling prophecy",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Believing it will happen is what makes it happen.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04911",
+      "ord": 4911,
+      "text": "Goldilocks zone",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Not too hot, not too cold, just right.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04912",
+      "ord": 4912,
+      "text": "law of attraction",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Think about it hard enough and it will come to you.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04913",
+      "ord": 4913,
+      "text": "boiling frog",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Change so slow you don't notice until it's too late.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04914",
+      "ord": 4914,
+      "text": "the 80/20 rule",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 4,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Most of the results come from a small slice of the effort.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04915",
+      "ord": 4915,
+      "text": "10,000 hour rule",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Practise long enough and you become an expert.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04916",
+      "ord": 4916,
+      "text": "six degrees of separation",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone is only a few friends away from everyone else.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04917",
+      "ord": 4917,
+      "text": "fifteen minutes of fame",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Famous for a moment, then forgotten.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04918",
+      "ord": 4918,
+      "text": "mind over matter",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Willpower beating the body's limits.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04919",
+      "ord": 4919,
+      "text": "nature versus nurture",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Were you born this way, or raised this way?",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04920",
+      "ord": 4920,
+      "text": "underdog effect",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone roots for the one expected to lose.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04921",
+      "ord": 4921,
+      "text": "hive mind",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A crowd thinking and acting as one.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04922",
+      "ord": 4922,
+      "text": "brainwashing",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "effects",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Beliefs installed in your head by someone else.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04923",
+      "ord": 4923,
+      "text": "survival instinct",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The urge that kicks in when your life is on the line.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04924",
+      "ord": 4924,
+      "text": "beginner's mind",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 3
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Approaching something as if for the very first time.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04925",
+      "ord": 4925,
+      "text": "Eureka moment",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "effects",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The sudden flash when the answer finally arrives.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04926",
+      "ord": 4926,
+      "text": "Taj Mahal of love",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A grand monument built out of devotion.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04927",
+      "ord": 4927,
+      "text": "burning the boats",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Removing every way back so retreat is impossible.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04928",
+      "ord": 4928,
+      "text": "the shot heard round the world",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The first move that starts something enormous.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04929",
+      "ord": 4929,
+      "text": "Nero fiddling while Rome burns",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Doing something trivial while everything falls apart.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04930",
+      "ord": 4930,
+      "text": "D-Day",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The day the big, long-planned operation finally begins.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04931",
+      "ord": 4931,
+      "text": "the Space Race",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Two superpowers racing to reach the Moon first.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04932",
+      "ord": 4932,
+      "text": "fall of the Berlin Wall",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The day a divided city became one again.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04933",
+      "ord": 4933,
+      "text": "one small step for man",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A tiny action that is a giant leap for everyone.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04934",
+      "ord": 4934,
+      "text": "I have a dream",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A vision of a fairer future, spoken out loud.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04935",
+      "ord": 4935,
+      "text": "Pyrrhic victory",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 12,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Won the battle, but lost so much it barely counts.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04936",
+      "ord": 4936,
+      "text": "crossing the Rubicon",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Taking the step there is no coming back from.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04937",
+      "ord": 4937,
+      "text": "meeting your Waterloo",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The final, decisive defeat.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04938",
+      "ord": 4938,
+      "text": "cold war",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Enemies who never fight each other directly.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04939",
+      "ord": 4939,
+      "text": "iron curtain",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A hard line that splits the world in two.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04940",
+      "ord": 4940,
+      "text": "Industrial Revolution",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "When machines took over the work of hands.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04941",
+      "ord": 4941,
+      "text": "Silk Road",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The ancient trade route linking East and West.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04942",
+      "ord": 4942,
+      "text": "the Enlightenment",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 3
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "When reason began challenging kings and priests.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04943",
+      "ord": 4943,
+      "text": "Magna Carta",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 3
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The document that said even the king must obey the law.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04944",
+      "ord": 4944,
+      "text": "let them eat cake",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Out-of-touch advice from someone who has plenty.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04945",
+      "ord": 4945,
+      "text": "veni vidi vici",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "I came, I saw, I conquered.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04946",
+      "ord": 4946,
+      "text": "Et tu, Brute",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Betrayed by your closest friend.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04947",
+      "ord": 4947,
+      "text": "divide and rule",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Keep your enemies busy fighting each other.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04948",
+      "ord": 4948,
+      "text": "Boston Tea Party",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Tea dumped in a harbour to protest a tax.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04949",
+      "ord": 4949,
+      "text": "Salt March",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Walking to the sea to make salt in defiance of an unfair tax.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04950",
+      "ord": 4950,
+      "text": "rearranging deckchairs on the Titanic",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Busy, pointless work while disaster approaches.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04951",
+      "ord": 4951,
+      "text": "Y2K bug",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 2,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The fear that every computer would break at midnight in 2000.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04952",
+      "ord": 4952,
+      "text": "civil disobedience",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Peacefully breaking unfair laws, on purpose.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04953",
+      "ord": 4953,
+      "text": "the Olympic spirit",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "It's the taking part that counts.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04954",
+      "ord": 4954,
+      "text": "Renaissance",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "history",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A sudden rebirth of art and ideas.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04955",
+      "ord": 4955,
+      "text": "Stone Age thinking",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "history",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Hopelessly primitive, out-of-date ideas.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04956",
+      "ord": 4956,
+      "text": "the Grinch",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Someone determined to ruin everyone's celebration.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04957",
+      "ord": 4957,
+      "text": "Mr Bean moment",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A clumsy, wordless disaster in public.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04958",
+      "ord": 4958,
+      "text": "Snow White's mirror",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The brutally honest answer you didn't want to hear.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04959",
+      "ord": 4959,
+      "text": "Pinocchio's nose",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The giveaway that proves you're lying.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04960",
+      "ord": 4960,
+      "text": "Mowgli",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A child raised by the jungle, wild and free.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04961",
+      "ord": 4961,
+      "text": "the Tortoise wins",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Slow and steady beats fast and careless.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04962",
+      "ord": 4962,
+      "text": "Mogambo khush hua",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The villain is very pleased, and so is everyone else.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04963",
+      "ord": 4963,
+      "text": "the elephant and the blind men",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone holds one piece and thinks it's the whole truth.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04964",
+      "ord": 4964,
+      "text": "David and Goliath",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The little one takes down the giant.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04965",
+      "ord": 4965,
+      "text": "Cheshire cat grin",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A wide, knowing grin that lingers after you've gone.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04966",
+      "ord": 4966,
+      "text": "the wizard behind the curtain",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The unimpressive person really pulling the strings.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04967",
+      "ord": 4967,
+      "text": "there's no place like home",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Nowhere beats the place where you belong.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04968",
+      "ord": 4968,
+      "text": "the dark side",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The tempting path that leads to evil.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04969",
+      "ord": 4969,
+      "text": "I'll be back",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A promise to return that sounds like a threat.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04970",
+      "ord": 4970,
+      "text": "Houston, we have a problem",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Calmly reporting that something has gone badly wrong.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04971",
+      "ord": 4971,
+      "text": "Rip Van Winkle",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Fell asleep for twenty years and woke to a changed world.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04972",
+      "ord": 4972,
+      "text": "thought police",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "People who punish you for thinking the wrong thing.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04973",
+      "ord": 4973,
+      "text": "Robinson Crusoe",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Stranded alone on an island, surviving on your wits.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04974",
+      "ord": 4974,
+      "text": "chasing a white whale",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "An obsessive pursuit of one elusive goal.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04975",
+      "ord": 4975,
+      "text": "emperor's new clothes",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone pretends to see what simply isn't there.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04976",
+      "ord": 4976,
+      "text": "the boy who cried wolf",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Lie often enough and nobody believes the truth.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04977",
+      "ord": 4977,
+      "text": "killing the golden goose",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Destroying the very thing that keeps making you money.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04978",
+      "ord": 4978,
+      "text": "down the rabbit hole",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "One question leads you deeper and deeper in.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04979",
+      "ord": 4979,
+      "text": "taking the red pill",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Choosing an uncomfortable truth over a comfortable lie.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04980",
+      "ord": 4980,
+      "text": "kryptonite",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 1,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The one thing that brings down even the strongest.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04981",
+      "ord": 4981,
+      "text": "star-crossed lovers",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Lovers doomed by forces beyond their control.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04982",
+      "ord": 4982,
+      "text": "Cinderella story",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "From nobody to champion, almost overnight.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04983",
+      "ord": 4983,
+      "text": "Waiting for Godot",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 2,
+        "R": 3,
+        "T": 4
+      },
+      "score": 13,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Waiting for something that never, ever arrives.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04984",
+      "ord": 4984,
+      "text": "Lord of the Flies",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 3,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Children left alone turn savage.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04985",
+      "ord": 4985,
+      "text": "Shakespearean tragedy",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Everyone dies, and all of it was avoidable.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04986",
+      "ord": 4986,
+      "text": "Oscar-worthy performance",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 2,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Faking it far too dramatically.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04987",
+      "ord": 4987,
+      "text": "an offer you can't refuse",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "A deal that is really a threat.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04988",
+      "ord": 4988,
+      "text": "may the force be with you",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 3
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Good luck, from a galaxy far, far away.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04989",
+      "ord": 4989,
+      "text": "with great power comes great responsibility",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 6,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 1,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 11,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The stronger you are, the more you owe everyone else.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04990",
+      "ord": 4990,
+      "text": "elementary, my dear Watson",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 4,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 4,
+        "T": 4
+      },
+      "score": 10,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "Said when the answer is obvious, if you'd only noticed.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04991",
+      "ord": 4991,
+      "text": "the one that got away",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 5,
+      "category": "culture",
+      "axes": {
+        "C": 2,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 8,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The chance, or person, you still wish you'd kept.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
+    },
+    {
+      "id": "e-04992",
+      "ord": 4992,
+      "text": "happily ever after",
+      "family": "pictionary",
+      "tier": "expert",
+      "words": 3,
+      "category": "culture",
+      "axes": {
+        "C": 1,
+        "F": 2,
+        "D": 3,
+        "R": 5,
+        "T": 4
+      },
+      "score": 9,
+      "computedTier": "expert",
+      "override": null,
+      "meaning": "The fairy-tale ending where nothing goes wrong again.",
+      "locale": [
+        "global"
+      ],
+      "volatility": "evergreen",
+      "addedIn": "2026.09.4"
     },
     {
       "id": "g-00878",
